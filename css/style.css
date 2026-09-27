@@ -399,3 +399,5 @@
 .form-message.success{color:#176b49;background:#effaf5;border-color:#b9e4ce}.account-card{max-width:560px}.account-switch{margin:20px 0 0;color:var(--muted);font-size:.9rem;text-align:center}.account-switch a{color:var(--blue);font-weight:700}.account-logout{margin-top:20px;cursor:pointer}.account-logout:disabled{opacity:.65;cursor:wait}
 
 .logout-confirmation{width:min(420px,calc(100% - 32px));padding:26px;border:1px solid var(--line);border-radius:14px;color:var(--ink);box-shadow:var(--shadow)}.logout-confirmation::backdrop{background:rgba(23,36,61,.45)}.logout-confirmation form{display:grid;gap:14px}.logout-confirmation h2,.logout-confirmation p{margin:0}.logout-confirmation p{color:var(--muted)}.logout-confirmation form>div{display:flex;justify-content:flex-end;gap:10px}.logout-confirmation button:not(.button){padding:10px 16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+
+body.auth-pending{visibility:hidden!important}

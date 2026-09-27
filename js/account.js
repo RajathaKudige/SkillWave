@@ -95,11 +95,7 @@
       window.location.replace("dashboard.html");
       return { user, profile, redirected: true };
     }
-    if (page === "dashboard" && !profile) {
-      window.location.replace("onboarding.html");
-      return { user, profile: null, redirected: true };
-    }
-    if (page === "roadmap" && !profile) {
+    if (["dashboard", "roadmap", "softskills", "networking"].includes(page) && !profile) {
       window.location.replace("onboarding.html");
       return { user, profile: null, redirected: true };
     }
@@ -119,9 +115,10 @@
     if (!page) return { user: null, profile: null };
     const user = await sessionUser();
     if (!user) {
-      if (page === "dashboard" || page === "roadmap") window.location.replace("login.html");
+      const protectedPage = ["dashboard", "roadmap", "softskills", "networking"].includes(page);
+      if (protectedPage) window.location.replace("login.html");
       if (page === "onboarding") window.location.replace("signup.html");
-      return { user: null, profile: null, redirected: page === "dashboard" || page === "roadmap" || page === "onboarding" };
+      return { user: null, profile: null, redirected: protectedPage || page === "onboarding" };
     }
     if (page === "home") {
       window.location.replace("dashboard.html");
@@ -131,10 +128,11 @@
     return routeAuthenticatedUser(user, page);
   })();
 
-  ready.then(({ user }) => {
+  ready.then(({ user, redirected }) => {
     document.querySelectorAll("[data-public-nav], [data-authenticated-nav], [data-public-action]")
       .forEach((element) => { element.hidden = Boolean(user) ? element.hasAttribute("data-public-nav") || element.hasAttribute("data-public-action") : element.hasAttribute("data-authenticated-nav"); });
     document.querySelectorAll("a.brand").forEach((brand) => { if (user) brand.href = "dashboard.html"; });
+    if (!redirected) document.body.classList.remove("auth-pending");
   });
 
   ready.catch((error) => {
