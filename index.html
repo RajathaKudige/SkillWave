@@ -1,22 +1,161 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A guided career-development ecosystem for students."><title>Professional Level | Career Development</title><link rel="stylesheet" href="css/style.css"></head>
-<body class="auth-pending" data-account-page="home">
-  <header class="site-header"><nav class="navbar container" aria-label="Main navigation">
-    <a class="brand" href="index.html"><span class="brand-mark">PL</span><span>Professional Level</span></a>
-    <button class="menu-button" type="button" aria-expanded="false" aria-controls="nav-links"><span class="sr-only">Open navigation menu</span><i></i><i></i><i></i></button>
-    <div class="nav-links" id="nav-links"><div data-public-nav><a href="login.html">Login</a><a class="button button-small" href="signup.html">Create Account</a></div><div data-authenticated-nav hidden><a href="dashboard.html">Dashboard</a><a href="roadmap.html">Roadmap</a><a href="softskills.html">Soft Skills</a><a href="networking.html">Networking</a><a href="index.html" id="nav-logout-button">Logout</a></div></div>
-  </nav></header>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="See where you stand and build the technical skills, communication, and connections that help you move from student to professional.">
+  <title>Professional Level | Career Readiness, Made Clear</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body class="auth-pending home-page" data-account-page="home">
+  <header class="site-header home-header">
+    <nav class="navbar container" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="Professional Level home"><span class="brand-mark">PL</span><span>Professional Level</span></a>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="nav-links"><span class="sr-only">Open navigation menu</span><i></i><i></i><i></i></button>
+      <div class="nav-links" id="nav-links">
+        <div data-public-nav><a href="login.html">Login</a><a class="button button-small" data-public-action href="signup.html">Create account</a></div>
+        <div data-authenticated-nav hidden><a href="dashboard.html">Dashboard</a><a href="roadmap.html">Roadmap</a><a href="softskills.html">Soft Skills</a><a href="networking.html">Networking</a><a href="index.html" id="nav-logout-button">Logout</a></div>
+      </div>
+    </nav>
+  </header>
+
   <main>
-    <section class="hero"><div class="container hero-grid"><div class="hero-content">
-      <p class="eyebrow">YOUR CAREER, WITH DIRECTION</p><h1>Your Career Journey,<br>All in One Place.</h1><p class="hero-text">Build technical skills, develop professional abilities, and connect with opportunities — all through one guided journey.</p><div class="hero-actions"><a class="button" data-public-action href="signup.html">Create Account <b>→</b></a><a class="text-button" data-public-action href="login.html">Login</a><a class="text-button" href="#how-it-works">Explore the Journey <b>↓</b></a></div>
-    </div><div class="hero-visual" aria-label="Career journey illustration"><div class="visual-label">Career-ready path</div><div class="journey-card"><div class="journey-card-top"><span>YOUR JOURNEY</span><span class="status-dot">A guided path</span></div><div class="progress-circle"><strong>Your</strong><span>journey</span></div><div class="journey-list"><div><b>✓</b> Technical foundation</div><div><b>✓</b> Professional skills</div><div><em></em> Build your network</div></div></div><div class="floating-card"><b>✦</b><div><strong>Keep growing</strong><small>One step at a time</small></div></div></div></div></section>
-    <section class="pillars section"><div class="container"><div class="section-heading"><p class="eyebrow">A COMPLETE ECOSYSTEM</p><h2>Everything You Need to<br>Become Career Ready</h2></div><div class="pillar-grid">
-      <article class="pillar-card"><div class="icon-box">⌘</div><p class="card-number">01</p><h3>Tech Roadmap</h3><p>Know what to learn, what to practice, and what to build for your target career.</p><a href="roadmap.html">Explore →</a></article>
-      <article class="pillar-card"><div class="icon-box">◒</div><p class="card-number">02</p><h3>Soft Skills</h3><p>Develop communication, teamwork, problem-solving, leadership, and other professional skills.</p><a href="softskills.html">Explore →</a></article>
-      <article class="pillar-card"><div class="icon-box">◎</div><p class="card-number">03</p><h3>Networking</h3><p>Learn how to build meaningful professional connections and discover opportunities.</p><a href="networking.html">Explore →</a></article>
-    </div></div></section>
-    <section class="journey section" id="how-it-works"><div class="container"><div class="section-heading"><p class="eyebrow">SIMPLE, FOCUSED, EFFECTIVE</p><h2>How Your Journey Works</h2></div><div class="steps"><article class="step"><span>01</span><h3>Assess</h3><p>Understand where you are.</p></article><article class="step"><span>02</span><h3>Improve</h3><p>Follow a personalized path and practice consistently.</p></article><article class="step"><span>03</span><h3>Connect</h3><p>Build visibility and discover opportunities.</p></article><article class="step"><span>04</span><h3>Get Job Ready</h3><p>Track your growth and take your next step.</p></article></div></div></section>
-    <section class="cta-section"><div class="container cta-content"><p class="eyebrow">YOUR NEXT STEP STARTS HERE</p><h2>Ready to Start Your Journey?</h2><p>Stop wondering what to do next. Start building your professional journey today.</p><a class="button button-light" data-public-action href="signup.html">Create Account →</a></div></section>
+    <section class="home-hero" aria-labelledby="home-title">
+      <div class="container home-hero-grid">
+        <div class="home-hero-copy">
+          <p class="home-kicker"><span></span> FROM STUDENT TO PROFESSIONAL</p>
+          <h1 id="home-title">Graduate with<br>more than a <em>degree.</em></h1>
+          <p class="home-lede">Know where you stand. Strengthen the skills that matter. Professional Level helps you build the confidence and evidence to enter the job market ready.</p>
+          <div class="home-actions">
+            <a class="home-button home-button-accent" data-public-action href="signup.html">Start leveling up <span aria-hidden="true">↗</span></a>
+            <a class="home-text-link" href="#how-it-works">See how it works <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="home-trust"><span class="trust-rule"></span> A clearer picture of what you know — and what to work on next.</p>
+        </div>
+
+        <div class="level-panel" aria-label="The Level Track: Student, Building Skills, Career Ready">
+          <div class="level-panel-head"><span>THE LEVEL TRACK</span><span class="level-index">PROFILE / 01—03</span></div>
+          <svg class="level-track" viewBox="0 0 580 330" role="img" aria-labelledby="track-title track-desc">
+            <title id="track-title">The Level Track</title>
+            <desc id="track-desc">Three career-readiness levels connected by a continuous line: Student, Building Skills, and Career Ready.</desc>
+            <path class="track-base" d="M70 244H230V174H390V104H520" />
+            <path class="track-fill" d="M70 244H230V174H390V104H520" />
+            <circle class="track-node track-node-start" cx="70" cy="244" r="11" />
+            <circle class="track-node track-node-mid" cx="230" cy="174" r="11" />
+            <circle class="track-node track-node-current" cx="390" cy="104" r="14" />
+            <path class="track-tick" d="M520 94v20m-10-10h20" />
+            <text class="track-level" x="43" y="281">LEVEL 01</text>
+            <text class="track-name" x="43" y="307">Student</text>
+            <text class="track-level" x="192" y="211">LEVEL 02</text>
+            <text class="track-name" x="192" y="237">Building Skills</text>
+            <text class="track-level track-level-accent" x="352" y="144">LEVEL 03</text>
+            <text class="track-name" x="352" y="170">Career Ready</text>
+          </svg>
+          <div class="level-tags" aria-label="Areas that strengthen your profile">
+            <span>Skills</span><span>Communication</span><span>Confidence</span><span>Connections</span>
+          </div>
+          <div class="level-panel-foot"><span>PROGRESS YOU CAN SEE</span><span>KEEP MOVING ↗</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pillars-section" id="pillars" aria-labelledby="pillars-title">
+      <div class="container">
+        <div class="section-intro">
+          <div><p class="home-kicker home-kicker-dark"><span></span> YOUR CAREER-READINESS PROFILE</p><h2 id="pillars-title">Three areas.<br><em>One stronger profile.</em></h2></div>
+          <p>Progress is easier to act on when you can see the whole picture. Build technical ability, practice how you work with others, and make useful connections.</p>
+        </div>
+        <div class="pillar-cards">
+          <article class="pillar-card pillar-technical">
+            <div class="pillar-visual tech-visual" aria-hidden="true">
+              <svg viewBox="0 0 360 150">
+                <path d="M28 112H112V82H198V52H286V30H332" class="mini-route-base" />
+                <path d="M28 112H112V82H198V52H286V30H332" class="mini-route-progress" />
+                <circle cx="28" cy="112" r="6"/><circle cx="112" cy="82" r="6"/><circle cx="198" cy="52" r="6"/><circle cx="286" cy="30" r="6"/>
+                <text x="27" y="141">LEARN</text><text x="143" y="109">PRACTICE</text><text x="255" y="72">DEMONSTRATE</text>
+              </svg>
+            </div>
+            <p class="pillar-label">01 / TECHNICAL SKILLS</p>
+            <h3>Turn knowledge into proof.</h3>
+            <p>Follow a role-specific sequence from fundamentals to projects, then mark the skills and stage work you complete as you practice.</p>
+            <p class="pillar-outcome"><span>OUTCOME</span> A clearer view of your technical strengths</p>
+            <a class="pillar-link" href="roadmap.html">Explore the Roadmap <span aria-hidden="true">↗</span></a>
+          </article>
+
+          <article class="pillar-card pillar-soft">
+            <div class="pillar-visual talk-visual" aria-hidden="true">
+              <svg viewBox="0 0 360 150">
+                <path class="talk-line" d="M64 24h151a22 22 0 0 1 22 22v29a22 22 0 0 1-22 22h-58l-24 20V97H64a22 22 0 0 1-22-22V46a22 22 0 0 1 22-22Z" />
+                <path class="talk-line talk-line-second" d="M151 67h145a20 20 0 0 1 20 20v25a20 20 0 0 1-20 20h-48l-20 15v-15h-77a20 20 0 0 1-20-20V87a20 20 0 0 1 20-20Z" />
+                <path class="talk-dots" d="M83 59h87m-87 18h55m48 20h66m-66 16h43" />
+              </svg>
+            </div>
+            <p class="pillar-label">02 / SOFT SKILLS</p>
+            <h3>Make your thinking understood.</h3>
+            <p>Practice clearer communication, confident collaboration, and the professional behavior expected in interviews and team settings.</p>
+            <p class="pillar-outcome"><span>OUTCOME</span> More confidence in how you contribute</p>
+            <a class="pillar-link" href="softskills.html">Build your soft skills <span aria-hidden="true">↗</span></a>
+          </article>
+
+          <article class="pillar-card pillar-network">
+            <div class="pillar-visual people-visual" aria-hidden="true">
+              <svg viewBox="0 0 360 150">
+                <path class="people-link" d="M93 71 177 38l89 43-82 39-91-49Z" />
+                <circle class="person-head" cx="93" cy="54" r="13"/><path class="person-body" d="M66 105c2-20 12-31 27-31s25 11 27 31M154 38c2-20 12-31 27-31s25 11 27 31m33 61c2-20 12-31 27-31s25 11 27 31" />
+                <circle class="person-head person-head-accent" cx="181" cy="22" r="13"/><circle class="person-head" cx="270" cy="71" r="13"/>
+                <circle class="people-joint" cx="177" cy="38" r="4"/><circle class="people-joint" cx="266" cy="81" r="4"/><circle class="people-joint" cx="174" cy="120" r="4"/>
+              </svg>
+            </div>
+            <p class="pillar-label">03 / NETWORKING</p>
+            <h3>Build connections with purpose.</h3>
+            <p>Find relevant people and communities, write thoughtful first messages, and maintain relationships with useful follow-ups.</p>
+            <p class="pillar-outcome"><span>OUTCOME</span> A stronger sense of where to find opportunity</p>
+            <a class="pillar-link" href="networking.html">Explore networking <span aria-hidden="true">↗</span></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="process-section" id="how-it-works" aria-labelledby="process-title">
+      <div class="container">
+        <div class="process-heading"><div><p class="home-kicker home-kicker-dark"><span></span> A PRACTICAL WAY FORWARD</p><h2 id="process-title">From baseline<br><em>to ready.</em></h2></div><p>Use each checkpoint to choose a practical action, from understanding your strengths to making useful professional connections.</p></div>
+        <div class="progression-track" aria-label="Four checkpoints: Assess, Improve, Connect, Get ready">
+          <div class="progression-line" aria-hidden="true"><span></span></div>
+          <article class="checkpoint"><span class="checkpoint-label">CHECKPOINT / 01</span><span class="checkpoint-node" aria-hidden="true"></span><h3>Assess</h3><p>Get a grounded picture of your current skills and strengths.</p></article>
+          <article class="checkpoint"><span class="checkpoint-label">CHECKPOINT / 02</span><span class="checkpoint-node" aria-hidden="true"></span><h3>Improve</h3><p>Choose a useful skill and practice it with intention.</p></article>
+          <article class="checkpoint"><span class="checkpoint-label">CHECKPOINT / 03</span><span class="checkpoint-node" aria-hidden="true"></span><h3>Connect</h3><p>Build professional relationships through thoughtful action.</p></article>
+          <article class="checkpoint"><span class="checkpoint-label">CHECKPOINT / 04</span><span class="checkpoint-node checkpoint-node-final" aria-hidden="true"></span><h3>Get ready</h3><p>Bring your technical ability, people skills, and confidence together.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="editorial-band" aria-labelledby="editorial-title">
+      <div class="container editorial-grid">
+        <p class="editorial-index">PROOF<br>OVER PROMISE</p>
+        <h2 id="editorial-title">A degree says what you studied.<br><em>Your evidence shows how you work.</em></h2>
+        <div class="editorial-note"><p>Completed roadmap skills and milestones stay visible in your profile, so progress reflects what you have practiced.</p></div>
+      </div>
+      <div class="editorial-vertical" aria-hidden="true">SKILLS / PRACTICE / PEOPLE</div>
+    </section>
+
+    <section class="closing-section" aria-labelledby="closing-title">
+      <div class="container closing-grid">
+        <p class="home-kicker"><span></span> YOUR NEXT LEVEL IS PRACTICAL</p>
+        <h2 id="closing-title">Ready for your<br><em>next level?</em></h2>
+        <div class="closing-copy"><p>Your degree is a strong start. See where you stand, strengthen the skills and connections you need, and move into professional life with more confidence.</p><a class="home-button home-button-dark" data-public-action href="signup.html">Start leveling up <span aria-hidden="true">↗</span></a></div>
+      </div>
+      <div class="closing-stamp" aria-hidden="true">PROFESSIONAL<br>LEVEL / 01—03</div>
+    </section>
   </main>
-  <footer class="site-footer"><div class="container footer-content"><p>Professional Level Ecosystem for Students</p><p>© 2026 Professional Level. All rights reserved.</p></div></footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/supabase-config.js"></script><script src="js/account.js"></script><script src="js/app.js"></script>
-</body></html>
+
+  <footer class="home-footer"><div class="container home-footer-inner"><a class="brand" href="index.html"><span class="brand-mark">PL</span><span>Professional Level</span></a><p>Career readiness, made clear.</p><span>© 2026 Professional Level</span></div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
