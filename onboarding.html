@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Set up your Professional Level career journey."><title>Start Your Journey | Professional Level</title><link rel="stylesheet" href="css/style.css"></head>
-<body class="onboarding-page">
+<body class="onboarding-page" data-account-page="onboarding">
   <header class="onboarding-header"><div class="container onboarding-nav"><a class="brand" href="index.html"><span class="brand-mark">PL</span><span>Professional Level</span></a><div class="step-indicator"><span>Step 1 of 1</span><div class="step-track"><i></i></div></div></div></header>
   <main class="onboarding-main"><section class="onboarding-card" aria-labelledby="onboarding-title"><div class="onboarding-intro"><p class="eyebrow">LET'S GET TO KNOW YOU</p><h1 id="onboarding-title">Let's Build Your<br>Career Journey</h1><p>Tell us a little about yourself so we can help you understand where you are and what to do next.</p></div>
   <form id="onboarding-form" novalidate><div id="form-message" class="form-message" role="alert" aria-live="polite"></div>
@@ -11,5 +11,7 @@
     <div class="form-field dependent-field" id="role-field" hidden><label for="target-role">Choose your target role</label><select id="target-role" name="targetRole" disabled required><option value="">Select a career track first</option></select></div>
     <button class="button form-submit" type="submit">Start My Journey <span>→</span></button>
   </form></section></main>
-  <footer class="onboarding-footer">© 2026 Professional Level Ecosystem for Students</footer><script src="js/app.js"></script>
+  <footer class="onboarding-footer">© 2026 Professional Level Ecosystem for Students</footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script><script src="js/account.js"></script><script src="js/app.js"></script>
 </body></html>

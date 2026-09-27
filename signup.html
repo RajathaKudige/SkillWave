@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create your Professional Level account.">
+  <title>Create Account | Professional Level</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="onboarding-page" data-account-page="signup">
+  <header class="onboarding-header"><div class="container onboarding-nav"><a class="brand" href="index.html"><span class="brand-mark">PL</span><span>Professional Level</span></a></div></header>
+  <main class="onboarding-main"><section class="onboarding-card account-card" aria-labelledby="account-title">
+    <div class="onboarding-intro"><p class="eyebrow">START YOUR JOURNEY</p><h1 id="account-title">Create Account</h1><p>Create an account, then set up your career journey.</p></div>
+    <div id="form-message" class="form-message" role="alert" aria-live="polite"></div>
+    <form id="account-form" data-mode="signup" novalidate>
+      <div class="form-field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+      <div class="form-field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required></div>
+      <div class="form-field"><label for="password-confirmation">Confirm password</label><input id="password-confirmation" name="passwordConfirmation" type="password" autocomplete="new-password" minlength="8" required></div>
+      <button class="button form-submit" type="submit">Create Account</button>
+    </form>
+    <p class="account-switch">Already registered? <a href="login.html">Log in</a></p>
+  </section></main>
+  <footer class="onboarding-footer">© 2026 Professional Level Ecosystem for Students</footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script><script src="js/account.js"></script><script src="js/auth.js"></script>
+</body>
+</html>

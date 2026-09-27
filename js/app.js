@@ -84,7 +84,7 @@ if (onboardingForm) {
     roleField.hidden = roles.length === 0;
   });
 
-  onboardingForm.addEventListener("submit", (event) => {
+  onboardingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(onboardingForm);
     const profile = Object.fromEntries(formData.entries());
@@ -95,8 +95,22 @@ if (onboardingForm) {
       return;
     }
 
-    localStorage.setItem("studentProfile", JSON.stringify(profile));
-    window.location.href = "dashboard.html";
+    const submitButton = onboardingForm.querySelector("button[type='submit']");
+    submitButton.disabled = true;
+    submitButton.textContent = "Saving your profile…";
+    try {
+      const authState = await window.accountAuth.ready;
+      if (!authState?.user) throw new Error("Please create an account or log in before saving your career profile.");
+      await window.accountAuth.saveCareerProfile(profile);
+      // Keep the legacy profile shape available to pages that still read it.
+      try { localStorage.setItem("studentProfile", JSON.stringify(profile)); } catch (storageError) { console.warn("Legacy profile cache could not be updated:", storageError); }
+      window.location.replace("dashboard.html");
+    } catch (error) {
+      message.textContent = error.message || "We could not save your profile. Please try again.";
+      message.classList.add("show");
+      submitButton.disabled = false;
+      submitButton.innerHTML = "Start My Journey <span>→</span>";
+    }
   });
 }
 
@@ -104,12 +118,9 @@ if (onboardingForm) {
 const dashboardPage = document.querySelector(".dashboard-page");
 
 if (dashboardPage) {
-  const studentProfile = JSON.parse(localStorage.getItem("studentProfile"));
-
-  // A dashboard needs a completed onboarding profile to display useful information.
-  if (!studentProfile) {
-    window.location.href = "onboarding.html";
-  } else {
+  window.accountAuth.ready.then((authState) => {
+    const studentProfile = window.accountAuth.studentProfile(authState?.profile);
+    if (!studentProfile) return;
     const defaultCareerProgress = { technical: null, softSkills: null, networking: null };
     const targetRole = studentProfile.targetRole || "Full-Stack Developer";
     const selectedRoadmap = window.roadmapData?.[targetRole];
@@ -207,5 +218,8 @@ if (dashboardPage) {
     setText("#roadmap-missions-count", hasSelectedRoadmap ? `Missions completed: ${completedMissions} of ${totalMissions}` : "Missions completed: —");
     setText("#roadmap-percent", `Overall progress: ${roadmapPercent}%`);
     document.querySelector("#roadmap-bar").style.width = `${roadmapPercent}%`;
-  }
+  }).catch((error) => {
+    console.error("Dashboard account loading failed:", error);
+    window.accountAuth.showError("We could not load your account profile. Please check your connection and try again.");
+  });
 }
