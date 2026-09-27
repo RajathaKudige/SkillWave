@@ -99,6 +99,10 @@
       window.location.replace("onboarding.html");
       return { user, profile: null, redirected: true };
     }
+    if (page === "roadmap" && !profile) {
+      window.location.replace("onboarding.html");
+      return { user, profile: null, redirected: true };
+    }
     if ((page === "login" || page === "signup") && !profile) {
       window.location.replace("onboarding.html");
       return { user, profile: null, redirected: true };
@@ -115,9 +119,9 @@
     if (!page) return { user: null, profile: null };
     const user = await sessionUser();
     if (!user) {
-      if (page === "dashboard") window.location.replace("login.html");
+      if (page === "dashboard" || page === "roadmap") window.location.replace("login.html");
       if (page === "onboarding") window.location.replace("signup.html");
-      return { user: null, profile: null, redirected: page === "dashboard" || page === "onboarding" };
+      return { user: null, profile: null, redirected: page === "dashboard" || page === "roadmap" || page === "onboarding" };
     }
     if (page === "home") {
       window.location.replace("dashboard.html");

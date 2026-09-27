@@ -1,13 +1,12 @@
 window.accountAuth.ready.then((authState) => {
-  const localStorage = window.accountAuth.userStorage(authState?.user?.id);
+  if (!authState?.user || authState.redirected) return;
+  const localStorage = window.accountAuth.userStorage(authState.user.id);
+  const studentProfile = window.accountAuth.studentProfile(authState.profile);
+  if (!studentProfile) return;
 // One renderer handles every roadmap selected by studentProfile.targetRole.
 const roadmapPage = document.querySelector(".roadmap-page");
 
 if (roadmapPage) {
-  const studentProfile = JSON.parse(localStorage.getItem("studentProfile"));
-  if (!studentProfile) {
-    window.location.href = "onboarding.html";
-  } else {
     const roadmap = window.roadmapData?.[studentProfile.targetRole];
     const title = document.querySelector("#roadmap-title");
     const description = document.querySelector("#roadmap-description");
@@ -191,7 +190,6 @@ if (roadmapPage) {
         }
       });
       render();
-    }
   }
 }
 
