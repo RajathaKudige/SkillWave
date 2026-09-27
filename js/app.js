@@ -154,11 +154,15 @@ if (dashboardPage) {
     if (hasSelectedRoadmap) roadmapProgressByRole[targetRole] = roadmapProgress;
     localStorage.setItem("roadmapProgress", JSON.stringify(roadmapProgressByRole));
 
+    const roadmapTotal = Math.max(1, Number(roadmapProgress.total) || 10);
+    const roadmapCompleted = Math.max(0, Math.min(roadmapTotal, Number(roadmapProgress.completed) || 0));
+    const roadmapPercent = Math.round((roadmapCompleted / roadmapTotal) * 100);
+
     const getPercentage = (value) => {
       if (value === null || value === undefined || value === "") return null;
       return Math.max(0, Math.min(100, Number(value) || 0));
     };
-    const technical = getPercentage(careerProgress.technical);
+    const technical = hasSelectedRoadmap ? roadmapPercent : getPercentage(careerProgress.technical);
     const savedSoftSkills = JSON.parse(localStorage.getItem("softSkillsProgress") || "{}") || {};
     const softSkillLevels = savedSoftSkills && savedSoftSkills.levels && typeof savedSoftSkills.levels === "object" ? Object.values(savedSoftSkills.levels) : [];
     const softSkillWeights = { "Not Started": 0, Beginner: 1, Developing: 2, Strong: 3 };
@@ -172,11 +176,6 @@ if (dashboardPage) {
     const networking = getPercentage(savedNetworkingProgress?.progress ?? careerProgress.networking);
     const assessedAreas = [technical, softSkills, networking].filter((value) => value !== null);
     const overall = assessedAreas.length ? Math.round(assessedAreas.reduce((total, value) => total + value, 0) / assessedAreas.length) : null;
-    const roadmapTotal = selectedRoadmapTotal === null
-      ? Math.max(1, Number(roadmapProgress.total) || 10)
-      : Math.max(1, selectedRoadmapTotal);
-    const roadmapCompleted = Math.max(0, Math.min(roadmapTotal, Number(roadmapProgress.completed) || 0));
-    const roadmapPercent = Math.round((roadmapCompleted / roadmapTotal) * 100);
     const allRoadmapSkills = hasSelectedRoadmap ? selectedRoadmap.stages.flatMap((stage) => stage.skills) : [];
     const completedSkills = allRoadmapSkills.filter((skill) => skillStatuses[skill.id] === "Completed").length;
     const totalMissions = hasSelectedRoadmap ? selectedRoadmap.stages.length : 0;
@@ -210,6 +209,7 @@ if (dashboardPage) {
     document.querySelector("#overall-ring").style.borderTopColor = overall === null ? "#dfe8ff" : "var(--blue)";
     document.querySelector("#overall-ring").style.borderRightColor = overall === null ? "#dfe8ff" : "var(--blue)";
     setReadinessArea("#technical-bar", "#technical-value", "#technical-hint", technical, "Not assessed", "Complete your technical assessment");
+    if (hasSelectedRoadmap) setText("#technical-hint", "Based on your roadmap progress");
     setReadinessArea("#soft-skills-bar", "#soft-skills-value", "#soft-skills-hint", softSkills, "Not assessed", "Complete your soft skills assessment");
     if (softSkills !== null) setText("#soft-skills-hint", hasSoftSkillRatings ? "Based on your skill ratings" : "Saved progress estimate");
     setReadinessArea("#networking-bar", "#networking-value", "#networking-hint", networking, "Getting started", "Begin your networking journey");
