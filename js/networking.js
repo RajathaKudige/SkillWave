@@ -1,5 +1,7 @@
 // Networking tools are local-first and use storage keys separate from every other pillar.
 (() => {
+  window.accountAuth.ready.then((authState) => {
+    const localStorage = window.accountAuth.userStorage(authState?.user?.id);
   const KEYS = { progress: "networkingProgress", presence: "networkingPresence", contacts: "networkingContacts", missions: "networkingMissions", practice: "networkingPractice" };
   const safeRead = (key, fallback) => {
     try { const value = JSON.parse(localStorage.getItem(key)); return value ?? fallback; }
@@ -279,4 +281,5 @@
 
   drawContacts();
   renderProgress(Boolean(localStorage.getItem(KEYS.progress)));
+  });
 })();

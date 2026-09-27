@@ -44,8 +44,8 @@ window.roadmapProgress = (() => {
     }
   };
 
-  const readSkillStatusesByRole = () => {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  const readSkillStatusesByRole = (storage = localStorage) => {
+    const stored = JSON.parse(storage.getItem(STORAGE_KEY)) || {};
     const isRoleScoped = Object.values(stored).some((value) => value && typeof value === "object" && !Array.isArray(value));
     const statusesByRole = isRoleScoped
       ? stored
@@ -78,7 +78,7 @@ window.roadmapProgress = (() => {
       }
     }
 
-    if (changed) localStorage.setItem(STORAGE_KEY, JSON.stringify(statusesByRole));
+    if (changed) storage.setItem(STORAGE_KEY, JSON.stringify(statusesByRole));
     return statusesByRole;
   };
 

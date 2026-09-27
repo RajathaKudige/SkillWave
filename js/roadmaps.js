@@ -1,3 +1,5 @@
+window.accountAuth.ready.then((authState) => {
+  const localStorage = window.accountAuth.userStorage(authState?.user?.id);
 // One renderer handles every roadmap selected by studentProfile.targetRole.
 const roadmapPage = document.querySelector(".roadmap-page");
 
@@ -24,7 +26,7 @@ if (roadmapPage) {
       }
       return scoped;
     };
-    const skillStateByRole = window.roadmapProgress.readSkillStatusesByRole();
+    const skillStateByRole = window.roadmapProgress.readSkillStatusesByRole(localStorage);
     const missionStateByRole = readRoleScopedState("roadmapMissionStatus");
     const progressByRole = (() => {
       const stored = JSON.parse(localStorage.getItem("roadmapProgress")) || {};
@@ -192,3 +194,5 @@ if (roadmapPage) {
     }
   }
 }
+
+});

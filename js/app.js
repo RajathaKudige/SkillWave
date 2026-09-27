@@ -103,7 +103,7 @@ if (onboardingForm) {
       if (!authState?.user) throw new Error("Please create an account or log in before saving your career profile.");
       await window.accountAuth.saveCareerProfile(profile);
       // Keep the legacy profile shape available to pages that still read it.
-      try { localStorage.setItem("studentProfile", JSON.stringify(profile)); } catch (storageError) { console.warn("Legacy profile cache could not be updated:", storageError); }
+      try { window.accountAuth.userStorage(authState.user.id).setItem("studentProfile", JSON.stringify(profile)); } catch (storageError) { console.warn("Legacy profile cache could not be updated:", storageError); }
       window.location.replace("dashboard.html");
     } catch (error) {
       message.textContent = error.message || "We could not save your profile. Please try again.";
@@ -121,6 +121,7 @@ if (dashboardPage) {
   window.accountAuth.ready.then((authState) => {
     const studentProfile = window.accountAuth.studentProfile(authState?.profile);
     if (!studentProfile) return;
+    const localStorage = window.accountAuth.userStorage(authState.user.id);
     const defaultCareerProgress = { technical: null, softSkills: null, networking: null };
     const targetRole = studentProfile.targetRole || "Full-Stack Developer";
     const selectedRoadmap = window.roadmapData?.[targetRole];
@@ -145,7 +146,7 @@ if (dashboardPage) {
       if (isRoleScoped) return stored[targetRole] || {};
       return targetRole === "Full-Stack Developer" ? stored : {};
     };
-    const skillStatuses = window.roadmapProgress.readSkillStatusesByRole()[targetRole] || {};
+    const skillStatuses = window.roadmapProgress.readSkillStatusesByRole(localStorage)[targetRole] || {};
     const missionStatuses = getRoleStatuses("roadmapMissionStatus");
     const roadmapProgress = hasSelectedRoadmap
       ? window.roadmapProgress.calculateProgress(selectedRoadmap, skillStatuses, missionStatuses)

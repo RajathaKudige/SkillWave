@@ -1,5 +1,7 @@
 // Soft skills are self-paced and stored separately from technical roadmap state.
 (() => {
+  window.accountAuth.ready.then((authState) => {
+    const localStorage = window.accountAuth.userStorage(authState?.user?.id);
   const STORAGE_KEY = "softSkillsProgress";
   const PRACTICE_STORAGE_KEY = "softSkillsPractice";
   const levels = ["Not Started", "Beginner", "Developing", "Strong"];
@@ -251,4 +253,5 @@
     }
   });
   renderProgress();
+  });
 })();

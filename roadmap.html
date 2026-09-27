@@ -7,14 +7,12 @@
   <title>Career Roadmap | Professional Level</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="roadmap-page">
+<body class="roadmap-page" data-account-page="navigation">
   <header class="site-header">
     <nav class="navbar container" aria-label="Main navigation">
       <a class="brand" href="index.html"><span class="brand-mark">PL</span><span>Professional Level</span></a>
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="nav-links"><span class="sr-only">Open navigation menu</span><i></i><i></i><i></i></button>
-      <div class="nav-links" id="nav-links">
-        <a href="index.html">Home</a><a href="dashboard.html">Dashboard</a><a class="active" href="roadmap.html">Tech</a><a href="softskills.html">Soft Skills</a><a href="networking.html">Networking</a>
-      </div>
+      <div class="nav-links" id="nav-links"><div data-public-nav><a href="index.html">Home</a><a href="dashboard.html">Dashboard</a><a class="active" href="roadmap.html">Tech</a><a href="softskills.html">Soft Skills</a><a href="networking.html">Networking</a><a href="login.html">Login</a><a class="button button-small" href="signup.html">Create Account</a></div><div data-authenticated-nav hidden><a href="dashboard.html">Dashboard</a><a class="active" href="roadmap.html">Roadmap</a><a href="softskills.html">Soft Skills</a><a href="networking.html">Networking</a><a href="index.html" id="nav-logout-button">Logout</a></div></div>
     </nav>
   </header>
   <main class="roadmap-main">
@@ -46,7 +44,7 @@
     </div>
   </main>
   <footer class="site-footer"><div class="container footer-content"><p>Professional Level Ecosystem for Students</p><p>© 2026 Professional Level. All rights reserved.</p></div></footer>
-  <script src="js/roadmap-data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/supabase-config.js"></script><script src="js/account.js"></script><script src="js/roadmap-data.js"></script>
   <script src="js/roadmap-progress.js"></script>
   <script src="js/roadmaps.js"></script>
   <script src="js/app.js"></script>
