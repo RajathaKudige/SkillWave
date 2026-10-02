@@ -1,0 +1,211 @@
+/* 1. SkillWave design tokens */
+.soft-skills-page {
+  --ink: #142f5c;
+  --muted: #62778f;
+  --blue: #456b9b;
+  --blue-dark: #294f80;
+  --pale: #e8f0f6;
+  --line: #d9e3ec;
+  --white: #fff;
+  --soft: #f8fbfd;
+  --shadow: 0 14px 38px rgba(25,55,90,.075);
+  min-height: 100vh;
+  color: var(--ink);
+  background-color: #dce8f2;
+  background-image: radial-gradient(ellipse at 18% 4%,rgba(255,255,255,.88),transparent 42%),radial-gradient(ellipse at 88% 37%,rgba(190,211,230,.42),transparent 42%),linear-gradient(135deg,rgba(255,255,255,.18),transparent 48%,rgba(204,220,234,.22));
+  font-family: "DM Sans",Arial,sans-serif;
+}
+.soft-skills-page h1,.soft-skills-page h2,.soft-skills-page h3 { font-family: "Fraunces",Georgia,serif; font-weight: 500; letter-spacing: -.035em; }
+.soft-skills-page a:focus-visible,.soft-skills-page button:focus-visible,.soft-skills-page summary:focus-visible,.soft-skills-page input:focus-visible,.soft-skills-page select:focus-visible,.soft-skills-page textarea:focus-visible { outline: 2px solid #6488ad; outline-offset: 3px; }
+
+/* 2. Page shell and header/navigation */
+.soft-skills-page .container { width: min(1200px,calc(100% - 64px)); }
+.soft-skills-page .site-header { border-color: rgba(20,47,92,.1); background: rgba(247,250,252,.88); backdrop-filter: blur(14px); }
+.soft-skills-page .navbar { min-height: 78px; }
+.soft-skills-page .brand { gap: 11px; color: var(--ink); font-size: .95rem; letter-spacing: -.02em; }
+.soft-skills-page .brand-mark { width: 36px; height: 36px; border: 1px solid #c6d3e0; border-radius: 9px; background: linear-gradient(145deg,#fff,#dfe8f0); color: #18365f; font-size: .68rem; font-weight: 800; }
+.soft-skills-page .nav-links { gap: 22px; color: var(--ink); font-size: .82rem; }
+.soft-skills-page .nav-links [data-public-nav],.soft-skills-page .nav-links [data-authenticated-nav] { display: contents; }
+.soft-skills-page .nav-links a:not(.button) { padding: 8px 0; border: 0; color: #536b86; transition: color .18s ease; }
+.soft-skills-page .nav-links a:not(.button):hover,.soft-skills-page .nav-links a.active { color: #18365f; }
+.soft-skills-page .nav-links .button { padding: 9px 13px; border: 1px solid #cbd7e3; border-radius: 11px; background: #fff; color: #18365f; font-size: .76rem; }
+.soft-skills-page .menu-button i { background: #18365f; }
+.soft-skills-page .eyebrow { margin: 0 0 11px; color: #6d8298; font-size: .62rem; font-weight: 700; letter-spacing: .16em; line-height: 1.5; }
+.soft-skills-main { padding: clamp(38px,5vw,64px) 0 86px; }
+
+/* 3. Hero and learning overview */
+.soft-hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(250px,.42fr); align-items: center; gap: clamp(24px,4vw,48px); min-width: 0; padding: clamp(28px,4.5vw,50px); border: 1px solid rgba(151,171,191,.28); border-radius: 25px; background: linear-gradient(125deg,rgba(255,255,255,.98),rgba(255,255,255,.95) 68%,rgba(237,244,249,.94)); box-shadow: var(--shadow); }
+.soft-hero>div { min-width: 0; }
+.soft-hero h1 { margin: 0 0 14px; color: #102a56; font-size: clamp(2.6rem,5.3vw,4.5rem); line-height: 1.02; overflow-wrap: anywhere; }
+.soft-hero>div>p:not(.eyebrow) { max-width: 710px; margin: 0; color: #5f748a; font-size: .91rem; line-height: 1.7; }
+.soft-self-paced { display: flex; align-items: center; gap: 9px; margin-top: 17px !important; color: #486d94 !important; font-size: .78rem !important; font-weight: 600; }
+.soft-self-paced span { display: grid; flex: 0 0 25px; place-items: center; width: 25px; height: 25px; border: 1px solid #dce6ee; border-radius: 50%; background: #f1f6f9; }
+.soft-hero-note { padding: 21px; border: 1px solid #dce5ec; border-radius: 18px; background: linear-gradient(145deg,#f8fbfc,#edf3f7); }
+.soft-note-icon { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 12px; border: 1px solid #dce6ee; border-radius: 11px; background: #fff; color: #55799e; }
+.soft-hero-note strong { color: #29476b; font-size: .91rem; }
+.soft-hero-note p { margin: 7px 0 0; color: #6b8095; font-size: .76rem; line-height: 1.6; }
+
+/* 4. Progress overview */
+.soft-progress-section,.soft-domains-section { margin-top: clamp(38px,5vw,54px); }
+.soft-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; min-width: 0; margin-bottom: 17px; }
+.soft-section-heading>div { min-width: 0; }
+.soft-section-heading .eyebrow { margin-bottom: 5px; }
+.soft-section-heading h2 { margin: 0; color: #102a56; font-size: clamp(1.55rem,3vw,2.2rem); line-height: 1.12; overflow-wrap: anywhere; }
+.soft-section-heading>p { max-width: 390px; margin: 0; color: #687d93; font-size: .8rem; line-height: 1.55; text-align: right; }
+.soft-metrics { display: grid; grid-template-columns: minmax(0,1.45fr) repeat(3,minmax(0,1fr)); gap: 12px; }
+.soft-metric { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 96px; padding: 16px; border: 1px solid rgba(151,171,191,.27); border-radius: 17px; background: rgba(255,255,255,.95); box-shadow: 0 8px 22px rgba(25,55,90,.045); }
+.soft-metric-icon { display: grid; flex: 0 0 36px; place-items: center; width: 36px; height: 36px; border: 1px solid #dce6ee; border-radius: 11px; background: #f1f6f9; color: #55799e; font-size: .86rem; font-weight: 700; }
+.soft-metric>div { flex: 1; min-width: 0; }
+.soft-metric small { display: block; margin-bottom: 5px; color: #71859a; font-size: .55rem; font-weight: 700; letter-spacing: .09em; line-height: 1.4; }
+.soft-metric strong { display: block; color: #18365f; font-size: 1.14rem; line-height: 1.3; overflow-wrap: anywhere; }
+.soft-metric-overall { background: linear-gradient(145deg,#fff,#f1f6f9); }
+.soft-metric-overall .soft-metric-icon { background: #fff; }
+.soft-meter { height: 7px; margin-top: 9px; overflow: hidden; border-radius: 99px; background: #e5edf2; }
+.soft-meter i { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#92abc2,#557ca8); transition: width .3s ease; }
+.soft-progress-note { margin: 11px 2px 0; color: #75889b; font-size: .7rem; line-height: 1.5; }
+
+/* 5. Skill/category navigation */
+.soft-domain-list { display: grid; gap: 12px; }
+.soft-domain { min-width: 0; overflow: hidden; border: 1px solid rgba(151,171,191,.27); border-radius: 18px; background: rgba(255,255,255,.95); box-shadow: 0 8px 22px rgba(25,55,90,.04); transition: border-color .18s ease,box-shadow .18s ease; }
+.soft-domain[open] { border-color: #b9cbd9; box-shadow: 0 12px 28px rgba(25,55,90,.07); }
+.soft-domain-summary { display: grid; grid-template-columns: 42px minmax(0,1fr) auto 20px; align-items: center; gap: 13px; min-width: 0; min-height: 84px; padding: 15px 19px; cursor: pointer; list-style: none; }
+.soft-domain-summary::-webkit-details-marker,.soft-skill-details summary::-webkit-details-marker,.soft-simulation>summary::-webkit-details-marker,.soft-ai-practice>summary::-webkit-details-marker,.soft-reflection>summary::-webkit-details-marker { display: none; }
+.soft-domain-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #dce6ee; border-radius: 12px; background: #f1f6f9; color: #55799e; font-size: 1rem; font-weight: 700; }
+.soft-domain-title { display: grid; gap: 3px; min-width: 0; }
+.soft-domain-title strong { color: #29476b; font-size: .92rem; line-height: 1.35; overflow-wrap: anywhere; }
+.soft-domain-title small { color: #74879a; font-size: .69rem; line-height: 1.45; }
+.soft-domain-count { padding: 5px 8px; border: 1px solid #e3eaf0; border-radius: 99px; background: #f7f9fa; color: #657b90; font-size: .59rem; font-weight: 600; white-space: nowrap; }
+.soft-domain-chevron { color: #71869b; font-size: 1.05rem; transition: transform .2s ease; }
+.soft-domain[open] .soft-domain-chevron { transform: rotate(180deg); }
+.soft-skill-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; min-width: 0; padding: 0 18px 18px; }
+
+/* 6. Learning/content area */
+.soft-skill-card { min-width: 0; padding: 17px; border: 1px solid #e1e8ed; border-radius: 15px; background: linear-gradient(145deg,#fff,#fbfcfd); }
+.soft-skill-heading { display: flex; align-items: flex-start; gap: 10px; min-width: 0; margin-bottom: 10px; }
+.soft-skill-heading>div { min-width: 0; }
+.soft-skill-symbol { display: grid; flex: 0 0 29px; place-items: center; width: 29px; height: 29px; border: 1px solid #e2e8ed; border-radius: 9px; background: #f5f7f9; color: #7189a0; font-size: .8rem; }
+.soft-skill-heading h3 { margin: 0 0 6px; color: #29476b; font-size: .96rem; line-height: 1.35; overflow-wrap: anywhere; }
+.soft-current-level { display: inline-block; max-width: 100%; padding: 3px 7px; border: 1px solid #e3e9ee; border-radius: 99px; background: #f6f8f9; color: #61768b; font-size: .57rem; font-weight: 600; overflow-wrap: anywhere; }
+.soft-skill-meaning { margin: 0 0 12px; color: #687d92; font-size: .74rem; line-height: 1.6; }
+.soft-skill-details { border-top: 1px solid #e9eef2; }
+.soft-skill-details>summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0 0; color: #456b9b; font-size: .71rem; font-weight: 700; cursor: pointer; list-style: none; }
+.soft-skill-details>summary:after,.soft-simulation>summary:after,.soft-ai-practice>summary:after,.soft-reflection>summary:after { flex: 0 0 auto; color: #8396a8; content: "+"; font-size: 1rem; font-weight: 400; }
+.soft-skill-details[open]>summary:after,.soft-simulation[open]>summary:after,.soft-ai-practice[open]>summary:after,.soft-reflection[open]>summary:after { content: "−"; }
+.soft-skill-content { min-width: 0; }
+.soft-skill-content section { min-width: 0; margin-top: 13px; }
+.soft-skill-content h4 { margin: 0 0 6px; color: #496580; font-family: "DM Sans",Arial,sans-serif; font-size: .59rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.soft-skill-content section p { margin: 0; color: #65798e; font-size: .72rem; line-height: 1.6; overflow-wrap: anywhere; }
+.soft-practice-box { padding: 12px; border: 1px solid #e1e9ef; border-radius: 11px; background: #f7fafb; }
+.soft-practice-box h4 { margin-bottom: 8px; }
+.soft-practice-box>p { margin: 8px 0 0; color: #61768b; font-size: .72rem; line-height: 1.6; }
+.soft-practice-scenario { margin-top: 10px !important; padding-top: 9px; border-top: 1px solid #e0e8ed; }
+.soft-practice-scenario strong { color: #29476b; }
+.soft-resource { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 11px 0; color: #62788d; font-size: .69rem; overflow-wrap: anywhere; }
+.soft-resource span { font-weight: 700; }
+.soft-resource a { color: #456b9b; font-weight: 700; text-decoration: underline; text-decoration-color: #c1d0dd; text-underline-offset: 2px; overflow-wrap: anywhere; }
+.soft-level-label { display: block; margin: 15px 0 6px; color: #405d79; font-size: .69rem; font-weight: 600; }
+.soft-level-select { width: 100%; min-width: 0; min-height: 40px; padding: 8px 10px; border: 1px solid #d2dee7; border-radius: 9px; background: #fff; color: #29476b; font: inherit; font-size: .73rem; }
+
+/* 7. Interactive practice, reflections and progress states */
+.soft-type-badge { display: inline-flex; align-items: center; gap: 4px; width: max-content; max-width: 100%; padding: 4px 7px; border: 1px solid #e2e9ee; border-radius: 99px; background: #f1f5f7; color: #526d87; font-size: .53rem; font-weight: 700; letter-spacing: .035em; line-height: 1.35; white-space: nowrap; }
+.soft-type-video { background: #f8f0ed; color: #906454; }
+.soft-type-course { background: #f3f2f7; color: #6e6784; }
+.soft-type-interactive,.soft-type-practice { background: #eff6f2; color: #4c7862; }
+.soft-type-simulation { background: #f8f5ef; color: #8d7654; }
+.soft-type-ai-practice { background: #f2f1f7; color: #6b6386; }
+.soft-type-tool { background: #edf4f7; color: #496d82; }
+.soft-type-reflection { background: #f5f1f5; color: #765f77; }
+.soft-learning-section,.soft-simulation,.soft-ai-practice,.soft-reflection { margin-top: 13px; padding-top: 11px; border-top: 1px solid #e9eef2; }
+.soft-learning-section h4 { margin-bottom: 7px !important; }
+.soft-learning-resources { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.soft-learning-resources li { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 5px 8px; min-width: 0; padding: 8px; border: 1px solid #e6edf1; border-radius: 9px; background: #f8fafb; }
+.soft-learning-resources a,.soft-tool-resource a { min-width: 0; color: #456b9b; font-size: .7rem; font-weight: 600; text-decoration: underline; text-decoration-color: #c1d0dd; text-underline-offset: 2px; overflow-wrap: anywhere; }
+.soft-learning-resources small { grid-column: 2; color: #74879a; font-size: .64rem; line-height: 1.45; overflow-wrap: anywhere; }
+.soft-simulation>summary,.soft-ai-practice>summary,.soft-reflection>summary { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 1px 0; color: #405d79; font-size: .7rem; font-weight: 600; cursor: pointer; list-style: none; }
+.soft-simulation>summary:after,.soft-ai-practice>summary:after,.soft-reflection>summary:after { margin-left: auto; }
+.soft-simulation-body,.soft-ai-body,.soft-reflection-fields { display: grid; gap: 9px; min-width: 0; margin-top: 10px; }
+.soft-simulation-body>p,.soft-ai-body>p { margin: 0; color: #687d92; font-size: .71rem; line-height: 1.55; overflow-wrap: anywhere; }
+.soft-simulation-body label,.soft-reflection-fields label { display: grid; gap: 4px; min-width: 0; color: #435f79; font-size: .66rem; font-weight: 600; }
+.soft-simulation textarea,.soft-ai-body textarea,.soft-reflection textarea { display: block; width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid #d2dee7; border-radius: 9px; background: #fff; color: #29476b; font: inherit; font-size: .72rem; line-height: 1.5; resize: vertical; }
+.soft-ai-body textarea[readonly] { background: #f6f9fa; }
+.soft-feedback-button,.soft-retry-button,.soft-copy-prompt { width: max-content; max-width: 100%; padding: 8px 10px; border: 1px solid #d7e2ea; border-radius: 9px; background: #f0f5f8; color: #456b9b; font: inherit; font-size: .66rem; font-weight: 700; cursor: pointer; }
+.soft-feedback-button:hover,.soft-copy-prompt:hover { background: #e7eff4; }
+.soft-retry-button { background: #f5f6f7; color: #65768a; }
+.soft-feedback-guidance { padding: 10px; border: 1px solid #dfe8ee; border-radius: 9px; background: #f5f8fa; color: #405d79; font-size: .7rem; }
+.soft-feedback-guidance p { margin: 4px 0; color: #64798e; font-size: .7rem; line-height: 1.5; }
+.soft-feedback-guidance small,.soft-copy-status,.soft-reflection-status { color: #708398; font-size: .63rem; line-height: 1.45; }
+.soft-activity-check { display: flex; align-items: center; gap: 7px; margin-top: 9px; color: #435f79; font-size: .67rem; font-weight: 600; }
+.soft-activity-check input { flex: 0 0 16px; width: 16px; height: 16px; accent-color: #557ca8; }
+.soft-tool-resource { display: grid; grid-template-columns: max-content minmax(0,1fr); align-items: center; gap: 5px 8px; min-width: 0; margin: 11px 0 0; padding: 8px; border: 1px solid #e6edf1; border-radius: 9px; background: #f8fafb; }
+.soft-tool-resource small { grid-column: 2; color: #74879a; font-size: .64rem; line-height: 1.45; }
+.soft-reflection-fields { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.soft-reflection-fields .soft-reflection-status { grid-column: 1/-1; }
+
+/* 8. Actions, responsive behavior and motion preferences */
+.soft-skills-page .site-footer { padding: 22px 0; border-top: 1px solid rgba(91,121,151,.2); background: rgba(247,250,252,.72); color: #6c8197; }
+.soft-skills-page .footer-content { align-items: center; }
+.soft-skills-page .footer-content p { color: #70849a; font-size: .68rem; }
+@media (max-width: 900px) {
+  .soft-hero { grid-template-columns: minmax(0,1fr) minmax(220px,.65fr); padding: 30px; }
+  .soft-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .soft-metric-overall { grid-column: span 2; }
+}
+@media (max-width: 820px) {
+  .soft-skills-page .navbar { min-height: 70px; }
+  .soft-skills-page .nav-links { top: 70px; gap: 0; padding: 14px 20px 20px; border-color: var(--line); background: rgba(247,250,252,.98); }
+  .soft-skills-page .nav-links [data-public-nav],.soft-skills-page .nav-links [data-authenticated-nav] { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+  .soft-skills-page .nav-links [data-public-nav] a,.soft-skills-page .nav-links [data-authenticated-nav] a { padding: 11px 4px; }
+  .soft-skills-page .nav-links [data-public-nav] .button { margin-top: 5px; padding: 11px 14px; }
+  .soft-skills-page .nav-links.open { display: flex; }
+  .soft-hero { grid-template-columns: minmax(0,1fr); gap: 22px; }
+  .soft-hero-note { max-width: 560px; }
+  .soft-section-heading { align-items: flex-start; }
+}
+@media (max-width: 760px) {
+  .soft-skill-grid { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 600px) {
+  .soft-skills-page .container { width: calc(100% - 36px); }
+  .soft-skills-main { padding: 30px 0 58px; }
+  .soft-hero { gap: 19px; padding: 23px 19px; border-radius: 20px; }
+  .soft-hero h1 { font-size: clamp(2.25rem,10vw,3.15rem); }
+  .soft-hero-note { padding: 17px; border-radius: 15px; }
+  .soft-progress-section,.soft-domains-section { margin-top: 37px; }
+  .soft-section-heading { flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .soft-section-heading h2 { font-size: 1.55rem; }
+  .soft-section-heading>p { text-align: left; }
+  .soft-metrics { gap: 9px; }
+  .soft-metric { min-height: 84px; padding: 11px 9px; gap: 8px; border-radius: 14px; }
+  .soft-metric-icon { flex-basis: 29px; width: 29px; height: 29px; border-radius: 9px; font-size: .73rem; }
+  .soft-metric small { font-size: .48rem; letter-spacing: .045em; }
+  .soft-metric strong { font-size: .98rem; }
+  .soft-metric-overall { grid-column: span 2; }
+  .soft-domain-list { gap: 10px; }
+  .soft-domain { border-radius: 15px; }
+  .soft-domain-summary { grid-template-columns: 34px minmax(0,1fr) 18px; gap: 9px; min-height: 76px; padding: 13px 11px; }
+  .soft-domain-icon { width: 32px; height: 32px; border-radius: 10px; font-size: .9rem; }
+  .soft-domain-title strong { font-size: .83rem; }
+  .soft-domain-title small { font-size: .64rem; }
+  .soft-domain-count { grid-column: 2; grid-row: 2; justify-self: start; padding: 4px 7px; font-size: .53rem; }
+  .soft-domain-chevron { grid-column: 3; grid-row: 1; }
+  .soft-skill-grid { gap: 8px; padding: 0 9px 11px; }
+  .soft-skill-card { padding: 13px; border-radius: 13px; }
+  .soft-skill-heading h3 { font-size: .88rem; }
+  .soft-learning-resources li { grid-template-columns: minmax(0,1fr); align-items: start; }
+  .soft-learning-resources small,.soft-tool-resource small { grid-column: 1; }
+  .soft-reflection-fields { grid-template-columns: minmax(0,1fr); }
+  .soft-reflection-fields .soft-reflection-status { grid-column: 1; }
+  .soft-feedback-button,.soft-retry-button,.soft-copy-prompt { width: 100%; text-align: center; }
+  .soft-skills-page .footer-content { align-items: flex-start; gap: 8px; }
+}
+@media (max-width: 380px) {
+  .soft-skills-page .container { width: calc(100% - 28px); }
+  .soft-hero { padding-right: 15px; padding-left: 15px; }
+  .soft-section-heading h2 { font-size: 1.45rem; }
+  .soft-domain-summary { gap: 7px; padding-right: 9px; padding-left: 9px; }
+  .soft-domain-count { white-space: normal; }
+  .soft-metric { gap: 6px; padding-right: 7px; padding-left: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .soft-skills-page *,.soft-skills-page *:before,.soft-skills-page *:after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
