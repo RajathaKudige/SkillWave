@@ -3,25 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Create your Professional Level account.">
-  <title>Create Account | Professional Level</title>
+  <meta name="description" content="Create a SkillWave account and set your direction.">
+  <title>Create Account | SkillWave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/signup.css">
 </head>
-<body class="onboarding-page" data-account-page="signup">
-  <header class="onboarding-header"><div class="container onboarding-nav"><a class="brand" href="index.html"><span class="brand-mark">PL</span><span>Professional Level</span></a></div></header>
-  <main class="onboarding-main"><section class="onboarding-card account-card" aria-labelledby="account-title">
-    <div class="onboarding-intro"><p class="eyebrow">START YOUR JOURNEY</p><h1 id="account-title">Create Account</h1><p>Create an account, then set up your career journey.</p></div>
-    <div id="form-message" class="form-message" role="alert" aria-live="polite"></div>
-    <form id="account-form" data-mode="signup" novalidate>
-      <div class="form-field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
-      <div class="form-field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required></div>
-      <div class="form-field"><label for="password-confirmation">Confirm password</label><input id="password-confirmation" name="passwordConfirmation" type="password" autocomplete="new-password" minlength="8" required></div>
-      <button class="button form-submit" type="submit">Create Account</button>
-    </form>
-    <p class="account-switch">Already registered? <a href="login.html">Log in</a></p>
-  </section></main>
-  <footer class="onboarding-footer">© 2026 Professional Level Ecosystem for Students</footer>
+<body class="signup-page" data-account-page="signup">
+  <header class="signup-header">
+    <div class="container signup-header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">SW</span><span>SkillWave</span></a>
+    </div>
+  </header>
+  <main class="signup-main">
+    <section class="signup-layout" aria-labelledby="account-title">
+      <div class="signup-intro">
+        <p class="eyebrow">A CLEARER WAY FORWARD</p>
+        <h1 id="account-title">Build your next level.</h1>
+        <p>Create a SkillWave account to shape your professional profile and focus on the skills that move you forward.</p>
+      </div>
+      <div class="signup-panel">
+        <form id="account-form" data-mode="signup" novalidate>
+          <p class="signup-form-label">Create your account</p>
+          <div id="form-message" class="form-message" role="alert" aria-live="polite"></div>
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="form-field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required aria-describedby="password-guidance">
+            <small class="signup-field-note" id="password-guidance">Use at least 8 characters.</small>
+          </div>
+          <div class="form-field">
+            <label for="password-confirmation">Confirm password</label>
+            <input id="password-confirmation" name="passwordConfirmation" type="password" autocomplete="new-password" minlength="8" required>
+          </div>
+          <button class="button form-submit" type="submit">Create Account</button>
+        </form>
+        <p class="account-switch">Already registered? <a href="login.html">Log in</a></p>
+      </div>
+    </section>
+  </main>
+  <footer class="signup-footer">© 2026 SkillWave · Career readiness for students</footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js"></script><script src="js/account.js"></script><script src="js/auth.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
