@@ -208,7 +208,7 @@
   .home-page .nav-links [data-public-nav] a,.home-page .nav-links [data-authenticated-nav] a { padding: 11px 4px; }
   .home-page .nav-links [data-public-nav] .button { margin-top: 5px; padding: 11px 14px; }
   .home-hero { padding: 61px 0 54px; }
-  .home-hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .home-hero-grid { grid-template-columns: minmax(0,1fr); gap: 40px; }
   .home-hero h1 { font-size: clamp(3rem,12vw,4.4rem); }
   .home-lede { font-size: .95rem; }
   .home-actions { gap: 18px; flex-wrap: wrap; margin-top: 25px; }
@@ -235,7 +235,7 @@
   .process-heading { margin-bottom: 38px; }
   .progression-track { grid-template-columns: 1fr; gap: 0; margin-left: 7px; padding-left: 27px; }
   .progression-line { top: 0; right: auto; bottom: 16px; left: 9px; width: 1px; height: auto; }
-  .progression-line span { width: 1px; height: 100%; background: linear-gradient(180deg,#aabed1,#698caf,#a6b9cb); transform-origin: top; }
+  .progression-line span { width: 1px; height: 100%; background: linear-gradient(90deg,#aabed1,#698caf,#a6b9cb); transform-origin: top; }
   .checkpoint { padding: 0 0 28px; }
   .checkpoint-label { margin-bottom: 8px; font-size: .51rem; }
   .checkpoint-node { top: -3px; left: -27px; width: 19px; height: 19px; }
