@@ -1,17 +1,95 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Set up your Professional Level career journey."><title>Start Your Journey | Professional Level</title><link rel="stylesheet" href="css/style.css"></head>
-<body class="onboarding-page" data-account-page="onboarding">
-  <header class="onboarding-header"><div class="container onboarding-nav"><a class="brand" href="index.html"><span class="brand-mark">PL</span><span>Professional Level</span></a><div class="step-indicator"><span>Step 1 of 1</span><div class="step-track"><i></i></div></div><div data-authenticated-nav hidden><a href="dashboard.html">Dashboard</a><a href="roadmap.html">Roadmap</a><a href="softskills.html">Soft Skills</a><a href="networking.html">Networking</a><a href="index.html" id="nav-logout-button">Logout</a></div></div></header>
-  <main class="onboarding-main"><section class="onboarding-card" aria-labelledby="onboarding-title"><div class="onboarding-intro"><p class="eyebrow">LET'S GET TO KNOW YOU</p><h1 id="onboarding-title">Let's Build Your<br>Career Journey</h1><p>Tell us a little about yourself so we can help you understand where you are and what to do next.</p></div>
-  <form id="onboarding-form" novalidate><div id="form-message" class="form-message" role="alert" aria-live="polite"></div>
-    <div class="form-field"><label for="student-name">Your Name</label><input id="student-name" name="name" type="text" placeholder="Enter your name" autocomplete="name" required></div>
-    <div class="form-field"><label for="education">Education</label><select id="education" name="education" required><option value="">Select your education</option><option>Diploma</option><option>Bachelor's Degree</option><option>Master's Degree</option><option>Other</option></select></div>
-    <fieldset class="form-field experience-field"><legend>Current Experience Level</legend><div class="experience-options"><label class="choice-card"><input type="radio" name="experienceLevel" value="Beginner"><span class="choice-icon">◎</span><span><b>Beginner</b><small>Starting my journey</small></span></label><label class="choice-card"><input type="radio" name="experienceLevel" value="Intermediate"><span class="choice-icon">◈</span><span><b>Intermediate</b><small>Building experience</small></span></label><label class="choice-card"><input type="radio" name="experienceLevel" value="Advanced"><span class="choice-icon">✦</span><span><b>Advanced</b><small>Ready for more</small></span></label></div></fieldset>
-    <div class="form-row"><div class="form-field"><label for="domain">Which domain interests you?</label><select id="domain" name="domain" required><option value="">Select a domain</option><option value="Technology">Technology</option><option value="Data">Data</option><option value="Design">Design</option><option value="Product">Product</option><option value="Marketing">Marketing</option><option value="Business &amp; Operations">Business &amp; Operations</option><option value="Finance &amp; Accounting">Finance &amp; Accounting</option></select></div><div class="form-field dependent-field" id="track-field" hidden><label for="career-track">Choose your career track</label><select id="career-track" name="careerTrack" disabled required><option value="">Select a domain first</option></select></div></div>
-    <div class="form-field dependent-field" id="role-field" hidden><label for="target-role">Choose your target role</label><select id="target-role" name="targetRole" disabled required><option value="">Select a career track first</option></select></div>
-    <button class="button form-submit" type="submit">Start My Journey <span>→</span></button>
-  </form></section></main>
-  <footer class="onboarding-footer">© 2026 Professional Level Ecosystem for Students</footer>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Set your direction and build a clear SkillWave career profile.">
+  <title>Set Your Direction | SkillWave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/onboarding.css">
+</head>
+<body class="onboarding-page auth-pending" data-account-page="onboarding">
+  <header class="onboarding-header">
+    <div class="container onboarding-nav">
+      <a class="brand" href="index.html"><span class="brand-mark">SW</span><span>SkillWave</span></a>
+      <div class="step-indicator"><span>Profile setup</span></div>
+      <div data-authenticated-nav hidden>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="roadmap.html">Roadmap</a>
+        <a href="softskills.html">Soft Skills</a>
+        <a href="networking.html">Networking</a>
+        <a href="index.html" id="nav-logout-button">Logout</a>
+      </div>
+    </div>
+  </header>
+  <main class="onboarding-main">
+    <section class="onboarding-card" aria-labelledby="onboarding-title">
+      <div class="onboarding-intro">
+        <p class="eyebrow">SET YOUR DIRECTION</p>
+        <h1 id="onboarding-title">Set your starting point.</h1>
+        <p>Share where you are today and what you want to build toward. SkillWave will shape a practical profile around your goals.</p>
+      </div>
+      <form id="onboarding-form" novalidate>
+        <div id="form-message" class="form-message" role="alert" aria-live="polite"></div>
+        <p class="form-section-label">Profile</p>
+        <div class="form-field">
+          <label for="student-name">Your Name</label>
+          <input id="student-name" name="name" type="text" placeholder="Enter your name" autocomplete="name" required>
+        </div>
+        <div class="form-field">
+          <label for="education">Education</label>
+          <select id="education" name="education" required>
+            <option value="">Select your education</option>
+            <option>Diploma</option>
+            <option>Bachelor's Degree</option>
+            <option>Master's Degree</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <p class="form-section-label">Current level</p>
+        <fieldset class="form-field experience-field">
+          <legend>Current Experience Level</legend>
+          <div class="experience-options">
+            <label class="choice-card"><input type="radio" name="experienceLevel" value="Beginner"><span class="choice-icon" aria-hidden="true">01</span><span><b>Beginner</b><small>Building the fundamentals</small></span></label>
+            <label class="choice-card"><input type="radio" name="experienceLevel" value="Intermediate"><span class="choice-icon" aria-hidden="true">02</span><span><b>Intermediate</b><small>Growing practical experience</small></span></label>
+            <label class="choice-card"><input type="radio" name="experienceLevel" value="Advanced"><span class="choice-icon" aria-hidden="true">03</span><span><b>Advanced</b><small>Strengthening your expertise</small></span></label>
+          </div>
+        </fieldset>
+        <p class="form-section-label">Career focus</p>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="domain">Which domain interests you?</label>
+            <select id="domain" name="domain" required>
+              <option value="">Select a domain</option>
+              <option value="Technology">Technology</option>
+              <option value="Data">Data</option>
+              <option value="Design">Design</option>
+              <option value="Product">Product</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Business &amp; Operations">Business &amp; Operations</option>
+              <option value="Finance &amp; Accounting">Finance &amp; Accounting</option>
+            </select>
+          </div>
+          <div class="form-field dependent-field" id="track-field" hidden>
+            <label for="career-track">Choose your career track</label>
+            <select id="career-track" name="careerTrack" disabled required><option value="">Select a domain first</option></select>
+          </div>
+        </div>
+        <div class="form-field dependent-field" id="role-field" hidden>
+          <label for="target-role">Choose your target role</label>
+          <select id="target-role" name="targetRole" disabled required><option value="">Select a career track first</option></select>
+        </div>
+        <button class="button form-submit" type="submit">Build My Profile <span aria-hidden="true">&rarr;</span></button>
+      </form>
+    </section>
+  </main>
+  <footer class="onboarding-footer">© 2026 SkillWave · Career readiness for students</footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js"></script><script src="js/account.js"></script><script src="js/app.js"></script>
-</body></html>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
