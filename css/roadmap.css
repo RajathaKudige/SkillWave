@@ -1,0 +1,266 @@
+/* 1. SkillWave design tokens */
+.roadmap-page {
+  --ink: #142f5c;
+  --muted: #62778f;
+  --blue: #456b9b;
+  --blue-dark: #294f80;
+  --pale: #e8f0f6;
+  --line: #d9e3ec;
+  --white: #fff;
+  --soft: #f8fbfd;
+  --shadow: 0 14px 38px rgba(25,55,90,.075);
+  min-height: 100vh;
+  color: var(--ink);
+  background-color: #dce8f2;
+  background-image: radial-gradient(ellipse at 18% 4%,rgba(255,255,255,.88),transparent 42%),radial-gradient(ellipse at 88% 37%,rgba(190,211,230,.42),transparent 42%),linear-gradient(135deg,rgba(255,255,255,.18),transparent 48%,rgba(204,220,234,.22));
+  font-family: "DM Sans",Arial,sans-serif;
+}
+.roadmap-page h1,.roadmap-page h2,.roadmap-page h3 { font-family: "Fraunces",Georgia,serif; font-weight: 500; letter-spacing: -.035em; }
+.roadmap-page a:focus-visible,.roadmap-page button:focus-visible,.roadmap-page input:focus-visible { outline: 2px solid #6488ad; outline-offset: 3px; }
+
+/* 2. Page shell and header/navigation */
+.roadmap-page .container { width: min(1200px,calc(100% - 64px)); }
+.roadmap-page .site-header { border-color: rgba(20,47,92,.1); background: rgba(247,250,252,.88); backdrop-filter: blur(14px); }
+.roadmap-page .navbar { min-height: 78px; }
+.roadmap-page .brand { gap: 11px; color: var(--ink); font-size: .95rem; letter-spacing: -.02em; }
+.roadmap-page .brand-mark { width: 36px; height: 36px; border: 1px solid #c6d3e0; border-radius: 9px; background: linear-gradient(145deg,#fff,#dfe8f0); color: #18365f; font-size: .68rem; font-weight: 800; }
+.roadmap-page .nav-links { gap: 22px; color: var(--ink); font-size: .82rem; }
+.roadmap-page .nav-links [data-public-nav],.roadmap-page .nav-links [data-authenticated-nav] { display: contents; }
+.roadmap-page .nav-links a:not(.button) { padding: 8px 0; border: 0; color: #536b86; transition: color .18s ease; }
+.roadmap-page .nav-links a:not(.button):hover,.roadmap-page .nav-links a.active { color: #18365f; }
+.roadmap-page .nav-links .button { padding: 9px 13px; border: 1px solid #cbd7e3; border-radius: 11px; background: #fff; color: #18365f; font-size: .76rem; }
+.roadmap-page .menu-button i { background: #18365f; }
+.roadmap-page .eyebrow { margin: 0 0 12px; color: #6d8298; font-size: .62rem; font-weight: 700; letter-spacing: .16em; line-height: 1.5; }
+.roadmap-main { padding: clamp(38px,5vw,62px) 0 88px; }
+
+/* 3. Hero and selected-role overview */
+.roadmap-hero { position: relative; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(280px,.72fr); align-items: center; gap: clamp(26px,5vw,60px); min-width: 0; padding: clamp(28px,4.5vw,52px); overflow: hidden; border: 1px solid rgba(151,171,191,.28); border-radius: 25px; background: linear-gradient(125deg,rgba(255,255,255,.98),rgba(255,255,255,.96) 68%,rgba(237,244,249,.94)); box-shadow: var(--shadow); }
+.roadmap-hero:after { position: absolute; top: -150px; right: -110px; width: 340px; height: 340px; border: 1px solid rgba(126,153,180,.16); border-radius: 50%; box-shadow: 0 0 0 28px rgba(126,153,180,.035),0 0 0 58px rgba(126,153,180,.025); content: ""; pointer-events: none; }
+.roadmap-hero-copy,.roadmap-overview { position: relative; z-index: 1; min-width: 0; }
+.roadmap-hero h1 { max-width: 680px; margin: 0 0 20px; color: #102a56; font-size: clamp(2.5rem,5.2vw,4.5rem); line-height: 1.02; overflow-wrap: anywhere; }
+.target-role-label { margin: 0 0 4px; color: #71869b; font-size: .6rem; font-weight: 700; letter-spacing: .15em; }
+.roadmap-hero h2 { margin: 0 0 9px; color: #29476b; font-size: clamp(1.35rem,2.5vw,1.8rem); line-height: 1.2; overflow-wrap: anywhere; }
+.roadmap-hero #roadmap-description { max-width: 690px; margin: 0; color: #61768c; font-size: .9rem; line-height: 1.7; overflow-wrap: anywhere; }
+.journey-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 23px; color: #60758b; font-size: .56rem; font-weight: 700; letter-spacing: .1em; }
+.journey-flow span { padding: 7px 9px; border: 1px solid #e0e8ef; border-radius: 99px; background: #f7fafc; }
+.journey-flow span:nth-of-type(2) { color: #456b9b; background: #edf3f8; }
+.journey-flow span:nth-of-type(3) { color: #9b6b58; background: #faf3ef; }
+.journey-flow span:nth-of-type(4) { color: #4c8069; background: #eff7f2; }
+.journey-flow i { color: #9aabba; font-size: .72rem; font-style: normal; }
+
+/* 4. Overall progress and summary */
+.roadmap-overview { min-width: 0; padding: 23px; border: 1px solid rgba(151,171,191,.3); border-radius: 20px; background: linear-gradient(145deg,#f7fafc,#edf3f8); color: var(--ink); }
+.overview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+.roadmap-overview .overview-heading>span { color: #6d8298; font-size: .59rem; font-weight: 700; letter-spacing: .12em; }
+.roadmap-overview .overview-heading strong { margin: 0; color: #18365f; font-size: 1.24rem; text-align: right; }
+.roadmap-overview .progress-bar { height: 9px; background: #dce6ee; }
+.roadmap-overview .progress-bar i { background: linear-gradient(90deg,#90abc4,#557ca8); }
+.roadmap-overview small { display: block; margin-top: 10px; color: #71859a; font-size: .7rem; }
+.roadmap-summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 13px; margin-top: 16px; }
+.summary-card { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 100px; padding: 16px; border: 1px solid rgba(151,171,191,.26); border-radius: 17px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(25,55,90,.045); transition: transform .2s ease,border-color .2s ease,box-shadow .2s ease; }
+.summary-card:hover { transform: translateY(-2px); border-color: #b9cbd9; box-shadow: 0 12px 26px rgba(25,55,90,.08); }
+.summary-card>div { min-width: 0; }
+.summary-icon { display: grid; flex: 0 0 38px; place-items: center; width: 38px; height: 38px; border: 1px solid #dce6ee; border-radius: 12px; background: #f1f6f9; color: #55799e; font-size: 1rem; font-weight: 700; }
+.summary-completed .summary-icon { color: #4d8068; background: #eff7f2; }
+.summary-remaining .summary-icon { color: #8c786d; background: #f7f3f0; }
+.summary-stage .summary-icon { color: #55799e; background: #edf3f8; }
+.summary-next .summary-icon { color: #9a6e5b; background: #faf3ef; }
+.summary-label { display: block; margin-bottom: 5px; color: #71859a; font-size: .56rem; font-weight: 700; letter-spacing: .1em; line-height: 1.4; }
+.summary-card strong { display: block; color: #18365f; font-size: 1.2rem; line-height: 1.32; overflow-wrap: anywhere; }
+.summary-stage strong,.summary-next strong { font-size: .83rem; }
+
+/* 5. Journey progression */
+.journey-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: 49px 0 17px; }
+.journey-section-heading .eyebrow { margin-bottom: 6px; }
+.journey-section-heading h2 { margin: 0; color: #102a56; font-size: clamp(1.65rem,3vw,2.3rem); line-height: 1.1; }
+.journey-section-heading>p { max-width: 390px; margin: 0; color: #687d93; font-size: .82rem; line-height: 1.6; }
+.roadmap-message { min-height: 22px; margin: 0 0 3px; color: #4d8068; font-size: .78rem; font-weight: 600; }
+.roadmap-stages { position: relative; display: grid; grid-template-columns: minmax(0,1fr); gap: 25px; min-width: 0; margin-top: 11px; }
+.roadmap-stages:before { position: absolute; top: 82px; bottom: 68px; left: 29px; width: 2px; background: linear-gradient(180deg,#cedce7,#dfe8ef 78%,#d2e0e9); content: ""; }
+.roadmap-stage { position: relative; display: grid; grid-template-columns: 62px minmax(0,1fr); align-items: start; gap: 19px; min-width: 0; }
+.stage-node { position: relative; z-index: 1; display: grid; place-items: center; width: 58px; height: 58px; margin-top: 22px; border: 5px solid #dce8f2; border-radius: 50%; background: #eef3f7; box-shadow: 0 0 0 1px #cbd9e4; color: #7b8da0; font-size: .68rem; font-weight: 700; }
+.journey-current .stage-node { width: 62px; height: 62px; margin-left: -2px; border-color: #e8f0f6; background: #557ca8; box-shadow: 0 0 0 5px rgba(85,124,168,.12); color: #fff; }
+.journey-completed .stage-node { background: #5a8b72; box-shadow: 0 0 0 4px #eaf3ee; color: #fff; font-size: .95rem; }
+.roadmap-stage.journey-completed:after { position: absolute; z-index: 0; top: 79px; bottom: -25px; left: 28px; width: 2px; border-radius: 99px; background: #9dbdab; content: ""; }
+.stage-card { min-width: 0; padding: clamp(20px,3vw,31px); border: 1px solid rgba(151,171,191,.27); border-radius: 21px; background: rgba(255,255,255,.95); box-shadow: 0 9px 27px rgba(25,55,90,.05); transition: border-color .2s ease,box-shadow .2s ease; }
+.journey-current .stage-card { border-color: #a9bfd2; box-shadow: 0 13px 34px rgba(48,83,120,.1); }
+.journey-upcoming .stage-card { background: rgba(255,255,255,.88); }
+.journey-completed .stage-card { border-color: #c7dfd1; background: linear-gradient(120deg,#fff,#f8fbf9); }
+.stage-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; margin-bottom: 15px; }
+.stage-heading>div { min-width: 0; }
+.stage-heading .eyebrow { margin-bottom: 6px; font-size: .58rem; }
+.stage-heading h2 { margin: 0; color: #18365f; font-size: clamp(1.2rem,2.1vw,1.6rem); line-height: 1.2; overflow-wrap: anywhere; }
+.stage-state-label { flex: 0 0 auto; padding: 6px 9px; border: 1px solid #e2e9ef; border-radius: 99px; background: #f6f8fa; color: #73869a; font-size: .54rem; font-weight: 700; letter-spacing: .08em; text-align: center; }
+.journey-current .stage-state-label { border-color: #d4e0e9; background: #edf3f8; color: #456b9b; }
+.journey-completed .stage-state-label { border-color: #d7e9de; background: #eff7f2; color: #4d8068; }
+.capstone-stage .stage-state-label { border-color: #e8ddd7; background: #faf4f0; color: #906954; }
+.stage-flow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 17px; color: #71859a; font-size: .53rem; font-weight: 700; letter-spacing: .09em; }
+.stage-flow span { padding: 5px 7px; border: 1px solid #e7edf1; border-radius: 5px; background: #f8fafb; }
+.journey-current .stage-flow span:nth-of-type(2),.journey-current .stage-flow span:nth-of-type(3) { border-color: #d8e4ed; background: #f0f5f8; color: #456b9b; }
+.journey-completed .stage-flow span { border-color: #deebe2; background: #f3f8f5; color: #5a8069; }
+.stage-flow i { color: #9aabba; font-size: .67rem; font-style: normal; }
+
+/* 6. Skill cards, learning details and resources */
+.skill-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; min-width: 0; }
+.skill-item { min-width: 0; overflow: hidden; border: 1px solid #e0e7ed; border-radius: 13px; background: #fff; transition: border-color .18s ease,box-shadow .18s ease; }
+.skill-item:hover { border-color: #bfcedb; box-shadow: 0 7px 17px rgba(25,55,90,.055); }
+.skill-item.skill-in-progress { border-color: #b4c8da; background: #f8fafc; }
+.skill-item.skill-completed { border-color: #c1ddcc; background: #f8fbf9; }
+.skill-toggle { display: grid; grid-template-columns: 27px minmax(0,1fr) auto 16px; align-items: center; gap: 9px; width: 100%; min-width: 0; min-height: 72px; padding: 12px; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.skill-toggle:hover { background: rgba(243,247,250,.72); }
+.skill-status-symbol { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid #e1e8ee; border-radius: 50%; background: #f4f7f9; color: #8797a7; font-size: .77rem; }
+.skill-in-progress .skill-status-symbol { border-color: #d6e2eb; background: #edf3f8; color: #456b9b; }
+.skill-completed .skill-status-symbol { border-color: #d7e8dd; background: #eff7f2; color: #4d8068; }
+.skill-toggle-copy { display: block; min-width: 0; }
+.skill-toggle-copy strong { display: block; color: #29476b; font-size: .78rem; line-height: 1.4; overflow-wrap: anywhere; }
+.skill-toggle-copy small { display: block; margin-top: 4px; color: #7b8da0; font-size: .65rem; font-weight: 400; line-height: 1.45; overflow-wrap: anywhere; }
+.skill-status-text { padding: 4px 7px; border-radius: 99px; background: #f1f4f6; color: #74869a; font-size: .52rem; font-weight: 700; white-space: nowrap; }
+.skill-in-progress .skill-status-text { background: #edf3f8; color: #456b9b; }
+.skill-completed .skill-status-text { background: #eff7f2; color: #4d8068; }
+.skill-toggle>b { color: #6485a5; font-size: 1rem; font-weight: 500; text-align: center; }
+.skill-detail { display: none; min-width: 0; padding: 4px 15px 16px; border-top: 1px solid #e7edf1; }
+.skill-detail.open { display: block; }
+.skill-detail>div { margin-top: 13px; }
+.skill-detail .detail-section h3 { margin: 0 0 5px; color: #496580; font-family: "DM Sans",Arial,sans-serif; font-size: .59rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.skill-detail .detail-section p,.skill-detail .detail-section li { margin: 0; color: #65798e; font-size: .73rem; line-height: 1.6; overflow-wrap: anywhere; }
+.skill-detail ul { margin: 0; padding-left: 17px; }
+.skill-detail a { color: #456b9b; font-weight: 700; text-decoration: underline; text-decoration-color: #c1d0dd; text-underline-offset: 2px; }
+.resource-list { display: grid; gap: 8px; margin: 0; padding: 0 !important; list-style: none; }
+.resource-list .resource-item { display: flex; align-items: flex-start; gap: 9px; min-width: 0; padding: 10px; border: 1px solid #e7edf1; border-radius: 10px; background: #f8fafb; }
+.resource-type { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 4px; padding: 4px 7px; border-radius: 99px; background: #edf2f6; color: #526d87; font-size: .52rem; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
+.resource-video .resource-type { background: #f8efec; color: #906454; }
+.resource-interactive .resource-type,.resource-practice .resource-type { background: #eff6f2; color: #4c7862; }
+.resource-course .resource-type { background: #f2f1f7; color: #6e6784; }
+.resource-copy { display: grid; gap: 3px; min-width: 0; }
+.resource-copy p { margin: 0; color: #6f8296; font-size: .66rem; line-height: 1.5; overflow-wrap: anywhere; }
+.resource-copy a { color: #456b9b; font-size: .72rem; line-height: 1.45; text-decoration: underline; text-decoration-color: #c1d0dd; text-underline-offset: 2px; overflow-wrap: anywhere; }
+.skill-status-controls { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 15px; padding-top: 13px; border-top: 1px solid #e7edf1; }
+.status-controls-label { margin-right: 3px; color: #71859a; font-size: .54rem; font-weight: 700; letter-spacing: .11em; }
+.status-choice { padding: 7px 9px; border: 1px solid #e2e8ed; border-radius: 8px; background: #f7f9fa; color: #63788d; font: inherit; font-size: .62rem; font-weight: 600; cursor: pointer; transition: border-color .16s ease,background .16s ease,color .16s ease; }
+.status-choice:hover { border-color: #b7c9d8; background: #fff; }
+.status-choice-not-started.selected { border-color: #d5dfe7; background: #eff3f6; color: #596f83; }
+.status-choice-in-progress.selected { border-color: #c4d5e2; background: #edf3f8; color: #456b9b; }
+.status-choice-completed.selected { border-color: #c9dfd2; background: #eff7f2; color: #4d8068; }
+.capstone-note { margin: 0; color: #667b90; font-size: .8rem; line-height: 1.6; }
+
+/* 7. Missions and completion states */
+.mission-card { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 20px; min-width: 0; margin-top: 18px; padding: 19px 20px; border: 1px solid #dfe7ed; border-radius: 15px; background: linear-gradient(120deg,#f7fafb,#f1f6f8); }
+.mission-content { min-width: 0; }
+.mission-card .eyebrow { margin-bottom: 7px; color: #6b8094; font-size: .58rem; font-weight: 700; letter-spacing: .1em; }
+.mission-card h3 { margin: 0 0 6px; color: #29476b; font-size: 1.05rem; line-height: 1.3; overflow-wrap: anywhere; }
+.mission-card p,.mission-card li { margin-bottom: 7px; color: #62778d; font-size: .74rem; line-height: 1.55; overflow-wrap: anywhere; }
+.mission-card .mission-description { color: #526c84; font-size: .79rem; font-weight: 600; }
+.mission-card .mission-why { font-size: .72rem; }
+.mission-card strong { color: #29476b; }
+.mission-card ul { display: grid; gap: 5px; margin: 11px 0 0; padding: 0; list-style: none; }
+.mission-card li { position: relative; margin: 0; padding-left: 20px; }
+.mission-card li:before { position: absolute; left: 0; color: #628b73; content: "✓"; }
+.mission-complete { position: relative; display: flex; align-items: center; gap: 9px; min-width: 168px; padding: 10px 12px; border: 1px solid #dfe7ed; border-radius: 11px; background: #fff; color: #516a82; font-size: .67rem; font-weight: 600; line-height: 1.4; cursor: pointer; }
+.mission-complete:hover { border-color: #b8d2c2; }
+.mission-complete input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.mission-checkmark { display: grid; flex: 0 0 22px; place-items: center; width: 22px; height: 22px; border: 1px solid #d6e0e7; border-radius: 7px; background: #f4f7f9; color: transparent; font-size: .7rem; font-weight: 700; }
+.mission-complete input:checked~.mission-checkmark { border-color: #72957f; background: #668b74; color: #fff; }
+.mission-complete input:focus-visible~.mission-checkmark { outline: 2px solid #6488ad; outline-offset: 2px; }
+.mission-completed { border-color: #c9dfd2; background: linear-gradient(120deg,#f2f8f4,#f8fbf9); }
+.mission-completed .mission-checkmark { border-color: #72957f; background: #668b74; color: #fff; }
+.mission-capstone { border-color: #d8e2e9; background: linear-gradient(125deg,#edf3f7,#f8fafb); }
+.mission-capstone h3,.mission-capstone strong { color: #18365f; }
+.mission-capstone.mission-completed { background: linear-gradient(120deg,#eff7f2,#f8fbf9); }
+.milestone { margin: 13px 0 0 !important; color: #4d8068 !important; font-weight: 700; }
+.capstone-stage .stage-node { border-color: #f0e9df; background: #b38a60; color: #fff; }
+.journey-start,.journey-finish { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; min-width: 0; grid-column: 2; padding: 16px 20px; border: 1px solid #d6e1e9; border-radius: 16px; background: linear-gradient(120deg,#f8fbfc,#eaf1f6); color: #29476b; box-shadow: 0 8px 22px rgba(25,55,90,.06); }
+.journey-start { grid-column: 1/-1; margin: 0 0 0 81px; }
+.journey-start-icon { display: grid; flex: 0 0 40px; place-items: center; width: 40px; height: 40px; border: 1px solid #d6e1e9; border-radius: 50%; background: #fff; color: #55799e; font-size: 1rem; }
+.journey-start>div { display: grid; gap: 2px; min-width: 0; }
+.journey-start .eyebrow { margin: 0; color: #71859a; font-size: .55rem; }
+.journey-start strong { color: #18365f; font-size: .88rem; overflow-wrap: anywhere; }
+.journey-start small { color: #71859a; font-size: .67rem; }
+.journey-finish { flex-direction: column; align-items: flex-start; gap: 3px; grid-column: 1; margin-left: 81px; border-color: #d7e5dc; background: #f1f7f3; color: #4d8068; box-shadow: none; }
+.journey-finish>span { margin-bottom: 4px; font-size: 1.05rem; }
+.journey-finish strong { font-size: .85rem; }
+.journey-finish small { color: #64816f; font-size: .67rem; }
+
+/* 8. Footer, responsive layout, accessibility */
+.roadmap-page .site-footer { padding: 22px 0; border-top: 1px solid rgba(91,121,151,.2); background: rgba(247,250,252,.72); color: #6c8197; }
+.roadmap-page .footer-content { align-items: center; }
+.roadmap-page .footer-content p { color: #70849a; font-size: .68rem; }
+@media (max-width: 900px) {
+  .roadmap-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .skill-list { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 820px) {
+  .roadmap-page .navbar { min-height: 70px; }
+  .roadmap-page .nav-links { top: 70px; gap: 0; padding: 14px 20px 20px; border-color: var(--line); background: rgba(247,250,252,.98); }
+  .roadmap-page .nav-links [data-public-nav],.roadmap-page .nav-links [data-authenticated-nav] { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+  .roadmap-page .nav-links [data-public-nav] a,.roadmap-page .nav-links [data-authenticated-nav] a { padding: 11px 4px; }
+  .roadmap-page .nav-links [data-public-nav] .button { margin-top: 5px; padding: 11px 14px; }
+  .roadmap-page .nav-links.open { display: flex; }
+  .roadmap-hero { grid-template-columns: minmax(0,1fr); gap: 24px; }
+  .journey-section-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .journey-section-heading>p { max-width: 620px; }
+}
+@media (max-width: 600px) {
+  .roadmap-page .container { width: calc(100% - 36px); }
+  .roadmap-main { padding: 30px 0 58px; }
+  .roadmap-hero { gap: 21px; padding: 24px 20px; border-radius: 20px; }
+  .roadmap-hero h1 { margin-bottom: 15px; font-size: clamp(2.3rem,10vw,3.2rem); }
+  .journey-flow { gap: 5px; margin-top: 18px; font-size: .48rem; letter-spacing: .04em; }
+  .journey-flow span { padding: 6px 7px; }
+  .journey-flow i { font-size: .6rem; }
+  .roadmap-overview { padding: 18px; border-radius: 16px; }
+  .overview-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
+  .roadmap-overview .overview-heading strong { text-align: left; }
+  .roadmap-summary { gap: 9px; margin-top: 11px; }
+  .summary-card { min-height: 91px; padding: 11px 10px; gap: 8px; border-radius: 14px; }
+  .summary-icon { flex-basis: 30px; width: 30px; height: 30px; border-radius: 10px; font-size: .83rem; }
+  .summary-label { font-size: .5rem; letter-spacing: .055em; }
+  .summary-card strong { font-size: 1rem; }
+  .summary-stage strong,.summary-next strong { font-size: .7rem; }
+  .journey-section-heading { gap: 6px; margin: 37px 0 13px; }
+  .roadmap-stages { gap: 17px; margin-top: 7px; }
+  .roadmap-stages:before { top: 58px; bottom: 49px; left: 17px; width: 2px; }
+  .roadmap-stage { grid-template-columns: 37px minmax(0,1fr); gap: 9px; }
+  .stage-node { width: 35px; height: 35px; margin-top: 15px; border-width: 3px; font-size: .55rem; }
+  .journey-current .stage-node { width: 41px; height: 41px; margin-left: -3px; }
+  .journey-completed .stage-node { font-size: .82rem; }
+  .roadmap-stage.journey-completed:after { top: 56px; left: 16px; width: 2px; }
+  .stage-card { padding: 17px 13px; border-radius: 16px; }
+  .stage-heading { align-items: flex-start; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .stage-heading h2 { font-size: 1.12rem; }
+  .stage-flow { gap: 4px; margin-bottom: 13px; font-size: .45rem; letter-spacing: .035em; }
+  .stage-flow span { padding: 4px 5px; }
+  .stage-flow i { font-size: .56rem; }
+  .skill-list { gap: 8px; }
+  .skill-toggle { grid-template-columns: 23px minmax(0,1fr) 14px; gap: 7px; min-height: 70px; padding: 10px 9px; }
+  .skill-status-symbol { width: 22px; height: 22px; font-size: .68rem; }
+  .skill-toggle-copy strong { font-size: .73rem; }
+  .skill-toggle-copy small { font-size: .62rem; }
+  .skill-status-text { grid-column: 2; grid-row: 2; justify-self: start; font-size: .5rem; }
+  .skill-toggle>b { grid-column: 3; grid-row: 1; }
+  .skill-detail { padding: 2px 10px 13px; }
+  .resource-list .resource-item { flex-direction: column; gap: 6px; }
+  .skill-status-controls { gap: 5px; }
+  .status-controls-label { width: 100%; }
+  .status-choice { padding: 7px 6px; font-size: .57rem; }
+  .mission-card { grid-template-columns: minmax(0,1fr); gap: 12px; padding: 15px; }
+  .mission-complete { justify-self: start; min-width: 0; }
+  .journey-start { gap: 10px; margin-left: 46px; padding: 12px; }
+  .journey-start-icon { flex-basis: 34px; width: 34px; height: 34px; }
+  .journey-finish { grid-column: 1; margin-left: 46px; padding: 13px; }
+  .roadmap-page .footer-content { align-items: flex-start; gap: 8px; }
+}
+@media (max-width: 380px) {
+  .roadmap-page .container { width: calc(100% - 28px); }
+  .roadmap-hero { padding-right: 16px; padding-left: 16px; }
+  .summary-card { padding-right: 8px; padding-left: 8px; }
+  .roadmap-stage { grid-template-columns: 34px minmax(0,1fr); gap: 7px; }
+  .roadmap-stages:before { left: 16px; }
+  .journey-current .stage-node { margin-left: -4px; }
+  .roadmap-stage.journey-completed:after { left: 15px; }
+  .stage-card { padding-right: 11px; padding-left: 11px; }
+  .journey-start,.journey-finish { margin-left: 41px; }
+  .stage-flow { font-size: .42rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .roadmap-page *,.roadmap-page *:before,.roadmap-page *:after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
