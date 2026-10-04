@@ -93,19 +93,6 @@
     ["portfolio", "Document the experience in your portfolio", "Describe your contribution accurately and link to the public change."]
   ].map(([id, title, description]) => ({ id, title, description }));
 
-  const missions = [
-    ["introduction", "Complete your professional introduction", "Write and practice a concise introduction that fits one community or event."],
-    ["github", "Improve your GitHub profile", "Add context to your profile and make one project easier to understand."],
-    ["linkedin", "Create or update your LinkedIn profile", "Review your headline, About section, projects, and contact preferences."],
-    ["find-people", "Find three relevant professionals", "Identify people connected to your target role or a genuine technical interest."],
-    ["community", "Join one relevant technical community", "Read its guidelines and participate in a useful, respectful way."],
-    ["event", "Attend one technical event or webinar", "Prepare a question, participate, and note one thing you learned."],
-    ["message", "Send one personalized networking message", "Use a real point of relevance and ask a focused, low-pressure question."],
-    ["contribution", "Participate in an open-source or community activity", "Complete a welcomed contribution or meaningful community task."],
-    ["follow-up", "Follow up with someone you met", "Mention the conversation and share a useful next step without pressure."],
-    ["connection", "Track one meaningful professional connection", "Save only the details needed to remember the interaction and next action."]
-  ].map(([id, title, description]) => ({ id, title, description }));
-
   let progressData = safeRead(KEYS.progress, {});
   if (!progressData || typeof progressData !== "object" || Array.isArray(progressData)) progressData = {};
   let presenceState = safeRead(KEYS.presence, {});
@@ -121,49 +108,56 @@
   let storageAvailable = true;
 
   const opportunityGrid = document.querySelector("#opportunity-grid");
-  opportunityGrid.innerHTML = opportunities.map((item) => `<article class="networking-opportunity-card"><div class="networking-card-topline"><span>${escapeHTML(item.title)}</span>${badge("guide")}</div><p>${escapeHTML(item.what)}</p><details><summary>Explore this opportunity type</summary><div class="networking-opportunity-detail"><h4>Why it matters</h4><p>${escapeHTML(item.why)}</p><h4>Who it is for</h4><p>${escapeHTML(item.who)}</p><h4>How to find it</h4><p>${escapeHTML(item.find)}</p><h4>What to prepare</h4><p>${escapeHTML(item.prepare)}</p><h4>Take one action</h4><p>${escapeHTML(item.action)}</p><ul>${item.resources.map(([name, url]) => `<li><a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)} ↗</a></li>`).join("")}</ul><label class="networking-check-label"><input type="checkbox" data-opportunity-id="${item.id}" ${opportunitiesExplored.includes(item.id) ? "checked" : ""}> Mark this discovery explored</label></div></details></article>`).join("");
+  opportunityGrid.innerHTML = opportunities.map((item) => `<article class="networking-opportunity-card"><div class="networking-card-topline"><span>${escapeHTML(item.title)}</span>${badge("guide")}</div><p>${escapeHTML(item.what)}</p><details><summary>Explore this opportunity type</summary><div class="networking-opportunity-detail"><h4>Why it matters</h4><p>${escapeHTML(item.why)}</p><h4>Who it is for</h4><p>${escapeHTML(item.who)}</p><h4>How to find it</h4><p>${escapeHTML(item.find)}</p><h4>What to prepare</h4><p>${escapeHTML(item.prepare)}</p><h4>Take one action</h4><p>${escapeHTML(item.action)}</p><ul>${item.resources.map(([name, url]) => `<li><a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)} &rarr;</a></li>`).join("")}</ul></div></details></article>`).join("");
 
-  document.querySelector("#presence-grid").innerHTML = presenceTasks.map((item) => `<article class="networking-presence-card"><label class="networking-presence-check"><input type="checkbox" data-presence-id="${item.id}" ${presenceState[item.id] ? "checked" : ""}><span>${escapeHTML(item.title)}</span></label><div><h4>Why it matters</h4><p>${escapeHTML(item.why)}</p></div><div><h4>What good looks like</h4><p>${escapeHTML(item.good)}</p></div><div><h4>Common mistakes</h4><p>${escapeHTML(item.mistakes)}</p></div><div class="networking-action-hint"><strong>Action:</strong> ${escapeHTML(item.action)}</div></article>`).join("");
+  document.querySelector("#presence-grid").innerHTML = presenceTasks.map((item) => `<article class="networking-presence-card"><h3>${escapeHTML(item.title)}</h3><div><h4>Why it matters</h4><p>${escapeHTML(item.why)}</p></div><div><h4>What good looks like</h4><p>${escapeHTML(item.good)}</p></div><div><h4>Common mistakes</h4><p>${escapeHTML(item.mistakes)}</p></div><div class="networking-action-hint"><strong>Try:</strong> ${escapeHTML(item.action)}</div></article>`).join("");
 
   document.querySelector("#people-grid").innerHTML = peopleCategories.map(([title, description]) => `<article class="networking-person-card"><span aria-hidden="true">⌕</span><div><h3>${escapeHTML(title)}</h3><p>${escapeHTML(description)}</p></div></article>`).join("");
 
   document.querySelector("#scenario-grid").innerHTML = scenarios.map((item, index) => `<article class="networking-scenario-card" data-scenario-card="${item.id}"><div class="networking-card-topline"><span>SCENARIO ${String(index + 1).padStart(2, "0")}</span>${badge("simulation")}</div><h3>${escapeHTML(item.situation)}</h3><p class="networking-scenario-principle">Communication principle: ${escapeHTML(item.principle)}</p><fieldset><legend>Choose a response to explore</legend>${item.choices.map(([answer, guidance], choiceIndex) => `<label class="networking-choice"><input type="radio" name="scenario-${item.id}" value="${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "checked" : ""}><span>${escapeHTML(answer)}</span></label><p class="networking-choice-feedback" data-choice-feedback="${item.id}-${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "" : "hidden"}><strong>${choiceIndex === 0 ? "Why this can help" : "Consider the impact"}:</strong> ${escapeHTML(guidance)}</p>`).join("")}</fieldset><button class="networking-secondary-button" type="button" data-retry-scenario="${item.id}">Try another response</button></article>`).join("");
 
-  document.querySelector("#opensource-steps").innerHTML = openSourceSteps.map((item, index) => `<li><label><input type="checkbox" data-open-step="${item.id}" ${openSteps[item.id] ? "checked" : ""}><span class="networking-step-number">${String(index + 1).padStart(2, "0")}</span><span><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.description)}</small></span></label></li>`).join("");
-  document.querySelector("#mission-grid").innerHTML = missions.map((item, index) => `<label class="networking-mission-card ${missionState[item.id] ? "is-complete" : ""}"><input type="checkbox" data-mission-id="${item.id}" ${missionState[item.id] ? "checked" : ""}><span class="networking-mission-number">${String(index + 1).padStart(2, "0")}</span><span><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.description)}</small></span></label>`).join("");
+  document.querySelector("#opensource-steps").innerHTML = openSourceSteps.map((item, index) => `<li><span class="networking-step-number">${String(index + 1).padStart(2, "0")}</span><span><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.description)}</small></span></li>`).join("");
 
-  const journeyMilestones = [
-    ["profile", "Profile ready", () => presenceTasks.every((item) => presenceState[item.id])],
-    ["community", "First community", () => Boolean(missionState.community)],
-    ["connection", "First connection", () => contacts.length > 0],
-    ["conversation", "First conversation practice", () => Object.values(practiceState).some((item) => item && item.completed)],
-    ["event", "First event", () => Boolean(missionState.event)],
-    ["contribution", "First contribution", () => Boolean(missionState.contribution)],
-    ["followup", "First follow-up", () => contacts.some((item) => item.followUpCompleted)],
-    ["opportunity", "First opportunity explored", () => opportunitiesExplored.length > 0]
+  const journeyItems = [
+    ["presence", "Build your professional presence", "Make your profile and one piece of work easy to understand."],
+    ["people", "Find relevant people or communities", "Look for people and groups connected to a real interest."],
+    ["conversation", "Start a meaningful conversation", "Use a specific point of relevance and ask one genuine question."],
+    ["practice", "Practice a networking conversation", "Try a scenario and reflect on how you would respond."],
+    ["opportunity", "Explore a relevant opportunity", "Check one opportunity's fit, eligibility, and next steps."],
+    ["participate", "Participate or contribute", "Take part in an event, community, or welcomed project contribution."],
+    ["followup", "Follow up thoughtfully", "Reconnect with context and one useful next step."],
+    ["connection", "Build one meaningful connection", "Keep in touch through respectful, useful exchanges."]
   ];
+  const legacyMilestones = Array.isArray(progressData.milestones) ? progressData.milestones : [];
+  const migratedJourney = {
+    presence: legacyMilestones.includes("profile") || Boolean(missionState.github || missionState.linkedin) || presenceTasks.every((item) => presenceState[item.id]),
+    people: legacyMilestones.includes("community") || Boolean(missionState["find-people"] || missionState.community) || opportunitiesExplored.includes("communities"),
+    conversation: Boolean(missionState.message),
+    practice: legacyMilestones.includes("conversation") || Object.values(practiceState).some((item) => item && item.completed),
+    opportunity: legacyMilestones.includes("opportunity") || opportunitiesExplored.length > 0,
+    participate: Boolean(missionState.event || missionState.contribution || openSteps.complete),
+    followup: legacyMilestones.includes("followup") || Boolean(missionState["follow-up"]) || contacts.some((item) => item.followUpCompleted),
+    connection: legacyMilestones.includes("connection") || Boolean(missionState.connection) || contacts.length > 0
+  };
+  const savedJourney = progressData.journey && typeof progressData.journey === "object" && !Array.isArray(progressData.journey) ? progressData.journey : {};
+  const journeyState = Object.fromEntries(journeyItems.map(([id]) => [id, typeof savedJourney[id] === "boolean" ? savedJourney[id] : Boolean(migratedJourney[id])]));
+  const journeyList = document.querySelector("#networking-journey-list");
+  journeyList.innerHTML = journeyItems.map(([id, title, description], index) => `<li class="networking-journey-item${journeyState[id] ? " is-complete" : ""}"><button type="button" class="networking-journey-toggle${journeyState[id] ? " is-complete" : ""}" data-journey-id="${id}" aria-pressed="${journeyState[id]}" aria-label="${journeyState[id] ? "Mark incomplete" : "Mark complete"}: ${escapeHTML(title)}"><span class="networking-journey-check" aria-hidden="true">${journeyState[id] ? "&#10003;" : ""}</span><span class="networking-journey-copy"><strong>${String(index + 1).padStart(2, "0")} &#183; ${escapeHTML(title)}</strong><small>${escapeHTML(description)}</small></span></button></li>`).join("");
+
   const renderProgress = (persist = true) => {
-    const completedMissions = missions.filter((item) => missionState[item.id]).length;
-    const completedPresence = presenceTasks.filter((item) => presenceState[item.id]).length;
-    const practiced = Object.values(practiceState).filter((item) => item && item.completed).length;
-    const completedMilestones = journeyMilestones.filter(([, , isDone]) => isDone()).length;
-    const overall = Math.round(completedMilestones / journeyMilestones.length * 100);
-    document.querySelector("#networking-progress-value").textContent = `${overall}%`;
+    const completedSteps = journeyItems.filter(([id]) => journeyState[id]).length;
+    const overall = Math.max(0, Math.min(100, completedSteps / journeyItems.length * 100));
+    const displayedProgress = Number.isInteger(overall) ? String(overall) : overall.toFixed(1);
+    document.querySelector("#networking-progress-value").textContent = `${displayedProgress}%`;
     document.querySelector("#networking-progress-fill").style.width = `${overall}%`;
     document.querySelector(".networking-progress-bar").setAttribute("aria-valuenow", String(overall));
-    document.querySelector("#networking-missions-count").textContent = `${completedMissions} of ${missions.length}`;
-    document.querySelector("#networking-presence-count").textContent = `${completedPresence} of ${presenceTasks.length}`;
-    document.querySelector("#networking-practice-count").textContent = `${practiced} of ${scenarios.length}`;
-    document.querySelector("#networking-opportunities-count").textContent = `${opportunitiesExplored.length} of ${opportunities.length}`;
-    document.querySelector("#networking-contacts-count").textContent = String(contacts.length);
-    document.querySelector("#networking-milestones-count").textContent = `${completedMilestones} of ${journeyMilestones.length}`;
-    document.querySelector("#networking-milestones").innerHTML = journeyMilestones.map(([id, label, isDone]) => `<li class="${isDone() ? "complete" : ""}" data-milestone="${id}">${escapeHTML(label)}</li>`).join("");
+    document.querySelector("#networking-journey-count").textContent = `${completedSteps} of ${journeyItems.length} journey steps complete`;
     if (persist) {
-      progressData = { ...progressData, opportunitiesExplored, openSourceSteps: openSteps, milestones: journeyMilestones.filter(([, , isDone]) => isDone()).map(([id]) => id), progress: overall };
+      progressData = { ...progressData, journey: journeyState, progress: overall };
       storageAvailable = safeWrite(KEYS.progress, progressData) && storageAvailable;
-      document.querySelector("#networking-save-status").textContent = storageAvailable ? "Your networking activity is saved only in this browser using separate networking storage." : "Some changes could not be saved. Check this browser's local storage settings.";
+      document.querySelector("#networking-save-status").textContent = storageAvailable ? "Your networking journey is saved to your account on this device." : "Some changes could not be saved. Check this browser's local storage settings.";
     }
-    window.dispatchEvent(new CustomEvent("networkingProgressUpdated", { detail: { progress: overall, completedMilestones, completedMissions, completedPresence, practiced, opportunities: opportunitiesExplored.length, contacts: contacts.length } }));
+    window.dispatchEvent(new CustomEvent("networkingProgressUpdated", { detail: { progress: overall, completedSteps, totalSteps: journeyItems.length } }));
   };
 
   const contactList = document.querySelector("#contact-list");
@@ -171,7 +165,7 @@
   const contactForm = document.querySelector("#contact-form");
   const drawContacts = () => {
     contactEmpty.hidden = contacts.length > 0;
-    contactList.innerHTML = contacts.map((item) => `<article class="networking-contact-card"><div class="networking-contact-card-heading"><div><h4>${escapeHTML(item.person)}</h4><p>${escapeHTML([item.role, item.organization].filter(Boolean).join(" · ") || "Professional connection")}</p></div><span class="networking-contact-met">${escapeHTML(item.met || "Connection")}</span></div><dl>${item.topic ? `<div><dt>Topic</dt><dd>${escapeHTML(item.topic)}</dd></div>` : ""}${item.lastInteraction ? `<div><dt>Last interaction</dt><dd>${escapeHTML(item.lastInteraction)}</dd></div>` : ""}${item.nextAction ? `<div><dt>Next action</dt><dd>${escapeHTML(item.nextAction)}</dd></div>` : ""}${item.notes ? `<div><dt>Notes</dt><dd>${escapeHTML(item.notes)}</dd></div>` : ""}</dl><label class="networking-followup-check"><input type="checkbox" data-followup-id="${escapeHTML(item.id)}" ${item.followUpCompleted ? "checked" : ""}> Follow-up complete</label><div class="networking-actions"><button type="button" class="networking-secondary-button" data-edit-contact="${escapeHTML(item.id)}">Edit</button><button type="button" class="networking-delete-button" data-delete-contact="${escapeHTML(item.id)}">Delete</button></div></article>`).join("");
+    contactList.innerHTML = contacts.map((item) => `<article class="networking-contact-card"><div class="networking-contact-card-heading"><div><h4>${escapeHTML(item.person)}</h4><p>${escapeHTML([item.role, item.organization].filter(Boolean).join(" · ") || "Professional connection")}</p></div><span class="networking-contact-met">${escapeHTML(item.met || "Connection")}</span></div><dl>${item.topic ? `<div><dt>Topic</dt><dd>${escapeHTML(item.topic)}</dd></div>` : ""}${item.lastInteraction ? `<div><dt>Last interaction</dt><dd>${escapeHTML(item.lastInteraction)}</dd></div>` : ""}${item.nextAction ? `<div><dt>Next action</dt><dd>${escapeHTML(item.nextAction)}</dd></div>` : ""}${item.notes ? `<div><dt>Notes</dt><dd>${escapeHTML(item.notes)}</dd></div>` : ""}</dl><div class="networking-actions"><button type="button" class="networking-secondary-button" data-edit-contact="${escapeHTML(item.id)}">Edit</button><button type="button" class="networking-delete-button" data-delete-contact="${escapeHTML(item.id)}">Delete</button></div></article>`).join("");
   };
   const clearContactForm = () => {
     ["id", "person", "role", "organization", "met", "topic", "lastInteraction", "nextAction", "notes"].forEach((name) => { contactForm.elements[name].value = ""; });
@@ -213,31 +207,28 @@
   });
 
   document.addEventListener("change", (event) => {
-    const presence = event.target.closest("[data-presence-id]");
-    if (presence) { presenceState[presence.dataset.presenceId] = presence.checked; safeWrite(KEYS.presence, presenceState); renderProgress(); }
-    const opportunity = event.target.closest("[data-opportunity-id]");
-    if (opportunity) {
-      opportunitiesExplored = opportunity.checked ? [...new Set([...opportunitiesExplored, opportunity.dataset.opportunityId])] : opportunitiesExplored.filter((id) => id !== opportunity.dataset.opportunityId);
-      renderProgress();
-    }
-    const mission = event.target.closest("[data-mission-id]");
-    if (mission) { missionState[mission.dataset.missionId] = mission.checked; safeWrite(KEYS.missions, missionState); mission.closest(".networking-mission-card").classList.toggle("is-complete", mission.checked); renderProgress(); }
-    const step = event.target.closest("[data-open-step]");
-    if (step) { openSteps[step.dataset.openStep] = step.checked; renderProgress(); }
     const scenarioChoice = event.target.closest('input[type="radio"][name^="scenario-"]');
-    if (scenarioChoice) {
-      const scenarioId = scenarioChoice.name.slice("scenario-".length);
-      const chosen = Number(scenarioChoice.value);
-      practiceState[scenarioId] = { ...(practiceState[scenarioId] || {}), choice: chosen, completed: true };
-      safeWrite(KEYS.practice, practiceState);
-      scenarios.find((item) => item.id === scenarioId).choices.forEach((_, index) => { const feedback = document.querySelector(`[data-choice-feedback="${scenarioId}-${index}"]`); if (feedback) feedback.hidden = index !== chosen; });
-      renderProgress();
-    }
-    const followup = event.target.closest("[data-followup-id]");
-    if (followup) { const item = contacts.find((contact) => contact.id === followup.dataset.followupId); if (item) item.followUpCompleted = followup.checked; safeWrite(KEYS.contacts, contacts); renderProgress(); }
+    if (!scenarioChoice) return;
+    const scenarioId = scenarioChoice.name.slice("scenario-".length);
+    const chosen = Number(scenarioChoice.value);
+    practiceState[scenarioId] = { ...(practiceState[scenarioId] || {}), choice: chosen, completed: true };
+    safeWrite(KEYS.practice, practiceState);
+    scenarios.find((item) => item.id === scenarioId).choices.forEach((_, index) => { const feedback = document.querySelector(`[data-choice-feedback="${scenarioId}-${index}"]`); if (feedback) feedback.hidden = index !== chosen; });
   });
 
   document.addEventListener("click", (event) => {
+    const journeyToggle = event.target.closest("[data-journey-id]");
+    if (journeyToggle) {
+      const id = journeyToggle.dataset.journeyId;
+      journeyState[id] = !journeyState[id];
+      journeyToggle.classList.toggle("is-complete", journeyState[id]);
+      journeyToggle.closest(".networking-journey-item").classList.toggle("is-complete", journeyState[id]);
+      journeyToggle.setAttribute("aria-pressed", String(journeyState[id]));
+      journeyToggle.setAttribute("aria-label", `${journeyState[id] ? "Mark incomplete" : "Mark complete"}: ${journeyItems.find(([itemId]) => itemId === id)[1]}`);
+      journeyToggle.querySelector(".networking-journey-check").textContent = journeyState[id] ? "\u2713" : "";
+      renderProgress();
+      return;
+    }
     const retry = event.target.closest("[data-retry-scenario]");
     if (retry) {
       const id = retry.dataset.retryScenario;
@@ -259,11 +250,6 @@
     const remove = event.target.closest("[data-delete-contact]");
     if (remove) { contacts = contacts.filter((item) => item.id !== remove.dataset.deleteContact); safeWrite(KEYS.contacts, contacts); drawContacts(); renderProgress(); return; }
   });
-  document.addEventListener("change", (event) => {
-    const followup = event.target.closest("[data-followup-id]");
-    if (followup) { drawContacts(); }
-  });
-
   contactForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const form = new FormData(contactForm);
@@ -280,6 +266,6 @@
   document.querySelector("#contact-cancel").addEventListener("click", clearContactForm);
 
   drawContacts();
-  renderProgress(Boolean(localStorage.getItem(KEYS.progress)));
+  renderProgress(true);
   });
 })();
