@@ -4,7 +4,6 @@
     const localStorage = window.accountAuth.userStorage(authState?.user?.id);
   const STORAGE_KEY = "softSkillsProgress";
   const PRACTICE_STORAGE_KEY = "softSkillsPractice";
-  const levels = ["Not Started", "Beginner", "Developing", "Strong"];
   const resourceTypes = {
     video: { label: "Video", icon: "🎥" }, article: { label: "Article", icon: "📖" }, course: { label: "Course", icon: "📚" },
     interactive: { label: "Interactive", icon: "💻" }, simulation: { label: "Simulation", icon: "🎭" }, practice: { label: "Practice", icon: "🧪" },
@@ -100,13 +99,19 @@
   let stored = {};
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    if (parsed && typeof parsed === "object" && parsed.levels && typeof parsed.levels === "object") stored = parsed.levels;
+    if (parsed && typeof parsed === "object") {
+      const savedStarted = parsed.started && typeof parsed.started === "object" ? parsed.started : {};
+      const legacyLevels = parsed.levels && typeof parsed.levels === "object" ? parsed.levels : {};
+      stored = Object.fromEntries(Object.entries({ ...legacyLevels, ...savedStarted }).map(([id, value]) => [id,
+        typeof value === "boolean" ? value : ["Beginner", "Developing", "Strong"].includes(value)
+      ]));
+    }
   } catch (error) {
-    console.warn("Soft skills ratings could not be read from local storage.", error);
+    console.warn("Soft skills progress could not be read from local storage.", error);
   }
 
   const allSkills = domains.flatMap((domain) => domain.skills);
-  const initialLevel = (id) => levels.includes(stored[id]) ? stored[id] : "Not Started";
+  const isStarted = (id) => stored[id] === true;
   let practiceData = { reflections: {}, simulations: {}, activities: {} };
   try {
     const savedPractice = JSON.parse(localStorage.getItem(PRACTICE_STORAGE_KEY) || "{}");
@@ -135,11 +140,11 @@
   };
   const aiPromptFor = (item) => `Act as a supportive practice partner helping me improve ${item.name}. Use this scenario: ${item.scenario}\n\nAsk me to respond first. Then give specific, kind feedback on what was clear, how I handled the other person's needs, and one practical way to improve. Let me try again. Do not score me or claim this is a real assessment.`;
   list.innerHTML = domains.map((domain, domainIndex) => {
-    const rated = domain.skills.filter((item) => initialLevel(item.id) !== "Not Started").length;
+    const rated = domain.skills.filter((item) => isStarted(item.id)).length;
     return `<details class="soft-domain" ${domainIndex === 0 ? "open" : ""}>
       <summary class="soft-domain-summary"><span class="soft-domain-icon" aria-hidden="true">${escapeHTML(domain.icon)}</span><span class="soft-domain-title"><strong>${escapeHTML(domain.title)}</strong><small>${escapeHTML(domain.intro)}</small></span><span class="soft-domain-count" data-domain-count="${escapeHTML(domain.id)}">${rated} of ${domain.skills.length} started</span><span class="soft-domain-chevron" aria-hidden="true">⌄</span></summary>
-      <div class="soft-skill-grid">${domain.skills.map((item) => `<article class="soft-skill-card" data-skill-card="${escapeHTML(item.id)}">
-        <div class="soft-skill-heading"><span class="soft-skill-symbol" aria-hidden="true">◇</span><div><h3>${escapeHTML(item.name)}</h3><span class="soft-current-level" data-current-level="${escapeHTML(item.id)}">${escapeHTML(initialLevel(item.id))}</span></div></div>
+      <div class="soft-skill-grid">${domain.skills.map((item) => `<article class="soft-skill-card${isStarted(item.id) ? " is-started" : ""}" data-skill-card="${escapeHTML(item.id)}">
+        <div class="soft-skill-heading"><span class="soft-skill-symbol" aria-hidden="true">◇</span><div class="soft-skill-title"><h3>${escapeHTML(item.name)}</h3><button class="soft-start-control${isStarted(item.id) ? " is-started" : ""}" type="button" data-started-id="${escapeHTML(item.id)}" aria-pressed="${isStarted(item.id)}" aria-label="${isStarted(item.id) ? "Unstart" : "Start"} ${escapeHTML(item.name)}"><span class="soft-start-check" aria-hidden="true">${isStarted(item.id) ? "✓" : ""}</span><span>Started</span></button></div></div>
         <p class="soft-skill-meaning">${escapeHTML(item.meaning)}</p>
         <details class="soft-skill-details"><summary>Explore this skill</summary><div class="soft-skill-content">
           <section><h4>Why it matters</h4><p>${escapeHTML(item.why)}</p></section>
@@ -150,31 +155,27 @@
           ${aiPracticeDomains.has(domain.id) ? `<details class="soft-ai-practice"><summary>${typeBadge("ai-practice")} Copy a role-play prompt</summary><div class="soft-ai-body"><p>This page has no AI connection. Copy this prompt into an AI assistant you choose; do not include private or sensitive information.</p><textarea readonly rows="5" data-prompt-id="${escapeHTML(item.id)}">${escapeHTML(aiPromptFor(item))}</textarea><button class="soft-copy-prompt" type="button" data-copy-prompt="${escapeHTML(item.id)}">Copy practice prompt</button><span class="soft-copy-status" data-copy-status="${escapeHTML(item.id)}" role="status"></span></div></details>` : ""}
           ${practiceTools[domain.id] ? `<p class="soft-tool-resource">${typeBadge("tool")} <a href="${escapeHTML(practiceTools[domain.id].url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(practiceTools[domain.id].title)}</a><small>${escapeHTML(practiceTools[domain.id].description)}</small></p>` : ""}
           <details class="soft-reflection"><summary>${typeBadge("reflection")} My reflection</summary><div class="soft-reflection-fields">${[["did", "What I did"], ["wentWell", "What went well"], ["difficult", "What was difficult"], ["improve", "What I should improve"], ["next", "What I will try next"]].map(([key, label]) => `<label>${label}<textarea rows="2" data-reflection-id="${escapeHTML(item.id)}" data-reflection-field="${key}" placeholder="Add a short note…">${escapeHTML(((practiceData.reflections[item.id] || {})[key]) || "")}</textarea></label>`).join("")}<span class="soft-reflection-status" data-reflection-status="${escapeHTML(item.id)}" role="status">Saved on this device</span></div></details>
-          <label class="soft-level-label" for="level-${escapeHTML(item.id)}">How would you rate yourself today?</label><select class="soft-level-select" id="level-${escapeHTML(item.id)}" data-level-id="${escapeHTML(item.id)}">${levels.map((level) => `<option value="${escapeHTML(level)}" ${initialLevel(item.id) === level ? "selected" : ""}>${escapeHTML(level)}</option>`).join("")}</select>
         </div></details>
       </article>`).join("")}</div>
     </details>`;
   }).join("");
 
   const renderProgress = () => {
-    const ratings = allSkills.map((item) => initialLevel(item.id));
-    const weight = { "Not Started": 0, Beginner: 1, Developing: 2, Strong: 3 };
-    const progress = Math.round(ratings.reduce((sum, level) => sum + weight[level], 0) / (allSkills.length * 3) * 100);
-    const startedDomains = domains.filter((domain) => domain.skills.some((item) => initialLevel(item.id) !== "Not Started")).length;
-    const developingOrStrong = ratings.filter((level) => level === "Developing" || level === "Strong").length;
-    const strong = ratings.filter((level) => level === "Strong").length;
+    const startedSkills = allSkills.filter((item) => isStarted(item.id)).length;
+    const progress = Math.max(0, Math.min(100, allSkills.length ? Math.round(startedSkills / allSkills.length * 100) : 0));
+    const startedDomains = domains.filter((domain) => domain.skills.some((item) => isStarted(item.id))).length;
     document.querySelector("#soft-overall").textContent = `${progress}%`;
     document.querySelector("#soft-meter-fill").style.width = `${progress}%`;
     document.querySelector(".soft-meter").setAttribute("aria-valuenow", String(progress));
     document.querySelector("#soft-domains-started").textContent = `${startedDomains} of ${domains.length}`;
-    document.querySelector("#soft-developing").textContent = `${developingOrStrong} of ${allSkills.length}`;
-    document.querySelector("#soft-strong").textContent = `${strong} of ${allSkills.length}`;
+    document.querySelector("#soft-skills-started").textContent = String(startedSkills);
+    document.querySelector("#soft-skills-to-explore").textContent = String(allSkills.length - startedSkills);
     domains.forEach((domain) => {
-      const count = domain.skills.filter((item) => initialLevel(item.id) !== "Not Started").length;
+      const count = domain.skills.filter((item) => isStarted(item.id)).length;
       const label = document.querySelector(`[data-domain-count="${domain.id}"]`);
       if (label) label.textContent = `${count} of ${domain.skills.length} started`;
     });
-    window.dispatchEvent(new CustomEvent("softSkillsProgressUpdated", { detail: { progress, startedDomains, developingOrStrong, strong } }));
+    window.dispatchEvent(new CustomEvent("softSkillsProgressUpdated", { detail: { progress, startedDomains, startedSkills, totalSkills: allSkills.length } }));
   };
 
   list.addEventListener("change", (event) => {
@@ -184,18 +185,6 @@
       savePractice();
       return;
     }
-    const select = event.target.closest("[data-level-id]");
-    if (!select) return;
-    stored[select.dataset.levelId] = levels.includes(select.value) ? select.value : "Not Started";
-    document.querySelector(`[data-current-level="${select.dataset.levelId}"]`).textContent = stored[select.dataset.levelId];
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ levels: stored, totalSkills: allSkills.length }));
-      document.querySelector("#soft-progress-note").textContent = "Saved on this device. Your soft skills ratings are separate from your technical roadmap.";
-    } catch (error) {
-      document.querySelector("#soft-progress-note").textContent = "This browser could not save your ratings. Check its storage settings and try again.";
-      console.warn("Soft skills ratings could not be saved to local storage.", error);
-    }
-    renderProgress();
   });
   list.addEventListener("input", (event) => {
     const simulation = event.target.closest("[data-simulation-id]");
@@ -217,6 +206,25 @@
     }
   });
   list.addEventListener("click", (event) => {
+    const startedControl = event.target.closest("[data-started-id]");
+    if (startedControl) {
+      const id = startedControl.dataset.startedId;
+      stored[id] = !isStarted(id);
+      startedControl.classList.toggle("is-started", isStarted(id));
+      startedControl.setAttribute("aria-pressed", String(isStarted(id)));
+      startedControl.setAttribute("aria-label", `${isStarted(id) ? "Unstart" : "Start"} ${startedControl.closest(".soft-skill-card").querySelector("h3").textContent}`);
+      startedControl.querySelector(".soft-start-check").textContent = isStarted(id) ? "✓" : "";
+      startedControl.closest(".soft-skill-card").classList.toggle("is-started", isStarted(id));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ started: stored, totalSkills: allSkills.length }));
+        document.querySelector("#soft-progress-note").textContent = "Progress saved to your account on this device.";
+      } catch (error) {
+        document.querySelector("#soft-progress-note").textContent = "This browser could not save your progress. Check its storage settings and try again.";
+        console.warn("Soft skills progress could not be saved to local storage.", error);
+      }
+      renderProgress();
+      return;
+    }
     const feedbackButton = event.target.closest("[data-feedback-id]");
     if (feedbackButton) {
       const id = feedbackButton.dataset.feedbackId;

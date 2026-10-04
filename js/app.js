@@ -164,13 +164,15 @@ if (dashboardPage) {
     };
     const technical = hasSelectedRoadmap ? roadmapPercent : getPercentage(careerProgress.technical);
     const savedSoftSkills = JSON.parse(localStorage.getItem("softSkillsProgress") || "{}") || {};
-    const softSkillLevels = savedSoftSkills && savedSoftSkills.levels && typeof savedSoftSkills.levels === "object" ? Object.values(savedSoftSkills.levels) : [];
-    const softSkillWeights = { "Not Started": 0, Beginner: 1, Developing: 2, Strong: 3 };
-    const assessedSoftSkillLevels = softSkillLevels.filter((level) => Object.prototype.hasOwnProperty.call(softSkillWeights, level));
+    const softSkillStarted = savedSoftSkills && savedSoftSkills.started && typeof savedSoftSkills.started === "object"
+      ? Object.values(savedSoftSkills.started).filter(Boolean).length
+      : savedSoftSkills && savedSoftSkills.levels && typeof savedSoftSkills.levels === "object"
+        ? Object.values(savedSoftSkills.levels).filter((level) => ["Beginner", "Developing", "Strong"].includes(level)).length
+        : 0;
     const savedSoftSkillTotal = Math.max(1, Number(savedSoftSkills.totalSkills) || 50);
-    const hasSoftSkillRatings = assessedSoftSkillLevels.some((level) => level !== "Not Started");
-    const softSkills = hasSoftSkillRatings
-      ? Math.round(assessedSoftSkillLevels.reduce((total, level) => total + softSkillWeights[level], 0) / (savedSoftSkillTotal * 3) * 100)
+    const hasSoftSkillsProgress = Boolean(savedSoftSkills && (savedSoftSkills.started || savedSoftSkills.levels));
+    const softSkills = hasSoftSkillsProgress
+      ? Math.max(0, Math.min(100, Math.round(softSkillStarted / savedSoftSkillTotal * 100)))
       : getPercentage(careerProgress.softSkills);
     const savedNetworkingProgress = JSON.parse(localStorage.getItem("networkingProgress") || "null");
     const networking = getPercentage(savedNetworkingProgress?.progress ?? careerProgress.networking);
@@ -207,7 +209,7 @@ if (dashboardPage) {
     setReadinessArea("#technical-bar", "#technical-value", "#technical-hint", technical, "Not assessed", "Complete your technical assessment");
     if (hasSelectedRoadmap) setText("#technical-hint", "Based on your roadmap progress");
     setReadinessArea("#soft-skills-bar", "#soft-skills-value", "#soft-skills-hint", softSkills, "Not assessed", "Complete your soft skills assessment");
-    if (softSkills !== null) setText("#soft-skills-hint", hasSoftSkillRatings ? "Based on your skill ratings" : "Saved progress estimate");
+    if (softSkills !== null) setText("#soft-skills-hint", hasSoftSkillsProgress ? "Based on skills you have started" : "Saved progress estimate");
     setReadinessArea("#networking-bar", "#networking-value", "#networking-hint", networking, "Getting started", "Begin your networking journey");
     if (networking !== null && savedNetworkingProgress && Array.isArray(savedNetworkingProgress.milestones)) setText("#networking-hint", `${savedNetworkingProgress.milestones.length} of 8 networking milestones`);
     setText("#roadmap-role", studentProfile.targetRole || "Your");
