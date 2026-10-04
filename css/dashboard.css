@@ -4,10 +4,7 @@
   --muted: #62778f;
   --blue: #456b9b;
   --blue-dark: #294f80;
-  --pale: #e8f0f6;
   --line: #d9e3ec;
-  --white: #fff;
-  --soft: #f8fbfd;
   --shadow: 0 16px 42px rgba(25,55,90,.09);
   min-height: 100vh;
   color: var(--ink);
