@@ -22,8 +22,7 @@
 .soft-skills-page .container { width: min(1200px,calc(100% - 64px)); }
 .soft-skills-page .site-header { border-color: rgba(20,47,92,.1); background: rgba(247,250,252,.88); backdrop-filter: blur(14px); }
 .soft-skills-page .navbar { min-height: 78px; }
-.soft-skills-page .brand { gap: 11px; color: var(--ink); font-size: .95rem; letter-spacing: -.02em; }
-.soft-skills-page .brand-mark { width: 36px; height: 36px; border: 1px solid #c6d3e0; border-radius: 9px; background: linear-gradient(145deg,#fff,#dfe8f0); color: #18365f; font-size: .68rem; font-weight: 800; }
+.soft-skills-page .brand { gap: 0; color: var(--ink); font-size: 1.02rem; font-weight: 800; letter-spacing: -.04em; }
 .soft-skills-page .nav-links { gap: 22px; color: var(--ink); font-size: .82rem; }
 .soft-skills-page .nav-links [data-public-nav],.soft-skills-page .nav-links [data-authenticated-nav] { display: contents; }
 .soft-skills-page .nav-links a:not(.button) { padding: 8px 0; border: 0; color: #536b86; transition: color .18s ease; }

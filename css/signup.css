@@ -14,8 +14,7 @@
 .signup-page :focus-visible { outline: 3px solid #7797b6; outline-offset: 3px; }
 .signup-header { flex: 0 0 auto; border-bottom: 1px solid rgba(54,82,112,.14); background: rgba(249,251,253,.9); }
 .signup-header-inner { min-height: 64px; display: flex; align-items: center; }
-.signup-header .brand { gap: 10px; color: #16345c; font-size: 1rem; font-weight: 700; letter-spacing: -.025em; }
-.signup-header .brand-mark { width: 34px; height: 34px; border: 1px solid #c6d4e0; border-radius: 9px; background: #f4f8fb; color: #18365f; font-size: .66rem; }
+.signup-header .brand { gap: 0; color: #16345c; font-size: 1.02rem; font-weight: 800; letter-spacing: -.04em; }
 .signup-main { flex: 1 0 auto; display: flex; align-items: center; width: 100%; padding: clamp(34px,5vw,62px) 24px; }
 .signup-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(360px,.92fr); align-items: center; gap: clamp(42px,7vw,88px); width: min(1040px,100%); margin: 0 auto; }
 .signup-intro { max-width: 510px; }

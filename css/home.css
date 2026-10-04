@@ -47,8 +47,7 @@
 /* Header and account-aware navigation */
 .home-page .site-header { position: relative; z-index: 5; border-color: rgba(20,47,92,.1); background: rgba(247,250,252,.84); backdrop-filter: blur(14px); }
 .home-page .navbar { min-height: 78px; }
-.home-page .brand { gap: 11px; color: var(--skillwave-navy); font-size: .95rem; font-weight: 700; letter-spacing: -.02em; }
-.home-page .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #c6d3e0; border-radius: 9px; background: linear-gradient(145deg,#fff,#dfe8f0); color: #18365f; font-size: .68rem; font-weight: 800; }
+.home-page .brand { gap: 0; color: var(--skillwave-navy); font-size: 1.02rem; font-weight: 800; letter-spacing: -.04em; }
 .home-page .nav-links { color: var(--skillwave-navy); font-size: .83rem; }
 .home-page .nav-links [data-public-nav],.home-page .nav-links [data-authenticated-nav] { display: contents; }
 .home-page .nav-links [hidden] { display: none !important; }
@@ -100,7 +99,7 @@
 .level-panel-foot { padding-top: 12px; border-top: 1px solid #e2e8ee; color: #929aa2; font-size: .53rem; }
 .level-panel-foot span:last-child { color: #50769f; }
 
-/* Career-readiness pillars */
+/* Professional development pillars */
 .pillars-section { position: relative; padding: clamp(28px,3vw,44px) 0; background: linear-gradient(180deg,rgba(241,246,250,.18),rgba(234,241,247,.22) 52%,rgba(241,246,250,.15)); }
 .pillars-section:before { position: absolute; top: 0; left: 50%; width: min(1200px,calc(100% - 64px)); height: 1px; background: linear-gradient(90deg,transparent,rgba(139,164,188,.28) 50%,transparent); content: ""; transform: translateX(-50%); }
 .section-intro,.process-heading { display: grid; grid-template-columns: 1.05fr .7fr; align-items: end; gap: 60px; margin-bottom: 42px; }
@@ -166,8 +165,7 @@
 /* Product footer */
 .home-footer { padding: 0 0 14px; border-top: 1px solid rgba(91,121,151,.22); color: #536b86; background: transparent; }
 .home-footer-main { display: grid; grid-template-columns: minmax(210px,1.45fr) repeat(3,minmax(108px,.75fr)) minmax(140px,.9fr); gap: clamp(18px,2.5vw,34px); padding: 30px 0 24px; }
-.home-footer-brand .brand { display: inline-flex; margin-bottom: 13px; color: #18365f; font-size: .95rem; }
-.home-footer-brand .brand-mark { width: 34px; height: 34px; border-radius: 9px; }
+.home-footer-brand .brand { display: inline-flex; margin-bottom: 13px; color: #18365f; font-size: 1rem; font-weight: 800; letter-spacing: -.04em; }
 .home-footer-brand > p { max-width: 260px; margin: 0; color: #647991; font-size: .78rem; line-height: 1.65; }
 .home-footer-column { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
 .home-footer-column h2 { margin: 2px 0 5px; color: #18365f; font-family: "DM Sans",Arial,sans-serif; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }

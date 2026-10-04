@@ -114,9 +114,29 @@
 
   document.querySelector("#people-grid").innerHTML = peopleCategories.map(([title, description]) => `<article class="networking-person-card"><span aria-hidden="true">⌕</span><div><h3>${escapeHTML(title)}</h3><p>${escapeHTML(description)}</p></div></article>`).join("");
 
-  document.querySelector("#scenario-grid").innerHTML = scenarios.map((item, index) => `<article class="networking-scenario-card" data-scenario-card="${item.id}"><div class="networking-card-topline"><span>SCENARIO ${String(index + 1).padStart(2, "0")}</span>${badge("simulation")}</div><h3>${escapeHTML(item.situation)}</h3><p class="networking-scenario-principle">Communication principle: ${escapeHTML(item.principle)}</p><fieldset><legend>Choose a response to explore</legend>${item.choices.map(([answer, guidance], choiceIndex) => `<label class="networking-choice"><input type="radio" name="scenario-${item.id}" value="${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "checked" : ""}><span>${escapeHTML(answer)}</span></label><p class="networking-choice-feedback" data-choice-feedback="${item.id}-${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "" : "hidden"}><strong>${choiceIndex === 0 ? "Why this can help" : "Consider the impact"}:</strong> ${escapeHTML(guidance)}</p>`).join("")}</fieldset><button class="networking-secondary-button" type="button" data-retry-scenario="${item.id}">Try another response</button></article>`).join("");
+  const scenarioGrid = document.querySelector("#scenario-grid");
+  scenarioGrid.innerHTML = scenarios.map((item, index) => {
+    const scenarioNumber = String(index + 1).padStart(2, "0");
+    const detailsId = `scenario-content-${item.id}`;
+    return `<details class="networking-scenario-card" data-scenario-card="${item.id}" name="networking-scenarios"><summary class="networking-scenario-summary" aria-controls="${detailsId}" aria-expanded="false"><span class="networking-scenario-number">${scenarioNumber}</span><span class="networking-scenario-heading"><span class="networking-scenario-title">${escapeHTML(item.situation)}</span>${badge("simulation")}</span><span class="networking-scenario-affordance" aria-hidden="true"></span></summary><div class="networking-scenario-content" id="${detailsId}"><h3>Situation</h3><p>${escapeHTML(item.situation)}</p><p class="networking-scenario-principle">Communication principle: ${escapeHTML(item.principle)}</p><fieldset><legend>Choose a response to explore</legend>${item.choices.map(([answer, guidance], choiceIndex) => `<label class="networking-choice"><input type="radio" name="scenario-${item.id}" value="${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "checked" : ""}><span>${escapeHTML(answer)}</span></label><p class="networking-choice-feedback" data-choice-feedback="${item.id}-${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "" : "hidden"}><strong>${choiceIndex === 0 ? "Why this can help" : "Consider the impact"}:</strong> ${escapeHTML(guidance)}</p>`).join("")}</fieldset><button class="networking-secondary-button" type="button" data-retry-scenario="${item.id}">Try another response</button></div></details>`;
+  }).join("");
+  scenarioGrid.querySelectorAll(".networking-scenario-card").forEach((scenario) => {
+    scenario.addEventListener("toggle", () => scenario.querySelector("summary").setAttribute("aria-expanded", String(scenario.open)));
+  });
 
-  document.querySelector("#opensource-steps").innerHTML = openSourceSteps.map((item, index) => `<li><span class="networking-step-number">${String(index + 1).padStart(2, "0")}</span><span><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.description)}</small></span></li>`).join("");
+  const openSourceStepsList = document.querySelector("#opensource-steps");
+  const openSourceStepDetail = document.querySelector("#opensource-step-detail");
+  openSourceStepsList.innerHTML = openSourceSteps.map((item, index) => `<li><button type="button" class="networking-open-source-step${index === 0 ? " is-selected" : ""}" data-open-source-step="${index}" aria-controls="opensource-step-detail" aria-pressed="${index === 0}"><span class="networking-step-number">${String(index + 1).padStart(2, "0")}</span></button></li>`).join("");
+  const renderOpenSourceStep = (selectedIndex) => {
+    openSourceStepsList.querySelectorAll("[data-open-source-step]").forEach((button) => {
+      const isSelected = Number(button.dataset.openSourceStep) === selectedIndex;
+      button.classList.toggle("is-selected", isSelected);
+      button.setAttribute("aria-pressed", String(isSelected));
+    });
+    const selectedStep = openSourceSteps[selectedIndex];
+    openSourceStepDetail.innerHTML = `<span class="networking-phase">STEP ${String(selectedIndex + 1).padStart(2, "0")}</span><strong>${escapeHTML(selectedStep.title)}</strong><p>${escapeHTML(selectedStep.description)}</p>`;
+  };
+  renderOpenSourceStep(0);
 
   const journeyItems = [
     ["presence", "Build your professional presence", "Make your profile and one piece of work easy to understand."],
@@ -227,6 +247,11 @@
       journeyToggle.setAttribute("aria-label", `${journeyState[id] ? "Mark incomplete" : "Mark complete"}: ${journeyItems.find(([itemId]) => itemId === id)[1]}`);
       journeyToggle.querySelector(".networking-journey-check").textContent = journeyState[id] ? "\u2713" : "";
       renderProgress();
+      return;
+    }
+    const openSourceStep = event.target.closest("[data-open-source-step]");
+    if (openSourceStep) {
+      renderOpenSourceStep(Number(openSourceStep.dataset.openSourceStep));
       return;
     }
     const retry = event.target.closest("[data-retry-scenario]");

@@ -22,8 +22,7 @@
 .networking-page .container { width: min(1200px,calc(100% - 64px)); }
 .networking-page .site-header { border-color: rgba(20,47,92,.1); background: rgba(247,250,252,.88); backdrop-filter: blur(14px); }
 .networking-page .navbar { min-height: 78px; }
-.networking-page .brand { gap: 11px; color: var(--ink); font-size: .95rem; letter-spacing: -.02em; }
-.networking-page .brand-mark { width: 36px; height: 36px; border: 1px solid #c6d3e0; border-radius: 9px; background: linear-gradient(145deg,#fff,#dfe8f0); color: #18365f; font-size: .68rem; font-weight: 800; }
+.networking-page .brand { gap: 0; color: var(--ink); font-size: 1.02rem; font-weight: 800; letter-spacing: -.04em; }
 .networking-page .nav-links { gap: 22px; color: var(--ink); font-size: .82rem; }
 .networking-page .nav-links [data-public-nav],.networking-page .nav-links [data-authenticated-nav] { display: contents; }
 .networking-page .nav-links a:not(.button) { padding: 8px 0; border: 0; color: #536b86; transition: color .18s ease; }
@@ -117,9 +116,20 @@
 .networking-page .networking-secondary-button,.networking-page .networking-delete-button { min-height: 34px; padding: 7px 10px; border: 1px solid #dce5eb; border-radius: 9px; background: #f5f8f9; color: #526b82; font: inherit; font-size: .66rem; font-weight: 600; cursor: pointer; transition: background .16s ease,border-color .16s ease; }
 .networking-page .networking-delete-button { border-color: #eadfdc; background: #faf5f3; color: #90675b; }
 .networking-page .networking-secondary-button:hover { border-color: #c4d4df; background: #edf3f6; }
-.networking-scenario-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; }
-.networking-scenario-card { padding: 16px; }
-.networking-scenario-card h3 { margin: 9px 0; color: #29476b; font-family: "DM Sans",Arial,sans-serif; font-size: .85rem; font-weight: 700; line-height: 1.45; }
+.networking-scenario-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 8px; min-width: 0; }
+.networking-scenario-card { min-width: 0; overflow: hidden; padding: 0; }
+.networking-scenario-summary { display: grid; grid-template-columns: 34px minmax(0,1fr) 22px; align-items: center; gap: 10px; min-height: 58px; padding: 10px 13px; color: #29476b; cursor: pointer; list-style: none; }
+.networking-scenario-summary::-webkit-details-marker { display: none; }
+.networking-scenario-number { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #b9cbd7; border-radius: 9px; background: #d5e1e8; color: #345c7d; font-size: .64rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.networking-scenario-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.networking-scenario-title { min-width: 0; color: #29476b; font-size: .76rem; font-weight: 700; line-height: 1.4; }
+.networking-scenario-affordance { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid #bdccd6; border-radius: 50%; color: #456b8a; }
+.networking-scenario-affordance::before { content: "+"; font-size: .9rem; line-height: 1; }
+.networking-scenario-card[open] .networking-scenario-summary { border-bottom: 1px solid rgba(117,144,166,.28); background: rgba(205,219,228,.36); }
+.networking-scenario-card[open] .networking-scenario-affordance::before { content: "−"; }
+.networking-scenario-content { min-width: 0; padding: 12px 15px 15px; }
+.networking-scenario-content h3 { margin: 0 0 4px; color: #29476b; font-family: "DM Sans",Arial,sans-serif; font-size: .78rem; font-weight: 700; line-height: 1.45; }
+.networking-scenario-content>p:not(.networking-scenario-principle) { margin: 0; color: #5e7488; font-size: .72rem; line-height: 1.5; }
 .networking-scenario-principle { padding: 9px 10px; border: 1px solid #e5ebef; border-radius: 9px; background: #f6f9fa; color: #526d84; font-size: .68rem; line-height: 1.5; }
 .networking-scenario-card fieldset { display: grid; gap: 5px; min-width: 0; margin: 11px 0; padding: 0; border: 0; }
 .networking-scenario-card legend { margin-bottom: 5px; color: #45627d; font-size: .65rem; font-weight: 600; }
@@ -127,15 +137,19 @@
 .networking-choice input { box-sizing: border-box; flex: 0 0 16px; width: 16px; height: 16px; min-width: 16px; margin: 2px 0 0; padding: 0; border: 0; accent-color: #557ca8; }
 .networking-choice span { flex: 1; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 .networking-choice-feedback { margin: 0; padding: 8px 10px; border-radius: 9px; background: #f0f6f2; color: #52725f; font-size: .66rem; line-height: 1.5; }
-.networking-opensource-card { display: grid; grid-template-columns: minmax(0,1fr) minmax(220px,250px); gap: 16px; min-width: 0; padding: 17px; border: 1px solid rgba(151,171,191,.26); border-radius: 17px; background: rgba(255,255,255,.95); }
-.networking-open-source-path { position: relative; display: grid; gap: 6px; min-width: 0; margin: 0; padding: 0; list-style: none; }
-.networking-open-source-path:before { position: absolute; top: 16px; bottom: 16px; left: 15px; width: 1px; background: #d5e1e9; content: ""; }
-.networking-open-source-path li { position: relative; min-width: 0; }
+.networking-opensource-card { display: grid; grid-template-columns: minmax(0,1fr); gap: 10px; min-width: 0; padding: 14px; border: 1px solid rgba(151,171,191,.26); border-radius: 17px; background: rgba(255,255,255,.95); }
+.networking-open-source-selector { display: grid; gap: 10px; min-width: 0; }
+.networking-open-source-path { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 6px; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.networking-open-source-path li { min-width: 0; }
 .networking-step-number { z-index: 1; display: grid; flex: 0 0 31px; place-items: center; width: 31px; height: 31px; border: 3px solid #fff; border-radius: 50%; background: #eaf1f5; color: #4f718c; font-size: .53rem; font-weight: 700; }
-.networking-open-source-path li>label>span:last-child { min-width: 0; }
-.networking-open-source-path li strong,.networking-open-source-path li small { display: block; overflow-wrap: anywhere; }
-.networking-open-source-path li strong { color: #34536f; font-size: .7rem; }
-.networking-open-source-path li small { margin-top: 2px; color: #71859a; font-size: .63rem; line-height: 1.45; }
+.networking-open-source-step { display: grid; place-items: center; width: 100%; min-width: 0; min-height: 44px; padding: 2px; border: 1px solid #c9d7e0; border-radius: 9px; background: #dfe8ee; color: #34536f; cursor: pointer; transition: border-color .16s ease,background .16s ease,transform .16s ease; }
+.networking-open-source-step:hover { border-color: #829eb3; background: #d3e0e8; transform: translateY(-1px); }
+.networking-open-source-step.is-selected { border-color: #557b9b; background: #284d70; color: #f5f8fa; }
+.networking-open-source-step .networking-step-number { width: 26px; height: 26px; border: 0; background: transparent; color: inherit; font-size: .63rem; }
+.networking-open-source-detail { display: grid; gap: 4px; min-width: 0; padding: 10px 12px; border: 1px solid #c3d1db; border-radius: 11px; background: linear-gradient(135deg,#d9e4eb,#d1dee6); }
+.networking-open-source-detail .networking-phase { width: max-content; margin: 0; }
+.networking-open-source-detail strong { color: #29476b; font-size: .78rem; line-height: 1.4; }
+.networking-open-source-detail p { margin: 0; color: #63798d; font-size: .68rem; line-height: 1.5; }
 .networking-opensource-card aside { align-self: start; min-width: 0; padding: 14px; border: 1px solid #e7e7dc; border-radius: 12px; background: #f8f7f2; }
 .networking-opensource-card aside strong { color: #625f4e; font-size: .76rem; }
 .networking-opensource-card aside p { margin: 5px 0 10px; color: #777361; font-size: .68rem; line-height: 1.55; }
@@ -242,7 +256,7 @@
 .networking-contact-list-wrap { padding: 14px; border: 1px solid #bccbd5; border-radius: 14px; background: linear-gradient(145deg,#dfe8ed,#d7e2e8); }
 .networking-contact-card { background: linear-gradient(145deg,#e9eff2,#e2eaee); }
 .networking-builder-card input,.networking-builder-card select,.networking-builder-card textarea,.networking-contact-form input:not([type=hidden]),.networking-contact-form textarea { background: #f0f4f6; border-color: #bfced8; }
-.networking-scenario-card { background: linear-gradient(145deg,#e9eaf0,#e1e3eb); }
+.networking-scenario-card { background: linear-gradient(145deg,#e1e9ee,#d9e3e9); }
 .networking-scenario-principle { background: #e6e7ed; border-color: #d0d2dc; }
 .networking-choice { background: #edf0f3; border-color: #d0d9e0; }
 .networking-choice-feedback { background: #e1ebe5; }
@@ -250,11 +264,7 @@
 .networking-action-hint { border-color: #d0dce2; background: #e7edf0; }
 .networking-people-intro { border-color: #c4d3dd; background: #dce6ec; }
 .networking-message-guide { border-color: #9eb2c2; background: linear-gradient(120deg,#d7e2e9,#cedbe4); }
-.networking-open-source-path:before { background: #bdcdd6; }
-.networking-open-source-path li { align-items: start; }
-.networking-open-source-path li>span:last-child { min-width: 0; }
-.networking-open-source-path li:hover { background: rgba(255,255,255,.28); }
-.networking-step-number { border-color: #e0e8eb; background: #d2e0e5; }
+.networking-open-source-step:focus-visible { outline: 2px solid #557da0; outline-offset: 2px; }
 .networking-opensource-card aside { border-color: #d6d5c8; background: #eceae1; }
 .networking-journey-toggle:focus-visible { outline: 2px solid #557da0; outline-offset: 3px; }
 .networking-contact-heading { min-width: 0; }
@@ -293,9 +303,7 @@
 .networking-choice-feedback { background: #e1ebe5; }
 .networking-opportunity-card details { border-color: #cbd7df; }
 .networking-opensource-card { align-items: start; border-color: #c1d0d8; background: linear-gradient(145deg,#e5ede8,#dde8e2); box-shadow: inset 0 1px rgba(255,255,255,.75); }
-.networking-open-source-path li { display: flex; align-items: flex-start; gap: 9px; padding: 7px 8px; border-radius: 9px; }
-.networking-open-source-path li>span:last-child { min-width: 0; }
-.networking-open-source-path li:hover { background: rgba(255,255,255,.28); }
+.networking-open-source-path li { min-width: 0; }
 .networking-step-number { border-color: #e0e8eb; background: #d2e0e5; }
 .networking-opensource-card aside { border-color: #d6d5c8; background: #eceae1; }
 .networking-contact-tool { margin-top: 22px; padding: clamp(15px,2.2vw,22px); border: 1px solid #9eb2c2; border-radius: 18px; background: linear-gradient(145deg,#d7e2e9,#cedbe4); box-shadow: 0 10px 26px rgba(25,55,90,.085),inset 0 1px rgba(255,255,255,.72); }
@@ -334,26 +342,26 @@
 }
 .networking-page .networking-principle { background: rgba(214,226,234,.78); }
 .networking-page .networking-journey-panel {
-  padding: clamp(20px,3vw,30px);
+  padding: clamp(14px,2vw,20px);
   border: 1px solid rgba(110,139,162,.48);
   border-radius: 22px;
-  background: linear-gradient(135deg,rgba(223,233,240,.96),rgba(211,224,233,.94));
+  background: linear-gradient(135deg,rgba(216,228,236,.98),rgba(204,219,229,.96));
   box-shadow: 0 16px 38px rgba(25,55,90,.12),inset 0 1px rgba(255,255,255,.84);
 }
-.networking-page .networking-journey-panel .networking-progress-heading { align-items: flex-end; margin-bottom: 15px; }
+.networking-page .networking-journey-panel .networking-progress-heading { align-items: flex-end; margin-bottom: 8px; }
 .networking-page .networking-progress-heading .eyebrow { color: #5c7891; }
 .networking-page .networking-progress-heading h2 { color: #18365f; font-size: clamp(1.45rem,2.5vw,1.9rem); }
-.networking-page .networking-progress-heading>strong { color: #254f78; font-size: clamp(1.6rem,3vw,2rem); font-variant-numeric: tabular-nums; letter-spacing: -.035em; }
-.networking-page .networking-progress-bar { height: 10px; border: 1px solid rgba(105,132,154,.2); background: #c4d2dc; box-shadow: inset 0 1px 2px rgba(30,57,80,.12); }
+.networking-page .networking-progress-heading>strong { color: #254f78; font-size: clamp(1.35rem,2.3vw,1.7rem); font-variant-numeric: tabular-nums; letter-spacing: -.035em; }
+.networking-page .networking-progress-bar { height: 8px; border: 1px solid rgba(105,132,154,.2); background: #c4d2dc; box-shadow: inset 0 1px 2px rgba(30,57,80,.12); }
 .networking-page .networking-progress-bar i { background: linear-gradient(90deg,#7f9db5,#456f98); }
-.networking-page .networking-journey-count { margin: 10px 0 0; color: #536d82; font-size: .72rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.networking-page .networking-journey-count { margin: 5px 0 0; color: #536d82; font-size: .69rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .networking-page ol.networking-journey-list {
   display: grid;
   grid-template-columns: repeat(2,minmax(0,1fr));
   align-items: start;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
-  margin: 18px 0 0;
+  margin: 10px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -361,16 +369,16 @@
 .networking-page .networking-journey-toggle {
   appearance: none;
   display: grid;
-  grid-template-columns: minmax(0,1fr) 25px;
+  grid-template-columns: 25px minmax(0,1fr);
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 78px;
+  min-height: 62px;
   margin: 0;
-  padding: 14px 15px;
+  padding: 10px 12px;
   border: 1px solid rgba(117,144,166,.34);
   border-radius: 14px;
-  background: linear-gradient(145deg,rgba(235,241,245,.96),rgba(224,233,239,.96));
+  background: linear-gradient(145deg,rgba(224,233,239,.98),rgba(213,224,232,.98));
   box-shadow: 0 4px 12px rgba(25,55,90,.055),inset 0 1px rgba(255,255,255,.82);
   color: #18365f;
   font-family: "DM Sans",Arial,sans-serif;
@@ -402,9 +410,9 @@
   font-weight: 700;
   line-height: 1.4;
   font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
-.networking-page .networking-journey-copy small { display: block; color: #63798d; font-size: .67rem; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
+.networking-page .networking-journey-copy small { display: block; width: auto; max-width: none; min-width: 0; color: #63798d; font-size: .67rem; font-weight: 400; line-height: 1.5; overflow-wrap: normal; }
 .networking-page .networking-journey-toggle.is-complete .networking-journey-copy strong { color: #173b62; }
 .networking-page .networking-journey-check {
   display: grid;
@@ -427,8 +435,8 @@
   box-shadow: 0 9px 24px rgba(25,55,90,.06),inset 0 1px rgba(255,255,255,.66);
 }
 .networking-page .networking-opportunity-card,.networking-page .networking-presence-card,.networking-page .networking-person-card,.networking-page .networking-card,.networking-page .networking-scenario-card,.networking-page .networking-contact-card {
-  border-color: rgba(124,148,167,.34);
-  background: linear-gradient(145deg,rgba(237,242,245,.96),rgba(225,234,239,.96));
+  border-color: rgba(112,139,159,.4);
+  background: linear-gradient(145deg,rgba(225,233,238,.98),rgba(213,224,231,.98));
   box-shadow: 0 5px 15px rgba(25,55,90,.065),inset 0 1px rgba(255,255,255,.82);
 }
 .networking-page .networking-opportunity-card details>summary,.networking-page .networking-scenario-card legend { color: #315b7d; }
@@ -449,8 +457,13 @@
   color: #29476b;
 }
 .networking-page .networking-opensource-card aside { border-color: rgba(128,148,161,.3); background: rgba(221,230,235,.8); }
-.networking-page .networking-section-discover,.networking-page .networking-section-presence,.networking-page .networking-section-connect,.networking-page .networking-section-practice,.networking-page .networking-section-participate,.networking-page .networking-section-relationships { background: linear-gradient(145deg,rgba(228,236,241,.78),rgba(215,226,233,.78)); }
+.networking-page .networking-section-discover,.networking-page .networking-section-presence,.networking-page .networking-section-connect,.networking-page .networking-section-practice,.networking-page .networking-section-participate,.networking-page .networking-section-relationships { background: linear-gradient(145deg,rgba(214,225,233,.94),rgba(202,216,226,.94)); }
 @media (max-width: 760px) {
-  .networking-page ol.networking-journey-list { grid-template-columns: minmax(0,1fr); gap: 9px; margin-top: 15px; }
-  .networking-page .networking-journey-toggle { min-height: 72px; padding: 13px; }
+  .networking-page ol.networking-journey-list { grid-template-columns: minmax(0,1fr); gap: 7px; margin-top: 9px; }
+  .networking-page .networking-journey-toggle { min-height: 58px; padding: 9px 10px; }
+}
+@media (max-width: 520px) {
+  .networking-open-source-path { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .networking-scenario-summary { grid-template-columns: 32px minmax(0,1fr) 22px; gap: 8px; padding: 9px 10px; }
+  .networking-scenario-title { font-size: .72rem; }
 }
