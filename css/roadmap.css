@@ -34,7 +34,7 @@
 .roadmap-main { padding: clamp(38px,5vw,62px) 0 88px; }
 
 /* 3. Hero and selected-role overview */
-.roadmap-hero { position: relative; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(280px,.72fr); align-items: center; gap: clamp(26px,5vw,60px); min-width: 0; padding: clamp(28px,4.5vw,52px); overflow: hidden; border: 1px solid rgba(151,171,191,.28); border-radius: 25px; background: linear-gradient(125deg,rgba(255,255,255,.98),rgba(255,255,255,.96) 68%,rgba(237,244,249,.94)); box-shadow: var(--shadow); }
+.roadmap-hero { position: relative; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(280px,.72fr); align-items: center; gap: clamp(26px,5vw,60px); min-width: 0; padding: clamp(28px,4.5vw,52px); overflow: hidden; border: 1px solid rgba(126,153,177,.34); border-radius: 25px; background: radial-gradient(ellipse at 86% 0%,rgba(255,255,255,.72),transparent 44%),linear-gradient(125deg,#edf3f7 0%,#e7eff4 63%,#dce7ef 100%); box-shadow: 0 16px 40px rgba(25,55,90,.09),inset 0 1px rgba(255,255,255,.9); }
 .roadmap-hero:after { position: absolute; top: -150px; right: -110px; width: 340px; height: 340px; border: 1px solid rgba(126,153,180,.16); border-radius: 50%; box-shadow: 0 0 0 28px rgba(126,153,180,.035),0 0 0 58px rgba(126,153,180,.025); content: ""; pointer-events: none; }
 .roadmap-hero-copy,.roadmap-overview { position: relative; z-index: 1; min-width: 0; }
 .roadmap-hero h1 { max-width: 680px; margin: 0 0 20px; color: #102a56; font-size: clamp(2.5rem,5.2vw,4.5rem); line-height: 1.02; overflow-wrap: anywhere; }
@@ -49,15 +49,19 @@
 .journey-flow i { color: #9aabba; font-size: .72rem; font-style: normal; }
 
 /* 4. Overall progress and summary */
-.roadmap-overview { min-width: 0; padding: 23px; border: 1px solid rgba(151,171,191,.3); border-radius: 20px; background: linear-gradient(145deg,#f7fafc,#edf3f8); color: var(--ink); }
+.roadmap-overview { min-width: 0; padding: 23px; border: 1px solid rgba(123,151,176,.38); border-radius: 20px; background: radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.48),transparent 48%),linear-gradient(145deg,#e3ecf2,#d5e1e9); box-shadow: inset 0 1px rgba(255,255,255,.82),0 8px 20px rgba(34,63,91,.08); color: var(--ink); }
 .overview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
 .roadmap-overview .overview-heading>span { color: #6d8298; font-size: .59rem; font-weight: 700; letter-spacing: .12em; }
 .roadmap-overview .overview-heading strong { margin: 0; color: #18365f; font-size: 1.24rem; text-align: right; }
-.roadmap-overview .progress-bar { height: 9px; background: #dce6ee; }
-.roadmap-overview .progress-bar i { background: linear-gradient(90deg,#90abc4,#557ca8); }
+.roadmap-overview .progress-bar { display: block; width: 100%; height: 9px; overflow: hidden; border: 1px solid rgba(102,131,157,.22); border-radius: 99px; background: linear-gradient(180deg,#c5d3de,#d0dce5); box-shadow: inset 0 1px 2px rgba(34,61,87,.12); }
+.roadmap-overview .progress-bar i { display: block; width: 0; max-width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#7595b4,#456b9b); box-shadow: inset 0 1px rgba(255,255,255,.28); transition: width .24s ease; }
 .roadmap-overview small { display: block; margin-top: 10px; color: #71859a; font-size: .7rem; }
 .roadmap-summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 13px; margin-top: 16px; }
-.summary-card { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 100px; padding: 16px; border: 1px solid rgba(151,171,191,.26); border-radius: 17px; background: rgba(255,255,255,.94); box-shadow: 0 8px 22px rgba(25,55,90,.045); transition: transform .2s ease,border-color .2s ease,box-shadow .2s ease; }
+.summary-card { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 100px; padding: 16px; border: 1px solid rgba(132,157,179,.34); border-radius: 17px; background: linear-gradient(145deg,#f0f5f8,#e5edf2); box-shadow: 0 9px 23px rgba(25,55,90,.065),inset 0 1px rgba(255,255,255,.82); transition: transform .2s ease,border-color .2s ease,box-shadow .2s ease; }
+.summary-completed { background: linear-gradient(145deg,#f0f6f2,#e5efe9); }
+.summary-remaining { background: linear-gradient(145deg,#eff4f7,#e2eaf0); }
+.summary-stage { background: linear-gradient(145deg,#edf4f8,#dfeaf1); }
+.summary-next { background: linear-gradient(145deg,#f4f4f2,#e9ebe9); }
 .summary-card:hover { transform: translateY(-2px); border-color: #b9cbd9; box-shadow: 0 12px 26px rgba(25,55,90,.08); }
 .summary-card>div { min-width: 0; }
 .summary-icon { display: grid; flex: 0 0 38px; place-items: center; width: 38px; height: 38px; border: 1px solid #dce6ee; border-radius: 12px; background: #f1f6f9; color: #55799e; font-size: 1rem; font-weight: 700; }
@@ -82,10 +86,10 @@
 .journey-current .stage-node { width: 62px; height: 62px; margin-left: -2px; border-color: #e8f0f6; background: #557ca8; box-shadow: 0 0 0 5px rgba(85,124,168,.12); color: #fff; }
 .journey-completed .stage-node { background: #5a8b72; box-shadow: 0 0 0 4px #eaf3ee; color: #fff; font-size: .95rem; }
 .roadmap-stage.journey-completed:after { position: absolute; z-index: 0; top: 79px; bottom: -25px; left: 28px; width: 2px; border-radius: 99px; background: #9dbdab; content: ""; }
-.stage-card { min-width: 0; padding: clamp(20px,3vw,31px); border: 1px solid rgba(151,171,191,.27); border-radius: 21px; background: rgba(255,255,255,.95); box-shadow: 0 9px 27px rgba(25,55,90,.05); transition: border-color .2s ease,box-shadow .2s ease; }
-.journey-current .stage-card { border-color: #a9bfd2; box-shadow: 0 13px 34px rgba(48,83,120,.1); }
-.journey-upcoming .stage-card { background: rgba(255,255,255,.88); }
-.journey-completed .stage-card { border-color: #c7dfd1; background: linear-gradient(120deg,#fff,#f8fbf9); }
+.stage-card { min-width: 0; padding: clamp(20px,3vw,31px); border: 1px solid rgba(132,157,179,.34); border-radius: 21px; background: linear-gradient(145deg,#e9f0f4,#e1eaf0); box-shadow: 0 10px 28px rgba(25,55,90,.075),inset 0 1px rgba(255,255,255,.8); transition: border-color .2s ease,box-shadow .2s ease; }
+.journey-current .stage-card { border-color: #9fb7ca; background: linear-gradient(145deg,#edf3f7,#e2ecf2); box-shadow: 0 13px 32px rgba(48,83,120,.11),inset 0 1px rgba(255,255,255,.86); }
+.journey-upcoming .stage-card { background: linear-gradient(145deg,#edf2f5,#e5ecf1); }
+.journey-completed .stage-card { border-color: #bad3c4; background: linear-gradient(125deg,#e9f2ec,#e2ede7); }
 .stage-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; margin-bottom: 15px; }
 .stage-heading>div { min-width: 0; }
 .stage-heading .eyebrow { margin-bottom: 6px; font-size: .58rem; }
@@ -102,22 +106,26 @@
 
 /* 6. Skill cards, learning details and resources */
 .skill-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; min-width: 0; }
-.skill-item { min-width: 0; overflow: hidden; border: 1px solid #e0e7ed; border-radius: 13px; background: #fff; transition: border-color .18s ease,box-shadow .18s ease; }
+.skill-item { min-width: 0; overflow: hidden; border: 1px solid #d3dee6; border-radius: 13px; background: linear-gradient(145deg,#f8fafb,#edf3f6); transition: border-color .18s ease,box-shadow .18s ease,background .18s ease; }
 .skill-item:hover { border-color: #bfcedb; box-shadow: 0 7px 17px rgba(25,55,90,.055); }
-.skill-item.skill-in-progress { border-color: #b4c8da; background: #f8fafc; }
-.skill-item.skill-completed { border-color: #c1ddcc; background: #f8fbf9; }
-.skill-toggle { display: grid; grid-template-columns: 27px minmax(0,1fr) auto 16px; align-items: center; gap: 9px; width: 100%; min-width: 0; min-height: 72px; padding: 12px; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
-.skill-toggle:hover { background: rgba(243,247,250,.72); }
-.skill-status-symbol { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid #e1e8ee; border-radius: 50%; background: #f4f7f9; color: #8797a7; font-size: .77rem; }
-.skill-in-progress .skill-status-symbol { border-color: #d6e2eb; background: #edf3f8; color: #456b9b; }
-.skill-completed .skill-status-symbol { border-color: #d7e8dd; background: #eff7f2; color: #4d8068; }
+.skill-item.skill-completed { border-color: #b9d2c3; background: linear-gradient(145deg,#f1f7f3,#e7f0ea); }
+.skill-row { display: grid; grid-template-columns: 42px minmax(0,1fr); align-items: stretch; gap: 7px; min-width: 0; padding: 8px; }
+.skill-completion { position: relative; display: grid; place-items: center; align-self: stretch; min-width: 42px; min-height: 56px; cursor: pointer; }
+.skill-completion input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.skill-checkmark { display: grid; place-items: center; width: 23px; height: 23px; border: 1px solid #aebfce; border-radius: 7px; background: linear-gradient(145deg,#fff,#f1f5f8); box-shadow: inset 0 1px rgba(255,255,255,.95),0 1px 2px rgba(37,66,94,.08); transition: background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease; }
+.skill-checkmark:after { width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; content: ""; opacity: 0; transform: rotate(45deg) translate(-1px,-1px) scale(.7); transition: opacity .14s ease,transform .14s ease; }
+.skill-completion input:checked + .skill-checkmark { border-color: #56806b; background: linear-gradient(145deg,#6b9a7e,#4f8066); box-shadow: inset 0 1px rgba(255,255,255,.24),0 2px 5px rgba(56,99,75,.2); }
+.skill-completion input:checked + .skill-checkmark:after { opacity: 1; transform: rotate(45deg) translate(-1px,-1px) scale(1); }
+.skill-completion input:focus-visible + .skill-checkmark { outline: 3px solid rgba(80,123,163,.45); outline-offset: 3px; }
+.skill-completion input:active + .skill-checkmark { transform: scale(.94); }
+.skill-expand { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 10px; width: 100%; min-width: 0; min-height: 56px; padding: 7px 8px 7px 2px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.skill-expand:hover { background: rgba(232,239,245,.58); }
+.skill-expand:focus-visible { outline: 2px solid #6488ad; outline-offset: 2px; }
 .skill-toggle-copy { display: block; min-width: 0; }
 .skill-toggle-copy strong { display: block; color: #29476b; font-size: .78rem; line-height: 1.4; overflow-wrap: anywhere; }
 .skill-toggle-copy small { display: block; margin-top: 4px; color: #7b8da0; font-size: .65rem; font-weight: 400; line-height: 1.45; overflow-wrap: anywhere; }
-.skill-status-text { padding: 4px 7px; border-radius: 99px; background: #f1f4f6; color: #74869a; font-size: .52rem; font-weight: 700; white-space: nowrap; }
-.skill-in-progress .skill-status-text { background: #edf3f8; color: #456b9b; }
-.skill-completed .skill-status-text { background: #eff7f2; color: #4d8068; }
-.skill-toggle>b { color: #6485a5; font-size: 1rem; font-weight: 500; text-align: center; }
+.skill-status-text { padding: 5px 8px; border: 1px solid #e3e9ee; border-radius: 99px; background: #f5f7f9; color: #718398; font-size: .54rem; font-weight: 700; white-space: nowrap; }
+.skill-completed .skill-status-text { border-color: #d1e3d8; background: #edf6f0; color: #4c765f; }
 .skill-detail { display: none; min-width: 0; padding: 4px 15px 16px; border-top: 1px solid #e7edf1; }
 .skill-detail.open { display: block; }
 .skill-detail>div { margin-top: 13px; }
@@ -134,17 +142,10 @@
 .resource-copy { display: grid; gap: 3px; min-width: 0; }
 .resource-copy p { margin: 0; color: #6f8296; font-size: .66rem; line-height: 1.5; overflow-wrap: anywhere; }
 .resource-copy a { color: #456b9b; font-size: .72rem; line-height: 1.45; text-decoration: underline; text-decoration-color: #c1d0dd; text-underline-offset: 2px; overflow-wrap: anywhere; }
-.skill-status-controls { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 15px; padding-top: 13px; border-top: 1px solid #e7edf1; }
-.status-controls-label { margin-right: 3px; color: #71859a; font-size: .54rem; font-weight: 700; letter-spacing: .11em; }
-.status-choice { padding: 7px 9px; border: 1px solid #e2e8ed; border-radius: 8px; background: #f7f9fa; color: #63788d; font: inherit; font-size: .62rem; font-weight: 600; cursor: pointer; transition: border-color .16s ease,background .16s ease,color .16s ease; }
-.status-choice:hover { border-color: #b7c9d8; background: #fff; }
-.status-choice-not-started.selected { border-color: #d5dfe7; background: #eff3f6; color: #596f83; }
-.status-choice-in-progress.selected { border-color: #c4d5e2; background: #edf3f8; color: #456b9b; }
-.status-choice-completed.selected { border-color: #c9dfd2; background: #eff7f2; color: #4d8068; }
 .capstone-note { margin: 0; color: #667b90; font-size: .8rem; line-height: 1.6; }
 
 /* 7. Missions and completion states */
-.mission-card { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 20px; min-width: 0; margin-top: 18px; padding: 19px 20px; border: 1px solid #dfe7ed; border-radius: 15px; background: linear-gradient(120deg,#f7fafb,#f1f6f8); }
+.mission-card { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 20px; min-width: 0; margin-top: 18px; padding: 19px 20px; border: 1px solid #ccd9e2; border-radius: 15px; background: linear-gradient(125deg,#e8eff3,#dfe8ee); box-shadow: inset 0 1px rgba(255,255,255,.72),0 6px 18px rgba(25,55,90,.045); }
 .mission-content { min-width: 0; }
 .mission-card .eyebrow { margin-bottom: 7px; color: #6b8094; font-size: .58rem; font-weight: 700; letter-spacing: .1em; }
 .mission-card h3 { margin: 0 0 6px; color: #29476b; font-size: 1.05rem; line-height: 1.3; overflow-wrap: anywhere; }
@@ -155,17 +156,17 @@
 .mission-card ul { display: grid; gap: 5px; margin: 11px 0 0; padding: 0; list-style: none; }
 .mission-card li { position: relative; margin: 0; padding-left: 20px; }
 .mission-card li:before { position: absolute; left: 0; color: #628b73; content: "✓"; }
-.mission-complete { position: relative; display: flex; align-items: center; gap: 9px; min-width: 168px; padding: 10px 12px; border: 1px solid #dfe7ed; border-radius: 11px; background: #fff; color: #516a82; font-size: .67rem; font-weight: 600; line-height: 1.4; cursor: pointer; }
+.mission-complete { position: relative; display: flex; align-items: center; gap: 9px; min-width: 168px; padding: 10px 12px; border: 1px solid #c8d6df; border-radius: 11px; background: linear-gradient(145deg,#f5f8fa,#e8eff3); color: #516a82; font-size: .67rem; font-weight: 600; line-height: 1.4; cursor: pointer; }
 .mission-complete:hover { border-color: #b8d2c2; }
 .mission-complete input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .mission-checkmark { display: grid; flex: 0 0 22px; place-items: center; width: 22px; height: 22px; border: 1px solid #d6e0e7; border-radius: 7px; background: #f4f7f9; color: transparent; font-size: .7rem; font-weight: 700; }
 .mission-complete input:checked~.mission-checkmark { border-color: #72957f; background: #668b74; color: #fff; }
 .mission-complete input:focus-visible~.mission-checkmark { outline: 2px solid #6488ad; outline-offset: 2px; }
-.mission-completed { border-color: #c9dfd2; background: linear-gradient(120deg,#f2f8f4,#f8fbf9); }
+.mission-completed { border-color: #b8d2c2; background: linear-gradient(120deg,#e6f0e9,#edf5f0); }
 .mission-completed .mission-checkmark { border-color: #72957f; background: #668b74; color: #fff; }
-.mission-capstone { border-color: #d8e2e9; background: linear-gradient(125deg,#edf3f7,#f8fafb); }
+.mission-capstone { border-color: #c5d4de; background: linear-gradient(125deg,#e2ebf1,#edf2f5); }
 .mission-capstone h3,.mission-capstone strong { color: #18365f; }
-.mission-capstone.mission-completed { background: linear-gradient(120deg,#eff7f2,#f8fbf9); }
+.mission-capstone.mission-completed { background: linear-gradient(120deg,#e4efe8,#edf5f0); }
 .milestone { margin: 13px 0 0 !important; color: #4d8068 !important; font-weight: 700; }
 .capstone-stage .stage-node { border-color: #f0e9df; background: #b38a60; color: #fff; }
 .journey-start,.journey-finish { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; min-width: 0; grid-column: 2; padding: 16px 20px; border: 1px solid #d6e1e9; border-radius: 16px; background: linear-gradient(120deg,#f8fbfc,#eaf1f6); color: #29476b; box-shadow: 0 8px 22px rgba(25,55,90,.06); }
@@ -231,17 +232,14 @@
   .stage-flow span { padding: 4px 5px; }
   .stage-flow i { font-size: .56rem; }
   .skill-list { gap: 8px; }
-  .skill-toggle { grid-template-columns: 23px minmax(0,1fr) 14px; gap: 7px; min-height: 70px; padding: 10px 9px; }
-  .skill-status-symbol { width: 22px; height: 22px; font-size: .68rem; }
+  .skill-row { grid-template-columns: 42px minmax(0,1fr); gap: 4px; padding: 7px; }
+  .skill-completion { min-height: 58px; }
+  .skill-expand { grid-template-columns: minmax(0,1fr); gap: 5px; min-height: 58px; padding-right: 3px; }
   .skill-toggle-copy strong { font-size: .73rem; }
   .skill-toggle-copy small { font-size: .62rem; }
-  .skill-status-text { grid-column: 2; grid-row: 2; justify-self: start; font-size: .5rem; }
-  .skill-toggle>b { grid-column: 3; grid-row: 1; }
+  .skill-status-text { justify-self: start; font-size: .5rem; }
   .skill-detail { padding: 2px 10px 13px; }
   .resource-list .resource-item { flex-direction: column; gap: 6px; }
-  .skill-status-controls { gap: 5px; }
-  .status-controls-label { width: 100%; }
-  .status-choice { padding: 7px 6px; font-size: .57rem; }
   .mission-card { grid-template-columns: minmax(0,1fr); gap: 12px; padding: 15px; }
   .mission-complete { justify-self: start; min-width: 0; }
   .journey-start { gap: 10px; margin-left: 46px; padding: 12px; }

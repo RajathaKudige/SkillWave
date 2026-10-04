@@ -75,19 +75,19 @@ if (roadmapPage) {
       };
 
       const saveProgress = () => {
-        const completedSkills = allSkills.filter((item) => statuses[item.id] === "Completed").length;
-        const completedMissions = roadmap.stages.filter((stage) => missionStatus[stage.title]).length;
-        const completed = completedSkills + completedMissions;
+        const progress = window.roadmapProgress.calculateProgress(roadmap, statuses, missionStatus);
+        const completed = progress.completed;
+        const percentage = Math.max(0, Math.min(100, progress.total ? Math.round((completed / progress.total) * 100) : 0));
         skillStateByRole[targetRole] = statuses;
         missionStateByRole[targetRole] = missionStatus;
         progressByRole[targetRole] = { completed, total: totalItems };
         localStorage.setItem("roadmapSkillStatus", JSON.stringify(skillStateByRole));
         localStorage.setItem("roadmapMissionStatus", JSON.stringify(missionStateByRole));
         localStorage.setItem("roadmapProgress", JSON.stringify(progressByRole));
-        document.querySelector("#roadmap-progress-value").textContent = completed ? `${Math.round((completed / totalItems) * 100)}%` : "Not started";
+        document.querySelector("#roadmap-progress-value").textContent = `${percentage}%`;
         document.querySelector("#roadmap-progress-count").textContent = `${completed} of ${totalItems} completed items`;
-        document.querySelector("#roadmap-progress-bar").style.width = `${Math.round((completed / totalItems) * 100)}%`;
-        document.querySelector(".roadmap-overview .progress-bar").setAttribute("aria-valuenow", Math.round((completed / totalItems) * 100));
+        document.querySelector("#roadmap-progress-bar").style.width = `${percentage}%`;
+        document.querySelector(".roadmap-overview .progress-bar").setAttribute("aria-valuenow", percentage);
         updateSummary();
       };
 
@@ -117,7 +117,6 @@ if (roadmapPage) {
                   /article|blog|guide|tutorial/.test(source) ? "article" : "documentation");
         return { type, ...resourceTypes[type] };
       };
-      const statusChoiceKey = (status) => status.toLowerCase().replace(/\s+/g, "-");
       const stageState = (stage, index, currentIndex) => {
         if (statusClass(stage) === "completed") return "completed";
         return index === currentIndex ? "current" : "upcoming";
@@ -135,15 +134,16 @@ if (roadmapPage) {
               <div class="stage-heading"><div><p class="eyebrow">${isCapstone ? "FINAL DESTINATION" : `MILESTONE ${stageNumber}`}</p><h2>${stage.title}</h2></div><span class="stage-state-label">${state === "current" ? "CURRENT STAGE" : state === "completed" ? "COMPLETED" : "UPCOMING"}</span></div>
               <div class="stage-flow" aria-label="Learn, practice, build, complete, move forward"><span>LEARN</span><i>↓</i><span>PRACTICE</span><i>↓</i><span>BUILD</span><i>↓</i><span>COMPLETE</span><i>↓</i><span>NEXT</span></div>
               <div class="skill-list">${stage.skills.length ? stage.skills.map((item) => {
-                const currentStatus = statuses[item.id] || "Not Started";
-                const statusKey = statusChoiceKey(currentStatus);
+                const isCompleted = statuses[item.id] === "Completed";
                 const isOpen = openSkillIds.has(`detail-${item.id}`);
-                return `<article class="skill-item skill-${statusKey}">
-                  <button class="skill-toggle" data-skill="${item.id}" aria-expanded="${isOpen}" aria-controls="detail-${item.id}">
-                    <span class="skill-status-symbol" aria-hidden="true">${currentStatus === "Completed" ? "✓" : currentStatus === "In Progress" ? "◐" : "○"}</span>
-                    <span class="skill-toggle-copy"><strong>${item.title}</strong><small>${item.what}</small></span>
-                    <span class="skill-status-text">${currentStatus}</span><b aria-hidden="true">${isOpen ? "−" : "+"}</b>
-                  </button>
+                return `<article class="skill-item ${isCompleted ? "skill-completed" : ""}">
+                  <div class="skill-row">
+                    <label class="skill-completion"><input type="checkbox" data-skill-complete="${item.id}" ${isCompleted ? "checked" : ""} aria-label="${isCompleted ? `Mark ${item.title} not completed` : `Mark ${item.title} completed`}"><span class="skill-checkmark" aria-hidden="true"></span></label>
+                    <button type="button" class="skill-expand" data-skill-toggle="${item.id}" aria-expanded="${isOpen}" aria-controls="detail-${item.id}">
+                      <span class="skill-toggle-copy"><strong>${item.title}</strong><small>${item.what}</small></span>
+                      <span class="skill-status-text">${isCompleted ? "Completed" : "Not completed"}</span>
+                    </button>
+                  </div>
                   <div class="skill-detail ${isOpen ? "open" : ""}" id="detail-${item.id}">
                     <div class="detail-section"><h3>What</h3><p>${item.what}</p></div>
                     <div class="detail-section"><h3>Where</h3><ul class="resource-list">${item.resources.slice(0, 4).map((itemResource) => {
@@ -153,7 +153,6 @@ if (roadmapPage) {
                     }).join("")}</ul></div>
                     <div class="detail-section"><h3>How</h3><p>${item.how}</p></div>
                     <div class="detail-section practice-section"><h3>Practice</h3><p>${item.practice}</p></div>
-                    <div class="skill-status-controls" role="group" aria-label="Set ${item.title} status"><span class="status-controls-label">STATUS</span>${["Not Started", "In Progress", "Completed"].map((status) => `<button type="button" class="status-choice ${currentStatus === status ? "selected" : ""} status-choice-${statusChoiceKey(status)}" data-skill-status="${item.id}" data-value="${status}" aria-pressed="${currentStatus === status}">${status === "Completed" ? "✓ " : status === "In Progress" ? "◐ " : "○ "}${status}</button>`).join("")}</div>
                   </div>
                 </article>`;
               }).join("") : `<p class="capstone-note">Bring every skill from your journey together in a complete, portfolio-ready project.</p>`}</div>
@@ -167,25 +166,24 @@ if (roadmapPage) {
         saveProgress();
       };
       stagesElement.addEventListener("click", (event) => {
-        const toggle = event.target.closest(".skill-toggle");
-        const statusChoice = event.target.closest("[data-skill-status]");
+        const toggle = event.target.closest("[data-skill-toggle]");
         if (toggle) {
-          const detail = document.querySelector(`#detail-${toggle.dataset.skill}`);
+          const detail = document.querySelector(`#detail-${toggle.dataset.skillToggle}`);
           const isOpen = detail.classList.toggle("open");
           toggle.setAttribute("aria-expanded", isOpen);
-          toggle.querySelector("b").textContent = isOpen ? "−" : "+";
-        }
-        if (statusChoice) {
-          const id = statusChoice.dataset.skillStatus;
-          statuses[id] = statusChoice.dataset.value;
-          message.textContent = `Skill status updated to ${statuses[id]}.`;
-          render();
         }
       });
       stagesElement.addEventListener("change", (event) => {
-        if (event.target.matches("[data-mission]")) {
+        if (event.target.matches("[data-skill-complete]")) {
+          const id = event.target.dataset.skillComplete;
+          if (event.target.checked) statuses[id] = "Completed";
+          else delete statuses[id];
+          message.textContent = "";
+          render();
+          [...stagesElement.querySelectorAll("[data-skill-complete]")].find((control) => control.dataset.skillComplete === id)?.focus();
+        } else if (event.target.matches("[data-mission]")) {
           missionStatus[event.target.dataset.mission] = event.target.checked;
-          message.textContent = event.target.checked ? "Mission marked as completed." : "Mission marked as incomplete.";
+          message.textContent = event.target.checked ? "Mission marked as completed." : "";
           render();
         }
       });
