@@ -193,10 +193,7 @@ if (dashboardPage) {
     const timeOfDay = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
     const firstName = (studentProfile.name || "there").trim().split(" ")[0];
 
-    setText("#greeting", `Good ${timeOfDay}, ${firstName} 👋`);
-    setText("#hero-domain", studentProfile.domain);
-    setText("#hero-track", studentProfile.careerTrack);
-    setText("#hero-role", studentProfile.targetRole);
+    setText("#greeting", `Good ${timeOfDay}, ${firstName}`);
     setText("#profile-name", studentProfile.name);
     setText("#profile-initial", firstName.charAt(0).toUpperCase());
     setText("#profile-education", studentProfile.education);
@@ -206,8 +203,7 @@ if (dashboardPage) {
     setText("#profile-role", studentProfile.targetRole);
     setText("#overall-progress", overall === null ? "—" : `${overall}%`);
     setText("#overall-label", overall === null ? "not assessed" : "overall");
-    document.querySelector("#overall-ring").style.borderTopColor = overall === null ? "#dfe8ff" : "var(--blue)";
-    document.querySelector("#overall-ring").style.borderRightColor = overall === null ? "#dfe8ff" : "var(--blue)";
+    document.querySelector("#overall-ring").style.setProperty("--overall-progress", `${Math.max(0, Math.min(100, Number(overall) || 0))}%`);
     setReadinessArea("#technical-bar", "#technical-value", "#technical-hint", technical, "Not assessed", "Complete your technical assessment");
     if (hasSelectedRoadmap) setText("#technical-hint", "Based on your roadmap progress");
     setReadinessArea("#soft-skills-bar", "#soft-skills-value", "#soft-skills-hint", softSkills, "Not assessed", "Complete your soft skills assessment");
