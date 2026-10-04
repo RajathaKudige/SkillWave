@@ -7,11 +7,14 @@
   --line: #d9e3ec;
   --shadow: 0 14px 38px rgba(25,55,90,.075);
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
   color: var(--ink);
-  background-color: #dce8f2;
-  background-image: radial-gradient(ellipse at 18% 4%,rgba(255,255,255,.88),transparent 42%),radial-gradient(ellipse at 88% 37%,rgba(190,211,230,.42),transparent 42%),linear-gradient(135deg,rgba(255,255,255,.18),transparent 48%,rgba(204,220,234,.22));
+  background-color: #c7d5e1;
   font-family: "DM Sans",Arial,sans-serif;
 }
+.networking-page:before { position: fixed; z-index: -1; inset: 0; background-color: #c7d5e1; background-image: radial-gradient(ellipse at 18% 12%,rgba(255,255,255,.62),transparent 46%),radial-gradient(ellipse at 84% 84%,rgba(173,196,216,.42),transparent 46%),linear-gradient(135deg,rgba(207,222,235,.38),transparent 35%,rgba(255,255,255,.2) 62%,transparent),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='chrome' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23fff' stop-opacity='.1'/%3E%3Cstop offset='.28' stop-color='%23aebdca' stop-opacity='.48'/%3E%3Cstop offset='.48' stop-color='%23fff' stop-opacity='.78'/%3E%3Cstop offset='.68' stop-color='%23b5c3d0' stop-opacity='.36'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='.08'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M-120 730C220 575 375 835 710 655S1160 305 1730 470' fill='none' stroke='url(%23chrome)' stroke-width='190' opacity='.34'/%3E%3Cpath d='M-120 645C250 500 415 730 730 570S1190 260 1730 380' fill='none' stroke='%23fff' stroke-opacity='.44' stroke-width='2'/%3E%3Cpath d='M-120 815C220 665 420 910 760 725S1220 385 1730 550' fill='none' stroke='%239db0c2' stroke-opacity='.24' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat,no-repeat,no-repeat,no-repeat; background-size: auto,auto,auto,cover; background-position: center,center,center,center; content: ""; pointer-events: none; }
+.networking-page > header,.networking-page > main,.networking-page > footer { position: relative; z-index: 1; }
 .networking-page h1,.networking-page h2,.networking-page h3 { font-family: "Fraunces",Georgia,serif; font-weight: 500; letter-spacing: -.035em; }
 .networking-page :focus-visible { outline: 2px solid #6488ad; outline-offset: 3px; }
 
