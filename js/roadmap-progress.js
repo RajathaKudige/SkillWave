@@ -44,7 +44,7 @@ window.roadmapProgress = (() => {
     }
   };
 
-  const readSkillStatusesByRole = (storage = localStorage) => {
+  const readSkillStatusesByRole = (storage = localStorage, persistChanges = true) => {
     const stored = JSON.parse(storage.getItem(STORAGE_KEY)) || {};
     const isRoleScoped = Object.values(stored).some((value) => value && typeof value === "object" && !Array.isArray(value));
     const statusesByRole = isRoleScoped
@@ -78,7 +78,7 @@ window.roadmapProgress = (() => {
       }
     }
 
-    if (changed) storage.setItem(STORAGE_KEY, JSON.stringify(statusesByRole));
+    if (changed && persistChanges) storage.setItem(STORAGE_KEY, JSON.stringify(statusesByRole));
     return statusesByRole;
   };
 
@@ -86,12 +86,90 @@ window.roadmapProgress = (() => {
     const stages = roadmap?.stages || [];
     const skills = stages.flatMap((stage) => stage.skills || []);
     const completedSkills = skills.filter((item) => skillStatuses[item.id] === "Completed").length;
-    const completedMissions = stages.filter((stage) => Boolean(missionStatuses[stage.title])).length;
+    const completedMissions = stages.filter((stage) => Boolean(missionStatuses[stage.mission?.id] ?? missionStatuses[stage.title])).length;
     return {
       completed: completedSkills + completedMissions,
       total: skills.length + stages.length
     };
   };
 
-  return { readSkillStatusesByRole, calculateProgress };
+  const loadAuthoritativeState = async (storage, progressStore = window.progressStore, catalog = window.roadmapData) => {
+    if (!progressStore || !catalog || typeof catalog !== "object") throw new Error("Roadmap progress services are unavailable.");
+    const load = (key) => {
+      try {
+        const parsed = JSON.parse(storage.getItem(key) || "{}");
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      } catch {
+        return {};
+      }
+    };
+    let legacySkills = {};
+    try { legacySkills = readSkillStatusesByRole(storage, false); } catch { legacySkills = {}; }
+    const legacyMissionsRaw = load("roadmapMissionStatus");
+    const isMissionRoleScoped = Object.values(legacyMissionsRaw).some((value) => value && typeof value === "object" && !Array.isArray(value));
+    const legacyMissions = isMissionRoleScoped ? legacyMissionsRaw : (Object.keys(legacyMissionsRaw).length ? { "Full-Stack Developer": legacyMissionsRaw } : {});
+    const [existingSkills, existingMissions] = await Promise.all([
+      progressStore.loadRoadmapSkillProgress(),
+      progressStore.loadRoadmapMissionProgress()
+    ]);
+    const skillKey = (role, id) => `${role}\u0000${id}`;
+    const existingSkillKeys = new Set(existingSkills.map((row) => skillKey(row.target_role, row.skill_id)));
+    const existingMissionKeys = new Set(existingMissions.map((row) => skillKey(row.target_role, row.mission_id)));
+    const skillWrites = [];
+    const missionWrites = [];
+
+    for (const [role, roadmap] of Object.entries(catalog)) {
+      if (!roadmap || !Array.isArray(roadmap.stages)) continue;
+      const validSkillIds = new Set(roadmap.stages.flatMap((stage) => Array.isArray(stage?.skills) ? stage.skills : [])
+        .map((skill) => skill?.id).filter((id) => typeof id === "string" && id.trim()));
+      const roleSkills = legacySkills[role];
+      if (roleSkills && typeof roleSkills === "object" && !Array.isArray(roleSkills)) {
+        for (const [skillId, status] of Object.entries(roleSkills)) {
+          if (!validSkillIds.has(skillId) || typeof status !== "string" || !status.trim() || status.trim().toLowerCase() === "not started") continue;
+          if (!existingSkillKeys.has(skillKey(role, skillId))) {
+            skillWrites.push({ target_role: role, skill_id: skillId, status: status.trim() });
+            existingSkillKeys.add(skillKey(role, skillId));
+          }
+        }
+      }
+
+      const roleMissions = legacyMissions[role];
+      if (!roleMissions || typeof roleMissions !== "object" || Array.isArray(roleMissions)) continue;
+      for (const stage of roadmap.stages) {
+        if (roleMissions[stage?.title] !== true) continue;
+        const missionId = stage?.mission?.id;
+        if (typeof missionId !== "string" || !missionId.trim()) continue;
+        const key = skillKey(role, missionId);
+        if (!existingMissionKeys.has(key)) {
+          missionWrites.push({ target_role: role, mission_id: missionId, completed: true });
+          existingMissionKeys.add(key);
+        }
+      }
+    }
+
+    const migrateInChunks = async (records, save) => {
+      for (let index = 0; index < records.length; index += 10) {
+        await Promise.all(records.slice(index, index + 10).map(save));
+      }
+    };
+    await migrateInChunks(skillWrites, (record) => progressStore.insertRoadmapSkillProgressIfMissing(record));
+    await migrateInChunks(missionWrites, (record) => progressStore.insertRoadmapMissionProgressIfMissing(record));
+
+    // Reload after migration so server state, including pre-existing rows, is authoritative.
+    const [skills, missions] = await Promise.all([
+      progressStore.loadRoadmapSkillProgress(),
+      progressStore.loadRoadmapMissionProgress()
+    ]);
+    const skillStatusesByRole = {};
+    for (const row of skills) {
+      (skillStatusesByRole[row.target_role] ||= {})[row.skill_id] = row.status;
+    }
+    const missionStatusesByRole = {};
+    for (const row of missions) {
+      (missionStatusesByRole[row.target_role] ||= {})[row.mission_id] = row.completed;
+    }
+    return { skillStatusesByRole, missionStatusesByRole };
+  };
+
+  return { readSkillStatusesByRole, calculateProgress, loadAuthoritativeState };
 })();

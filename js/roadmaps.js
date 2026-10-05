@@ -1,4 +1,4 @@
-window.accountAuth.ready.then((authState) => {
+window.accountAuth.ready.then(async (authState) => {
   if (!authState?.user || authState.redirected) return;
   const localStorage = window.accountAuth.userStorage(authState.user.id);
   const studentProfile = window.accountAuth.studentProfile(authState.profile);
@@ -13,31 +13,36 @@ if (roadmapPage) {
     const stagesElement = document.querySelector("#roadmap-stages");
     const message = document.querySelector("#roadmap-message");
     const targetRole = studentProfile.targetRole || "Full-Stack Developer";
+    let authoritativeState;
+    try {
+      authoritativeState = await window.roadmapProgress.loadAuthoritativeState(localStorage);
+    } catch (error) {
+      console.error("Roadmap progress could not be loaded:", error);
+      message.textContent = "Roadmap progress could not be loaded from your account. Your saved local progress is unchanged. Please try refreshing.";
+      return;
+    }
+    const statuses = { ...(authoritativeState.skillStatusesByRole[targetRole] || {}) };
+    const missionStatus = { ...(authoritativeState.missionStatusesByRole[targetRole] || {}) };
     const readRoleScopedState = (key) => {
-      const stored = JSON.parse(localStorage.getItem(key)) || {};
-      const isScoped = Object.values(stored).some((value) => value && typeof value === "object" && !Array.isArray(value));
-      const scoped = isScoped ? stored : {};
-      if (!isScoped && Object.keys(stored).length) {
-        // Existing flat skill/mission maps predate role-specific roadmaps.
-        // Their IDs and stage names belong to the original Full-Stack roadmap.
-        scoped["Full-Stack Developer"] = stored;
-        localStorage.setItem(key, JSON.stringify(scoped));
-      }
-      return scoped;
+      try {
+        const stored = JSON.parse(localStorage.getItem(key) || "{}");
+        if (!stored || typeof stored !== "object" || Array.isArray(stored)) return {};
+        const isScoped = Object.values(stored).some((value) => value && typeof value === "object" && !Array.isArray(value));
+        return isScoped ? stored : (Object.keys(stored).length ? { "Full-Stack Developer": stored } : {});
+      } catch { return {}; }
     };
-    const skillStateByRole = window.roadmapProgress.readSkillStatusesByRole(localStorage);
+    let skillStateByRole = {};
+    try { skillStateByRole = window.roadmapProgress.readSkillStatusesByRole(localStorage, false); } catch { skillStateByRole = {}; }
     const missionStateByRole = readRoleScopedState("roadmapMissionStatus");
     const progressByRole = (() => {
-      const stored = JSON.parse(localStorage.getItem("roadmapProgress")) || {};
-      if (Object.prototype.hasOwnProperty.call(stored, "completed") || Object.prototype.hasOwnProperty.call(stored, "total")) {
-        const scoped = { "Full-Stack Developer": stored };
-        localStorage.setItem("roadmapProgress", JSON.stringify(scoped));
-        return scoped;
-      }
-      return stored;
+      try {
+        const stored = JSON.parse(localStorage.getItem("roadmapProgress") || "{}");
+        if (!stored || typeof stored !== "object" || Array.isArray(stored)) return {};
+        return Object.prototype.hasOwnProperty.call(stored, "completed") || Object.prototype.hasOwnProperty.call(stored, "total")
+          ? { "Full-Stack Developer": stored }
+          : stored;
+      } catch { return {}; }
     })();
-    const statuses = skillStateByRole[targetRole] || {};
-    const missionStatus = missionStateByRole[targetRole] || {};
 
     if (!roadmap) {
       title.textContent = `${studentProfile.targetRole} roadmap coming soon`;
@@ -57,7 +62,7 @@ if (roadmapPage) {
       const updateSummary = () => {
         const completedSkills = allSkills.filter((item) => statuses[item.id] === "Completed").length;
         const currentStage = roadmap.stages.find((stage) =>
-          !stage.skills.every((item) => statuses[item.id] === "Completed") || !missionStatus[stage.title]
+          !stage.skills.every((item) => statuses[item.id] === "Completed") || !missionStatus[stage.mission.id]
         );
 
         summaryValues.completed.textContent = completedSkills;
@@ -74,16 +79,22 @@ if (roadmapPage) {
         summaryValues.action.textContent = nextSkill ? `Complete ${nextSkill.title}` : `Complete ${currentStage.mission.title}`;
       };
 
-      const saveProgress = () => {
+      const saveProgress = (writeCache = true) => {
         const progress = window.roadmapProgress.calculateProgress(roadmap, statuses, missionStatus);
         const completed = progress.completed;
         const percentage = Math.max(0, Math.min(100, progress.total ? Math.round((completed / progress.total) * 100) : 0));
         skillStateByRole[targetRole] = statuses;
-        missionStateByRole[targetRole] = missionStatus;
         progressByRole[targetRole] = { completed, total: totalItems };
-        localStorage.setItem("roadmapSkillStatus", JSON.stringify(skillStateByRole));
-        localStorage.setItem("roadmapMissionStatus", JSON.stringify(missionStateByRole));
-        localStorage.setItem("roadmapProgress", JSON.stringify(progressByRole));
+        if (writeCache) {
+          skillStateByRole[targetRole] = statuses;
+          missionStateByRole[targetRole] ||= {};
+          roadmap.stages.forEach((stage) => { missionStateByRole[targetRole][stage.title] = missionStatus[stage.mission.id] === true; });
+          try {
+            localStorage.setItem("roadmapSkillStatus", JSON.stringify(skillStateByRole));
+            localStorage.setItem("roadmapMissionStatus", JSON.stringify(missionStateByRole));
+            localStorage.setItem("roadmapProgress", JSON.stringify(progressByRole));
+          } catch (error) { console.warn("Roadmap progress cache could not be updated:", error); }
+        }
         document.querySelector("#roadmap-progress-value").textContent = `${percentage}%`;
         document.querySelector("#roadmap-progress-count").textContent = `${completed} of ${totalItems} completed items`;
         document.querySelector("#roadmap-progress-bar").style.width = `${percentage}%`;
@@ -93,8 +104,8 @@ if (roadmapPage) {
 
       const statusClass = (stage) => {
         const stageSkills = stage.skills;
-        const finished = missionStatus[stage.title] && (stageSkills.length === 0 || stageSkills.every((item) => statuses[item.id] === "Completed"));
-        const started = stageSkills.some((item) => statuses[item.id] && statuses[item.id] !== "Not Started") || missionStatus[stage.title];
+        const finished = missionStatus[stage.mission.id] && (stageSkills.length === 0 || stageSkills.every((item) => statuses[item.id] === "Completed"));
+        const started = stageSkills.some((item) => statuses[item.id] && statuses[item.id] !== "Not Started") || missionStatus[stage.mission.id];
         return finished ? "completed" : started ? "in-progress" : "future";
       };
       const resourceTypes = {
@@ -156,9 +167,9 @@ if (roadmapPage) {
                   </div>
                 </article>`;
               }).join("") : `<p class="capstone-note">Bring every skill from your journey together in a complete, portfolio-ready project.</p>`}</div>
-              <section class="mission-card ${isCapstone ? "mission-capstone" : ""} ${missionStatus[stage.title] ? "mission-completed" : ""}" aria-label="${isCapstone ? "Final capstone project" : "Stage mission"}">
+              <section class="mission-card ${isCapstone ? "mission-capstone" : ""} ${missionStatus[stage.mission.id] ? "mission-completed" : ""}" aria-label="${isCapstone ? "Final capstone project" : "Stage mission"}">
                 <div class="mission-content"><p class="eyebrow">${isCapstone ? "🏆 FINAL CAPSTONE" : `🧪 PRACTICAL MISSION ${stageNumber}`}</p><h3>${stage.mission.title}</h3><p class="mission-description">${stage.mission.description}</p><p class="mission-why"><strong>Why this matters:</strong> ${stage.mission.why}</p><ul>${stage.mission.tasks.map((task) => `<li>${task}</li>`).join("")}</ul>${stage.mission.finalMilestone ? `<p class="milestone">${stage.mission.finalMilestone}</p>` : ""}</div>
-                <label class="mission-complete"><input type="checkbox" data-mission="${stage.title}" ${missionStatus[stage.title] ? "checked" : ""}><span class="mission-checkmark" aria-hidden="true">✓</span><span>${missionStatus[stage.title] ? "Mission completed" : "Mark mission complete"}</span></label>
+                <label class="mission-complete"><input type="checkbox" data-mission="${stage.mission.id}" ${missionStatus[stage.mission.id] ? "checked" : ""}><span class="mission-checkmark" aria-hidden="true">✓</span><span>${missionStatus[stage.mission.id] ? "Mission completed" : "Mark mission complete"}</span></label>
               </section>
             </div>
           </article>`;
@@ -176,18 +187,54 @@ if (roadmapPage) {
       stagesElement.addEventListener("change", (event) => {
         if (event.target.matches("[data-skill-complete]")) {
           const id = event.target.dataset.skillComplete;
-          if (event.target.checked) statuses[id] = "Completed";
-          else delete statuses[id];
-          message.textContent = "";
-          render();
-          [...stagesElement.querySelectorAll("[data-skill-complete]")].find((control) => control.dataset.skillComplete === id)?.focus();
+          const wasCompleted = statuses[id] === "Completed";
+          const checked = event.target.checked;
+          event.target.disabled = true;
+          (async () => {
+            try {
+              if (checked) {
+                await window.progressStore.upsertRoadmapSkillProgress({ target_role: targetRole, skill_id: id, status: "Completed" });
+                statuses[id] = "Completed";
+              } else {
+                await window.progressStore.deleteRoadmapSkillProgress(targetRole, id);
+                delete statuses[id];
+              }
+              message.textContent = "";
+              render();
+            } catch (error) {
+              console.error("Roadmap skill update failed:", error);
+              if (wasCompleted) statuses[id] = "Completed"; else delete statuses[id];
+              message.textContent = "This skill could not be saved to your account. Your existing local progress was preserved. Please try again.";
+              render(false);
+            }
+            [...stagesElement.querySelectorAll("[data-skill-complete]")].find((control) => control.dataset.skillComplete === id)?.focus();
+          })();
         } else if (event.target.matches("[data-mission]")) {
-          missionStatus[event.target.dataset.mission] = event.target.checked;
-          message.textContent = event.target.checked ? "Mission marked as completed." : "";
-          render();
+          const id = event.target.dataset.mission;
+          const wasCompleted = missionStatus[id] === true;
+          const checked = event.target.checked;
+          event.target.disabled = true;
+          (async () => {
+            try {
+              if (checked) {
+                await window.progressStore.upsertRoadmapMissionProgress({ target_role: targetRole, mission_id: id, completed: true });
+                missionStatus[id] = true;
+              } else {
+                await window.progressStore.deleteRoadmapMissionProgress(targetRole, id);
+                delete missionStatus[id];
+              }
+              message.textContent = checked ? "Mission marked as completed." : "";
+              render();
+            } catch (error) {
+              console.error("Roadmap mission update failed:", error);
+              if (wasCompleted) missionStatus[id] = true; else delete missionStatus[id];
+              message.textContent = "This mission could not be saved to your account. Your existing local progress was preserved. Please try again.";
+              render(false);
+            }
+          })();
         }
       });
-      render();
+      render(false);
   }
 }
 
