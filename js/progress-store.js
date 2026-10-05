@@ -145,6 +145,7 @@
     },
     loadSoftSkillProgress() { return read(tables.softSkills, "loadSoftSkillProgress", normalize.softSkill); },
     upsertSoftSkillProgress(record) { return upsert(tables.softSkills, "upsertSoftSkillProgress", record, normalize.softSkill, "user_id,skill_id"); },
+    insertSoftSkillProgressIfMissing(record) { return insertIfMissing(tables.softSkills, "insertSoftSkillProgressIfMissing", record, normalize.softSkill, "user_id,skill_id"); },
     loadSoftSkillPractice() { return read(tables.softSkillPractice, "loadSoftSkillPractice", normalize.softSkillPractice); },
     upsertSoftSkillPractice(record) { return upsert(tables.softSkillPractice, "upsertSoftSkillPractice", record, normalize.softSkillPractice, "user_id,skill_id"); },
     loadNetworkingJourneyProgress() { return read(tables.networkingJourney, "loadNetworkingJourneyProgress", normalize.networkingJourney); },

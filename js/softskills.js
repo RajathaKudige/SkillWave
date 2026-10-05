@@ -1,6 +1,9 @@
 // Soft skills are self-paced and stored separately from technical roadmap state.
 (() => {
-  window.accountAuth.ready.then((authState) => {
+  let resolveSoftSkillsProgress;
+  window.softSkillsProgressReady = new Promise((resolve) => { resolveSoftSkillsProgress = resolve; });
+  window.accountAuth.ready.then(async (authState) => {
+    if (!authState?.user || authState.redirected) return;
     const localStorage = window.accountAuth.userStorage(authState?.user?.id);
   const STORAGE_KEY = "softSkillsProgress";
   const PRACTICE_STORAGE_KEY = "softSkillsPractice";
@@ -92,25 +95,65 @@
     ]}
   ];
 
+  const allSkills = domains.flatMap((domain) => domain.skills);
+  const catalogueSkillIds = new Set(allSkills.map((item) => item.id));
+  const loadAuthoritativeState = async (storage) => {
+    const progressStore = window.progressStore;
+    if (!progressStore) throw new Error("The shared progress store is unavailable.");
+
+    const existingRows = await progressStore.loadSoftSkillProgress();
+    const existingById = new Map(existingRows.map((row) => [row.skill_id, row.started]));
+    let legacy = {};
+    try {
+      const parsed = JSON.parse(storage.getItem(STORAGE_KEY) || "{}");
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        const levels = parsed.levels && typeof parsed.levels === "object" && !Array.isArray(parsed.levels) ? parsed.levels : {};
+        const started = parsed.started && typeof parsed.started === "object" && !Array.isArray(parsed.started) ? parsed.started : {};
+        for (const [id, level] of Object.entries(levels)) {
+          if (["Beginner", "Developing", "Strong"].includes(level)) legacy[id] = true;
+          else if (level === "Not Started") legacy[id] = false;
+        }
+        for (const [id, value] of Object.entries(started)) {
+          if (typeof value === "boolean") legacy[id] = value;
+        }
+      }
+    } catch (error) {
+      console.warn("Legacy Soft Skills progress could not be read for migration.", error);
+    }
+
+    const missingRows = Object.entries(legacy)
+      .filter(([id, started]) => catalogueSkillIds.has(id) && typeof started === "boolean" && !existingById.has(id))
+      .map(([skill_id, started]) => ({ skill_id, started }));
+    for (let index = 0; index < missingRows.length; index += 10) {
+      await Promise.all(missingRows.slice(index, index + 10).map((record) => progressStore.insertSoftSkillProgressIfMissing(record)));
+    }
+
+    const rows = await progressStore.loadSoftSkillProgress();
+    return Object.fromEntries(rows.filter((row) => catalogueSkillIds.has(row.skill_id)).map((row) => [row.skill_id, row.started]));
+  };
+  const calculateProgress = (state) => {
+    const startedSkills = allSkills.filter((item) => state[item.id] === true).length;
+    const progress = Math.max(0, Math.min(100, allSkills.length ? Math.round(startedSkills / allSkills.length * 100) : 0));
+    const startedDomains = domains.filter((domain) => domain.skills.some((item) => state[item.id] === true)).length;
+    return { progress, startedDomains, startedSkills, totalSkills: allSkills.length };
+  };
+  window.softSkillsProgress = Object.freeze({ loadAuthoritativeState, calculateProgress, totalSkills: allSkills.length });
+  resolveSoftSkillsProgress(window.softSkillsProgress);
+
   const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   const list = document.querySelector("#soft-domain-list");
   if (!list) return;
 
   let stored = {};
   try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    if (parsed && typeof parsed === "object") {
-      const savedStarted = parsed.started && typeof parsed.started === "object" ? parsed.started : {};
-      const legacyLevels = parsed.levels && typeof parsed.levels === "object" ? parsed.levels : {};
-      stored = Object.fromEntries(Object.entries({ ...legacyLevels, ...savedStarted }).map(([id, value]) => [id,
-        typeof value === "boolean" ? value : ["Beginner", "Developing", "Strong"].includes(value)
-      ]));
-    }
+    stored = await loadAuthoritativeState(localStorage);
   } catch (error) {
-    console.warn("Soft skills progress could not be read from local storage.", error);
+    console.error("Authoritative Soft Skills progress could not be loaded.", error);
+    const note = document.querySelector("#soft-progress-note");
+    if (note) note.textContent = "Soft Skills progress could not be loaded from your account. Your local data is unchanged. Please refresh and try again.";
+    return;
   }
 
-  const allSkills = domains.flatMap((domain) => domain.skills);
   const isStarted = (id) => stored[id] === true;
   let practiceData = { reflections: {}, simulations: {}, activities: {} };
   try {
@@ -161,9 +204,7 @@
   }).join("");
 
   const renderProgress = () => {
-    const startedSkills = allSkills.filter((item) => isStarted(item.id)).length;
-    const progress = Math.max(0, Math.min(100, allSkills.length ? Math.round(startedSkills / allSkills.length * 100) : 0));
-    const startedDomains = domains.filter((domain) => domain.skills.some((item) => isStarted(item.id))).length;
+    const { progress, startedDomains, startedSkills } = calculateProgress(stored);
     document.querySelector("#soft-overall").textContent = `${progress}%`;
     document.querySelector("#soft-meter-fill").style.width = `${progress}%`;
     document.querySelector(".soft-meter").setAttribute("aria-valuenow", String(progress));
@@ -209,20 +250,35 @@
     const startedControl = event.target.closest("[data-started-id]");
     if (startedControl) {
       const id = startedControl.dataset.startedId;
-      stored[id] = !isStarted(id);
-      startedControl.classList.toggle("is-started", isStarted(id));
-      startedControl.setAttribute("aria-pressed", String(isStarted(id)));
-      startedControl.setAttribute("aria-label", `${isStarted(id) ? "Unstart" : "Start"} ${startedControl.closest(".soft-skill-card").querySelector("h3").textContent}`);
-      startedControl.querySelector(".soft-start-check").textContent = isStarted(id) ? "✓" : "";
-      startedControl.closest(".soft-skill-card").classList.toggle("is-started", isStarted(id));
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ started: stored, totalSkills: allSkills.length }));
-        document.querySelector("#soft-progress-note").textContent = "Progress saved to your account on this device.";
-      } catch (error) {
-        document.querySelector("#soft-progress-note").textContent = "This browser could not save your progress. Check its storage settings and try again.";
-        console.warn("Soft skills progress could not be saved to local storage.", error);
-      }
-      renderProgress();
+      if (!catalogueSkillIds.has(id)) return;
+      const nextStarted = !isStarted(id);
+      startedControl.disabled = true;
+      (async () => {
+        try {
+          await window.progressStore.upsertSoftSkillProgress({ skill_id: id, started: nextStarted });
+          stored[id] = nextStarted;
+          const card = startedControl.closest(".soft-skill-card");
+          startedControl.classList.toggle("is-started", nextStarted);
+          startedControl.setAttribute("aria-pressed", String(nextStarted));
+          startedControl.setAttribute("aria-label", `${nextStarted ? "Unstart" : "Start"} ${card.querySelector("h3").textContent}`);
+          startedControl.querySelector(".soft-start-check").textContent = nextStarted ? "✓" : "";
+          card.classList.toggle("is-started", nextStarted);
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ started: stored, totalSkills: allSkills.length }));
+            document.querySelector("#soft-progress-note").textContent = "Progress saved to your account.";
+          } catch (storageError) {
+            console.warn("Soft Skills progress was saved to Supabase, but the local cache could not be updated.", storageError);
+            document.querySelector("#soft-progress-note").textContent = "Progress saved to your account. The local compatibility cache could not be updated.";
+          }
+          renderProgress();
+        } catch (error) {
+          console.error("Soft Skills progress write failed:", error);
+          const note = document.querySelector("#soft-progress-note");
+          if (note) note.textContent = `Could not save this skill to your account (${error.code || "write error"}). Your change was not applied. Please try again.`;
+        } finally {
+          startedControl.disabled = false;
+        }
+      })();
       return;
     }
     const feedbackButton = event.target.closest("[data-feedback-id]");
