@@ -184,8 +184,16 @@ if (dashboardPage) {
       softSkillUnavailable = true;
     }
     const softSkills = softSkillUnavailable ? null : softSkillMetrics.progress;
-    const savedNetworkingProgress = JSON.parse(localStorage.getItem("networkingProgress") || "null");
-    const networking = getPercentage(savedNetworkingProgress?.progress ?? careerProgress.networking);
+    let networkingUnavailable = false;
+    let networkingMetrics;
+    try {
+      const networkingState = await window.progressStore.loadNetworkingJourneyState();
+      networkingMetrics = window.progressStore.calculateNetworkingJourneyProgress(networkingState);
+    } catch (error) {
+      console.error("Dashboard Networking progress could not be loaded:", error);
+      networkingUnavailable = true;
+    }
+    const networking = networkingUnavailable ? null : networkingMetrics.progress;
     const assessedAreas = [technical, softSkills, networking].filter((value) => value !== null);
     const overall = assessedAreas.length ? Math.round(assessedAreas.reduce((total, value) => total + value, 0) / assessedAreas.length) : null;
     const allRoadmapSkills = hasSelectedRoadmap ? selectedRoadmap.stages.flatMap((stage) => stage.skills) : [];
@@ -222,7 +230,8 @@ if (dashboardPage) {
     if (softSkills !== null) setText("#soft-skills-hint", "Based on skills you have started");
     else if (softSkillUnavailable) setText("#soft-skills-hint", "Soft Skills progress is temporarily unavailable");
     setReadinessArea("#networking-bar", "#networking-value", "#networking-hint", networking, "Getting started", "Begin your networking journey");
-    if (networking !== null && savedNetworkingProgress && Array.isArray(savedNetworkingProgress.milestones)) setText("#networking-hint", `${savedNetworkingProgress.milestones.length} of 8 networking milestones`);
+    if (networkingUnavailable) setText("#networking-hint", "Networking progress is temporarily unavailable");
+    else if (networking !== null) setText("#networking-hint", `${networkingMetrics.completedSteps} of ${networkingMetrics.totalSteps} journey steps complete`);
     setText("#roadmap-role", studentProfile.targetRole || "Your");
     setText("#roadmap-skills-count", hasSelectedRoadmap ? `Skills completed: ${completedSkills} of ${allRoadmapSkills.length}` : "Skills completed: —");
     setText("#roadmap-missions-count", hasSelectedRoadmap ? `Missions completed: ${completedMissions} of ${totalMissions}` : "Missions completed: —");

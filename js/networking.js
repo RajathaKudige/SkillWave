@@ -1,7 +1,17 @@
-// Networking tools are local-first and use storage keys separate from every other pillar.
+// Networking progress is account-scoped and server-authoritative after load.
 (() => {
-  window.accountAuth.ready.then((authState) => {
+  window.accountAuth.ready.then(async (authState) => {
+    if (!authState?.user || authState.redirected) return;
+    const contactForm = document.querySelector("#contact-form");
+    contactForm?.querySelectorAll("input, textarea, button").forEach((control) => { control.disabled = true; });
     const localStorage = window.accountAuth.userStorage(authState?.user?.id);
+    const progressStore = window.progressStore;
+    if (!progressStore) throw new Error("The shared progress store is unavailable.");
+    await progressStore.loadNetworkingJourneyProgress();
+    const initialScenarioRows = await progressStore.loadNetworkingScenarioProgress();
+    const initialContactRows = await progressStore.loadNetworkingContacts();
+    const journeyState = await progressStore.loadNetworkingJourneyState();
+    const validJourneyIds = new Set(progressStore.networkingJourneyStepIds);
   const KEYS = { progress: "networkingProgress", presence: "networkingPresence", contacts: "networkingContacts", missions: "networkingMissions", practice: "networkingPractice" };
   const safeRead = (key, fallback) => {
     try { const value = JSON.parse(localStorage.getItem(key)); return value ?? fallback; }
@@ -93,19 +103,12 @@
     ["portfolio", "Document the experience in your portfolio", "Describe your contribution accurately and link to the public change."]
   ].map(([id, title, description]) => ({ id, title, description }));
 
-  let progressData = safeRead(KEYS.progress, {});
-  if (!progressData || typeof progressData !== "object" || Array.isArray(progressData)) progressData = {};
-  let presenceState = safeRead(KEYS.presence, {});
-  if (!presenceState || typeof presenceState !== "object" || Array.isArray(presenceState)) presenceState = {};
   let contacts = safeRead(KEYS.contacts, []);
   if (!Array.isArray(contacts)) contacts = [];
-  let missionState = safeRead(KEYS.missions, {});
-  if (!missionState || typeof missionState !== "object" || Array.isArray(missionState)) missionState = {};
+  let progressData;
   let practiceState = safeRead(KEYS.practice, {});
   if (!practiceState || typeof practiceState !== "object" || Array.isArray(practiceState)) practiceState = {};
-  let opportunitiesExplored = Array.isArray(progressData.opportunitiesExplored) ? progressData.opportunitiesExplored : [];
-  let openSteps = progressData.openSourceSteps && typeof progressData.openSourceSteps === "object" ? progressData.openSourceSteps : {};
-  let storageAvailable = true;
+  const legacyPracticeCache = practiceState;
 
   const opportunityGrid = document.querySelector("#opportunity-grid");
   opportunityGrid.innerHTML = opportunities.map((item) => `<article class="networking-opportunity-card"><div class="networking-card-topline"><span>${escapeHTML(item.title)}</span>${badge("guide")}</div><p>${escapeHTML(item.what)}</p><details><summary>Explore this opportunity type</summary><div class="networking-opportunity-detail"><h4>Why it matters</h4><p>${escapeHTML(item.why)}</p><h4>Who it is for</h4><p>${escapeHTML(item.who)}</p><h4>How to find it</h4><p>${escapeHTML(item.find)}</p><h4>What to prepare</h4><p>${escapeHTML(item.prepare)}</p><h4>Take one action</h4><p>${escapeHTML(item.action)}</p><ul>${item.resources.map(([name, url]) => `<li><a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)} &rarr;</a></li>`).join("")}</ul></div></details></article>`).join("");
@@ -115,14 +118,6 @@
   document.querySelector("#people-grid").innerHTML = peopleCategories.map(([title, description]) => `<article class="networking-person-card"><span aria-hidden="true">⌕</span><div><h3>${escapeHTML(title)}</h3><p>${escapeHTML(description)}</p></div></article>`).join("");
 
   const scenarioGrid = document.querySelector("#scenario-grid");
-  scenarioGrid.innerHTML = scenarios.map((item, index) => {
-    const scenarioNumber = String(index + 1).padStart(2, "0");
-    const detailsId = `scenario-content-${item.id}`;
-    return `<details class="networking-scenario-card" data-scenario-card="${item.id}" name="networking-scenarios"><summary class="networking-scenario-summary" aria-controls="${detailsId}" aria-expanded="false"><span class="networking-scenario-number">${scenarioNumber}</span><span class="networking-scenario-heading"><span class="networking-scenario-title">${escapeHTML(item.situation)}</span>${badge("simulation")}</span><span class="networking-scenario-affordance" aria-hidden="true"></span></summary><div class="networking-scenario-content" id="${detailsId}"><h3>Situation</h3><p>${escapeHTML(item.situation)}</p><p class="networking-scenario-principle">Communication principle: ${escapeHTML(item.principle)}</p><fieldset><legend>Choose a response to explore</legend>${item.choices.map(([answer, guidance], choiceIndex) => `<label class="networking-choice"><input type="radio" name="scenario-${item.id}" value="${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "checked" : ""}><span>${escapeHTML(answer)}</span></label><p class="networking-choice-feedback" data-choice-feedback="${item.id}-${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "" : "hidden"}><strong>${choiceIndex === 0 ? "Why this can help" : "Consider the impact"}:</strong> ${escapeHTML(guidance)}</p>`).join("")}</fieldset><button class="networking-secondary-button" type="button" data-retry-scenario="${item.id}">Try another response</button></div></details>`;
-  }).join("");
-  scenarioGrid.querySelectorAll(".networking-scenario-card").forEach((scenario) => {
-    scenario.addEventListener("toggle", () => scenario.querySelector("summary").setAttribute("aria-expanded", String(scenario.open)));
-  });
 
   const openSourceStepsList = document.querySelector("#opensource-steps");
   const openSourceStepDetail = document.querySelector("#opensource-step-detail");
@@ -148,41 +143,105 @@
     ["followup", "Follow up thoughtfully", "Reconnect with context and one useful next step."],
     ["connection", "Build one meaningful connection", "Keep in touch through respectful, useful exchanges."]
   ];
-  const legacyMilestones = Array.isArray(progressData.milestones) ? progressData.milestones : [];
-  const migratedJourney = {
-    presence: legacyMilestones.includes("profile") || Boolean(missionState.github || missionState.linkedin) || presenceTasks.every((item) => presenceState[item.id]),
-    people: legacyMilestones.includes("community") || Boolean(missionState["find-people"] || missionState.community) || opportunitiesExplored.includes("communities"),
-    conversation: Boolean(missionState.message),
-    practice: legacyMilestones.includes("conversation") || Object.values(practiceState).some((item) => item && item.completed),
-    opportunity: legacyMilestones.includes("opportunity") || opportunitiesExplored.length > 0,
-    participate: Boolean(missionState.event || missionState.contribution || openSteps.complete),
-    followup: legacyMilestones.includes("followup") || Boolean(missionState["follow-up"]) || contacts.some((item) => item.followUpCompleted),
-    connection: legacyMilestones.includes("connection") || Boolean(missionState.connection) || contacts.length > 0
+  const validScenarioIds = new Set(scenarios.map((item) => item.id));
+  const initialScenarioIds = new Set(initialScenarioRows.map((row) => row.scenario_id));
+  for (const [id, record] of Object.entries(practiceState)) {
+    if (!validScenarioIds.has(id) || initialScenarioIds.has(id) || !record || typeof record !== "object" || Array.isArray(record)) continue;
+    const validChoice = record.choice === null || (Number.isInteger(record.choice) && record.choice >= 0 && record.choice < scenarios.find((item) => item.id === id).choices.length);
+    if (!validChoice || typeof record.completed !== "boolean") continue;
+    await progressStore.insertNetworkingScenarioProgressIfMissing({
+      scenario_id: id,
+      selected_choice: record.choice === null ? null : String(record.choice),
+      completed: record.completed
+    });
+  }
+
+  const isUuid = (value) => typeof value === "string" && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(value);
+  const isValidDate = (value) => {
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const parsed = new Date(`${value}T00:00:00.000Z`);
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
   };
-  const savedJourney = progressData.journey && typeof progressData.journey === "object" && !Array.isArray(progressData.journey) ? progressData.journey : {};
-  const journeyState = Object.fromEntries(journeyItems.map(([id]) => [id, typeof savedJourney[id] === "boolean" ? savedJourney[id] : Boolean(migratedJourney[id])]));
+  // UUIDv8-style IDs use SHA-256 over user ID + legacy ID, so retries and accounts map independently.
+  const deterministicContactUuid = async (legacyId) => {
+    if (isUuid(legacyId)) return legacyId;
+    if (!window.crypto?.subtle) throw new Error("Secure UUID migration is unavailable in this browser context.");
+    const input = new TextEncoder().encode(`${authState.user.id}:${legacyId}`);
+    const hash = new Uint8Array(await window.crypto.subtle.digest("SHA-256", input));
+    const bytes = hash.slice(0, 16);
+    bytes[6] = (bytes[6] & 0x0f) | 0x80;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  };
+  const legacyContactRows = [];
+  for (const item of contacts) {
+    if (!item || typeof item !== "object" || Array.isArray(item) || typeof item.person !== "string" || !item.person.trim() || typeof item.id !== "string" || !item.id.trim()) continue;
+    const textFields = ["role", "organization", "met", "topic", "nextAction", "notes"];
+    if (textFields.some((key) => item[key] !== undefined && item[key] !== null && typeof item[key] !== "string")) continue;
+    const lastInteraction = item.lastInteraction || null;
+    if (lastInteraction !== null && !isValidDate(lastInteraction)) continue;
+    if (item.followUpCompleted !== undefined && typeof item.followUpCompleted !== "boolean") continue;
+    legacyContactRows.push({
+      id: await deterministicContactUuid(item.id),
+      person: item.person.trim(),
+      role: item.role || null,
+      organization: item.organization || null,
+      met: item.met || null,
+      topic: item.topic || null,
+      last_interaction: lastInteraction,
+      next_action: item.nextAction || null,
+      notes: item.notes || null,
+      follow_up_completed: item.followUpCompleted === true
+    });
+  }
+  const initialContactIds = new Set(initialContactRows.map((row) => row.id));
+  for (const record of legacyContactRows) {
+    if (!initialContactIds.has(record.id)) await progressStore.insertNetworkingContactIfMissing(record);
+  }
+
+  const scenarioRows = await progressStore.loadNetworkingScenarioProgress();
+  const contactRows = await progressStore.loadNetworkingContacts();
+  practiceState = Object.fromEntries(scenarioRows.filter((row) => validScenarioIds.has(row.scenario_id)).map((row) => {
+    const scenario = scenarios.find((item) => item.id === row.scenario_id);
+    const choice = row.selected_choice === null ? null : Number(row.selected_choice);
+    return [row.scenario_id, { choice: Number.isInteger(choice) && choice >= 0 && choice < scenario.choices.length ? choice : null, completed: row.completed }];
+  }));
+  contacts = contactRows.map((row) => ({
+    id: row.id, person: row.person, role: row.role || "", organization: row.organization || "", met: row.met || "", topic: row.topic || "",
+    lastInteraction: row.last_interaction || "", nextAction: row.next_action || "", notes: row.notes || "", followUpCompleted: row.follow_up_completed
+  }));
+  scenarioGrid.innerHTML = scenarios.map((item, index) => {
+    const scenarioNumber = String(index + 1).padStart(2, "0");
+    const detailsId = `scenario-content-${item.id}`;
+    return `<details class="networking-scenario-card" data-scenario-card="${item.id}" name="networking-scenarios"><summary class="networking-scenario-summary" aria-controls="${detailsId}" aria-expanded="false"><span class="networking-scenario-number">${scenarioNumber}</span><span class="networking-scenario-heading"><span class="networking-scenario-title">${escapeHTML(item.situation)}</span>${badge("simulation")}</span><span class="networking-scenario-affordance" aria-hidden="true"></span></summary><div class="networking-scenario-content" id="${detailsId}"><h3>Situation</h3><p>${escapeHTML(item.situation)}</p><p class="networking-scenario-principle">Communication principle: ${escapeHTML(item.principle)}</p><fieldset><legend>Choose a response to explore</legend>${item.choices.map(([answer, guidance], choiceIndex) => `<label class="networking-choice"><input type="radio" name="scenario-${item.id}" value="${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "checked" : ""}><span>${escapeHTML(answer)}</span></label><p class="networking-choice-feedback" data-choice-feedback="${item.id}-${choiceIndex}" ${practiceState[item.id]?.choice === choiceIndex ? "" : "hidden"}><strong>${choiceIndex === 0 ? "Why this can help" : "Consider the impact"}:</strong> ${escapeHTML(guidance)}</p>`).join("")}</fieldset><button class="networking-secondary-button" type="button" data-retry-scenario="${item.id}">Try another response</button></div></details>`;
+  }).join("");
+  scenarioGrid.querySelectorAll(".networking-scenario-card").forEach((scenario) => {
+    scenario.addEventListener("toggle", () => scenario.querySelector("summary").setAttribute("aria-expanded", String(scenario.open)));
+  });
   const journeyList = document.querySelector("#networking-journey-list");
   journeyList.innerHTML = journeyItems.map(([id, title, description], index) => `<li class="networking-journey-item${journeyState[id] ? " is-complete" : ""}"><button type="button" class="networking-journey-toggle${journeyState[id] ? " is-complete" : ""}" data-journey-id="${id}" aria-pressed="${journeyState[id]}" aria-label="${journeyState[id] ? "Mark incomplete" : "Mark complete"}: ${escapeHTML(title)}"><span class="networking-journey-check" aria-hidden="true">${journeyState[id] ? "&#10003;" : ""}</span><span class="networking-journey-copy"><strong>${String(index + 1).padStart(2, "0")} &#183; ${escapeHTML(title)}</strong><small>${escapeHTML(description)}</small></span></button></li>`).join("");
 
-  const renderProgress = (persist = true) => {
-    const completedSteps = journeyItems.filter(([id]) => journeyState[id]).length;
-    const overall = Math.max(0, Math.min(100, completedSteps / journeyItems.length * 100));
+  const renderProgress = (persistCache = false) => {
+    const { progress: overall, completedSteps, totalSteps } = progressStore.calculateNetworkingJourneyProgress(journeyState);
     const displayedProgress = Number.isInteger(overall) ? String(overall) : overall.toFixed(1);
     document.querySelector("#networking-progress-value").textContent = `${displayedProgress}%`;
     document.querySelector("#networking-progress-fill").style.width = `${overall}%`;
     document.querySelector(".networking-progress-bar").setAttribute("aria-valuenow", String(overall));
-    document.querySelector("#networking-journey-count").textContent = `${completedSteps} of ${journeyItems.length} journey steps complete`;
-    if (persist) {
-      progressData = { ...progressData, journey: journeyState, progress: overall };
-      storageAvailable = safeWrite(KEYS.progress, progressData) && storageAvailable;
-      document.querySelector("#networking-save-status").textContent = storageAvailable ? "Your networking journey is saved to your account on this device." : "Some changes could not be saved. Check this browser's local storage settings.";
+    document.querySelector("#networking-journey-count").textContent = `${completedSteps} of ${totalSteps} journey steps complete`;
+    if (persistCache) {
+      if (!progressData) {
+        progressData = safeRead(KEYS.progress, {});
+        if (!progressData || typeof progressData !== "object" || Array.isArray(progressData)) progressData = {};
+      }
+      progressData = { ...progressData, journey: { ...journeyState }, progress: overall };
+      safeWrite(KEYS.progress, progressData);
     }
-    window.dispatchEvent(new CustomEvent("networkingProgressUpdated", { detail: { progress: overall, completedSteps, totalSteps: journeyItems.length } }));
+    window.dispatchEvent(new CustomEvent("networkingProgressUpdated", { detail: { progress: overall, completedSteps, totalSteps } }));
   };
 
   const contactList = document.querySelector("#contact-list");
   const contactEmpty = document.querySelector("#contacts-empty");
-  const contactForm = document.querySelector("#contact-form");
   const drawContacts = () => {
     contactEmpty.hidden = contacts.length > 0;
     contactList.innerHTML = contacts.map((item) => `<article class="networking-contact-card"><div class="networking-contact-card-heading"><div><h4>${escapeHTML(item.person)}</h4><p>${escapeHTML([item.role, item.organization].filter(Boolean).join(" · ") || "Professional connection")}</p></div><span class="networking-contact-met">${escapeHTML(item.met || "Connection")}</span></div><dl>${item.topic ? `<div><dt>Topic</dt><dd>${escapeHTML(item.topic)}</dd></div>` : ""}${item.lastInteraction ? `<div><dt>Last interaction</dt><dd>${escapeHTML(item.lastInteraction)}</dd></div>` : ""}${item.nextAction ? `<div><dt>Next action</dt><dd>${escapeHTML(item.nextAction)}</dd></div>` : ""}${item.notes ? `<div><dt>Notes</dt><dd>${escapeHTML(item.notes)}</dd></div>` : ""}</dl><div class="networking-actions"><button type="button" class="networking-secondary-button" data-edit-contact="${escapeHTML(item.id)}">Edit</button><button type="button" class="networking-delete-button" data-delete-contact="${escapeHTML(item.id)}">Delete</button></div></article>`).join("");
@@ -230,23 +289,56 @@
     const scenarioChoice = event.target.closest('input[type="radio"][name^="scenario-"]');
     if (!scenarioChoice) return;
     const scenarioId = scenarioChoice.name.slice("scenario-".length);
+    const scenario = scenarios.find((item) => item.id === scenarioId);
+    if (!scenario) return;
     const chosen = Number(scenarioChoice.value);
-    practiceState[scenarioId] = { ...(practiceState[scenarioId] || {}), choice: chosen, completed: true };
-    safeWrite(KEYS.practice, practiceState);
-    scenarios.find((item) => item.id === scenarioId).choices.forEach((_, index) => { const feedback = document.querySelector(`[data-choice-feedback="${scenarioId}-${index}"]`); if (feedback) feedback.hidden = index !== chosen; });
+    if (!Number.isInteger(chosen) || chosen < 0 || chosen >= scenario.choices.length) return;
+    const previous = practiceState[scenarioId] || { choice: null, completed: false };
+    const radios = [...document.querySelectorAll(`input[name="scenario-${scenarioId}"]`)];
+    radios.forEach((radio) => { radio.disabled = true; radio.checked = previous.choice === Number(radio.value); });
+    (async () => {
+      try {
+        await progressStore.upsertNetworkingScenarioProgress({ scenario_id: scenarioId, selected_choice: String(chosen), completed: true });
+        practiceState[scenarioId] = { choice: chosen, completed: true };
+        legacyPracticeCache[scenarioId] = { choice: chosen, completed: true };
+        safeWrite(KEYS.practice, legacyPracticeCache);
+        radios.forEach((radio) => { radio.checked = Number(radio.value) === chosen; });
+        scenario.choices.forEach((_, index) => { const feedback = document.querySelector(`[data-choice-feedback="${scenarioId}-${index}"]`); if (feedback) feedback.hidden = index !== chosen; });
+        document.querySelector("#networking-save-status").textContent = "Networking progress synced with your account.";
+      } catch (error) {
+        console.error("Networking scenario progress write failed:", error);
+        document.querySelector("#networking-save-status").textContent = `Could not save this practice choice (${error.code || "write error"}). Your saved choice was not changed. Please try again.`;
+      } finally {
+        radios.forEach((radio) => { radio.disabled = false; });
+      }
+    })();
   });
 
   document.addEventListener("click", (event) => {
     const journeyToggle = event.target.closest("[data-journey-id]");
     if (journeyToggle) {
       const id = journeyToggle.dataset.journeyId;
-      journeyState[id] = !journeyState[id];
-      journeyToggle.classList.toggle("is-complete", journeyState[id]);
-      journeyToggle.closest(".networking-journey-item").classList.toggle("is-complete", journeyState[id]);
-      journeyToggle.setAttribute("aria-pressed", String(journeyState[id]));
-      journeyToggle.setAttribute("aria-label", `${journeyState[id] ? "Mark incomplete" : "Mark complete"}: ${journeyItems.find(([itemId]) => itemId === id)[1]}`);
-      journeyToggle.querySelector(".networking-journey-check").textContent = journeyState[id] ? "\u2713" : "";
-      renderProgress();
+      if (!validJourneyIds.has(id)) return;
+      const nextCompleted = !journeyState[id];
+      journeyToggle.disabled = true;
+      (async () => {
+        try {
+          await progressStore.upsertNetworkingJourneyProgress({ step_id: id, completed: nextCompleted });
+          journeyState[id] = nextCompleted;
+          journeyToggle.classList.toggle("is-complete", nextCompleted);
+          journeyToggle.closest(".networking-journey-item").classList.toggle("is-complete", nextCompleted);
+          journeyToggle.setAttribute("aria-pressed", String(nextCompleted));
+          journeyToggle.setAttribute("aria-label", `${nextCompleted ? "Mark incomplete" : "Mark complete"}: ${journeyItems.find(([itemId]) => itemId === id)[1]}`);
+          journeyToggle.querySelector(".networking-journey-check").textContent = nextCompleted ? "\u2713" : "";
+          renderProgress(true);
+          document.querySelector("#networking-save-status").textContent = "Networking progress synced with your account.";
+        } catch (error) {
+          console.error("Networking journey progress write failed:", error);
+          document.querySelector("#networking-save-status").textContent = `Could not save this journey step (${error.code || "write error"}). Your saved progress was not changed. Please try again.`;
+        } finally {
+          journeyToggle.disabled = false;
+        }
+      })();
       return;
     }
     const openSourceStep = event.target.closest("[data-open-source-step]");
@@ -257,11 +349,27 @@
     const retry = event.target.closest("[data-retry-scenario]");
     if (retry) {
       const id = retry.dataset.retryScenario;
-      practiceState[id] = { ...(practiceState[id] || {}), choice: null, completed: true };
-      safeWrite(KEYS.practice, practiceState);
-      document.querySelectorAll(`input[name="scenario-${id}"]`).forEach((radio) => { radio.checked = false; });
-      document.querySelectorAll(`[data-choice-feedback^="${id}-"]`).forEach((feedback) => { feedback.hidden = true; });
-      renderProgress(); return;
+      if (!validScenarioIds.has(id)) return;
+      const previous = practiceState[id] || { choice: null, completed: false };
+      retry.disabled = true;
+      (async () => {
+        try {
+          await progressStore.upsertNetworkingScenarioProgress({ scenario_id: id, selected_choice: null, completed: true });
+          practiceState[id] = { choice: null, completed: true };
+          legacyPracticeCache[id] = { choice: null, completed: true };
+          safeWrite(KEYS.practice, legacyPracticeCache);
+          document.querySelectorAll(`input[name="scenario-${id}"]`).forEach((radio) => { radio.checked = false; });
+          document.querySelectorAll(`[data-choice-feedback^="${id}-"]`).forEach((feedback) => { feedback.hidden = true; });
+          document.querySelector("#networking-save-status").textContent = "Practice reset and synced with your account.";
+        } catch (error) {
+          practiceState[id] = previous;
+          console.error("Networking scenario reset failed:", error);
+          document.querySelector("#networking-save-status").textContent = `Could not reset this practice (${error.code || "write error"}). Your saved response was not changed. Please try again.`;
+        } finally {
+          retry.disabled = false;
+        }
+      })();
+      return;
     }
     const edit = event.target.closest("[data-edit-contact]");
     if (edit) {
@@ -273,24 +381,88 @@
       contactForm.scrollIntoView({ behavior: "smooth", block: "center" }); return;
     }
     const remove = event.target.closest("[data-delete-contact]");
-    if (remove) { contacts = contacts.filter((item) => item.id !== remove.dataset.deleteContact); safeWrite(KEYS.contacts, contacts); drawContacts(); renderProgress(); return; }
+    if (remove) {
+      const id = remove.dataset.deleteContact;
+      if (!contacts.some((item) => item.id === id)) return;
+      remove.disabled = true;
+      (async () => {
+        try {
+          await progressStore.deleteNetworkingContact(id);
+          contacts = contacts.filter((item) => item.id !== id);
+          drawContacts();
+          document.querySelector("#contact-status").textContent = "Connection deleted from your account.";
+        } catch (error) {
+          console.error("Networking contact delete failed:", error);
+          document.querySelector("#contact-status").textContent = `Could not delete this connection (${error.code || "write error"}). It is still saved. Please try again.`;
+        } finally {
+          remove.disabled = false;
+        }
+      })();
+      return;
+    }
   });
-  contactForm.addEventListener("submit", (event) => {
+  contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = new FormData(contactForm);
-    const id = form.get("id") || (window.crypto?.randomUUID ? window.crypto.randomUUID() : `contact-${Date.now()}`);
-    const entry = { id, person: form.get("person").trim(), role: form.get("role").trim(), organization: form.get("organization").trim(), met: form.get("met").trim(), topic: form.get("topic").trim(), lastInteraction: form.get("lastInteraction"), nextAction: form.get("nextAction").trim(), notes: form.get("notes").trim(), followUpCompleted: contacts.find((item) => item.id === id)?.followUpCompleted || false };
+    const existingId = form.get("id");
+    const entry = {
+      id: existingId || null,
+      person: form.get("person").trim(), role: form.get("role").trim(), organization: form.get("organization").trim(),
+      met: form.get("met").trim(), topic: form.get("topic").trim(), lastInteraction: form.get("lastInteraction"),
+      nextAction: form.get("nextAction").trim(), notes: form.get("notes").trim(),
+      followUpCompleted: contacts.find((item) => item.id === existingId)?.followUpCompleted || false
+    };
     if (!entry.person) return;
-    const index = contacts.findIndex((item) => item.id === id);
-    if (index >= 0) contacts[index] = entry; else contacts.unshift(entry);
-    const saved = safeWrite(KEYS.contacts, contacts);
-    document.querySelector("#contact-status").textContent = saved ? "Connection saved on this device." : "Could not save; check browser storage settings.";
-    clearContactForm(); drawContacts(); renderProgress();
+    const submitButton = document.querySelector("#contact-submit");
+    submitButton.disabled = true;
+    try {
+      const payload = {
+        id: entry.id || createContactUuid(), person: entry.person, role: entry.role || null, organization: entry.organization || null,
+        met: entry.met || null, topic: entry.topic || null, last_interaction: entry.lastInteraction || null,
+        next_action: entry.nextAction || null, notes: entry.notes || null, follow_up_completed: entry.followUpCompleted
+      };
+      const savedRow = existingId
+        ? await progressStore.updateNetworkingContact(existingId, { person: payload.person, role: payload.role, organization: payload.organization, met: payload.met, topic: payload.topic, last_interaction: payload.last_interaction, next_action: payload.next_action, notes: payload.notes, follow_up_completed: payload.follow_up_completed })
+        : await progressStore.createNetworkingContact(payload);
+      const savedContact = {
+        id: savedRow.id, person: savedRow.person, role: savedRow.role || "", organization: savedRow.organization || "",
+        met: savedRow.met || "", topic: savedRow.topic || "", lastInteraction: savedRow.last_interaction || "",
+        nextAction: savedRow.next_action || "", notes: savedRow.notes || "", followUpCompleted: savedRow.follow_up_completed
+      };
+      const index = contacts.findIndex((item) => item.id === savedContact.id);
+      if (index >= 0) contacts[index] = savedContact; else contacts.unshift(savedContact);
+      clearContactForm(); drawContacts();
+      document.querySelector("#contact-status").textContent = "Connection saved to your account.";
+    } catch (error) {
+      console.error("Networking contact save failed:", error);
+      document.querySelector("#contact-status").textContent = `Could not save this connection (${error.code || "write error"}). Your saved contacts were not changed. Please try again.`;
+    } finally {
+      submitButton.disabled = false;
+    }
   });
   contactForm.addEventListener("reset", () => setTimeout(clearContactForm, 0));
   document.querySelector("#contact-cancel").addEventListener("click", clearContactForm);
 
   drawContacts();
-  renderProgress(true);
+  renderProgress(false);
+  contactForm?.querySelectorAll("input, textarea, button").forEach((control) => { control.disabled = false; });
+  document.querySelector("#networking-save-status").textContent = "Networking progress synced with your account.";
+  }).catch((error) => {
+    console.error("Networking progress could not be initialized:", error);
+    const message = `Networking progress is temporarily unavailable (${error.code || "load error"}). Your local data is unchanged. Refresh to try again.`;
+    const status = document.querySelector("#networking-save-status");
+    if (status) status.textContent = message;
+    const contactStatus = document.querySelector("#contact-status");
+    if (contactStatus) contactStatus.textContent = "Networking data could not be loaded from your account.";
   });
+
+  function createContactUuid() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    if (!window.crypto?.getRandomValues) throw new Error("Secure contact IDs are unavailable in this browser.");
+    const bytes = window.crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
 })();
