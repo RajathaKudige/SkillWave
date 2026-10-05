@@ -128,6 +128,34 @@
     return routeAuthenticatedUser(user, page);
   })();
 
+  const protectedPages = ["dashboard", "roadmap", "softskills", "networking"];
+  let initialIdentityReady = false;
+  let activeUserId = null;
+  let pendingUserId;
+  let identityNavigationStarted = false;
+  const handleIdentityChange = (userId) => {
+    if (!initialIdentityReady) {
+      pendingUserId = userId;
+      return;
+    }
+    if (userId === activeUserId) return;
+    activeUserId = userId;
+    if (!protectedPages.includes(page) || identityNavigationStarted) return;
+    identityNavigationStarted = true;
+    document.documentElement.style.visibility = "hidden";
+    window.location.reload();
+  };
+
+  client.auth.onAuthStateChange((_event, session) => {
+    handleIdentityChange(session?.user?.id || null);
+  });
+
+  ready.then(({ user }) => {
+    activeUserId = user?.id || null;
+    initialIdentityReady = true;
+    if (pendingUserId !== undefined) handleIdentityChange(pendingUserId);
+  });
+
   ready.then(({ user, redirected }) => {
     document.querySelectorAll("[data-public-nav], [data-authenticated-nav], [data-public-action]")
       .forEach((element) => { element.hidden = Boolean(user) ? element.hasAttribute("data-public-nav") || element.hasAttribute("data-public-action") : element.hasAttribute("data-authenticated-nav"); });

@@ -131,13 +131,47 @@
     const rows = await progressStore.loadSoftSkillProgress();
     return Object.fromEntries(rows.filter((row) => catalogueSkillIds.has(row.skill_id)).map((row) => [row.skill_id, row.started]));
   };
+  const loadAuthoritativePracticeState = async (storage) => {
+    const progressStore = window.progressStore;
+    if (!progressStore) throw new Error("The shared progress store is unavailable.");
+    const existingRows = await progressStore.loadSoftSkillPractice();
+    const existingIds = new Set(existingRows.map((row) => row.skill_id));
+    let legacy = {};
+    try {
+      const parsed = JSON.parse(storage.getItem(PRACTICE_STORAGE_KEY) || "{}");
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) legacy = parsed;
+    } catch (error) {
+      console.warn("Legacy Soft Skills practice could not be read for migration.", error);
+    }
+    const isRecord = (value) => value && typeof value === "object" && !Array.isArray(value);
+    const reflections = isRecord(legacy.reflections) ? legacy.reflections : {};
+    const simulations = isRecord(legacy.simulations) ? legacy.simulations : {};
+    const activities = isRecord(legacy.activities) ? legacy.activities : {};
+    const candidateIds = new Set([...Object.keys(reflections), ...Object.keys(simulations), ...Object.keys(activities)]);
+    const missingRows = [];
+    for (const skill_id of candidateIds) {
+      if (!catalogueSkillIds.has(skill_id) || existingIds.has(skill_id)) continue;
+      const reflection = reflections[skill_id];
+      const simulation = simulations[skill_id];
+      const activity = activities[skill_id];
+      if ((reflection !== undefined && !isRecord(reflection)) || (simulation !== undefined && !isRecord(simulation)) || (activity !== undefined && typeof activity !== "boolean")) continue;
+      missingRows.push({ skill_id, reflections: reflection || {}, simulation: simulation || {}, activity_completed: activity === true });
+    }
+    for (let index = 0; index < missingRows.length; index += 10) {
+      await Promise.all(missingRows.slice(index, index + 10).map((record) => progressStore.insertSoftSkillPracticeIfMissing(record)));
+    }
+    const rows = await progressStore.loadSoftSkillPractice();
+    return Object.fromEntries(rows.filter((row) => catalogueSkillIds.has(row.skill_id)).map((row) => [row.skill_id, {
+      reflections: row.reflections, simulation: row.simulation, activity_completed: row.activity_completed
+    }]));
+  };
   const calculateProgress = (state) => {
     const startedSkills = allSkills.filter((item) => state[item.id] === true).length;
     const progress = Math.max(0, Math.min(100, allSkills.length ? Math.round(startedSkills / allSkills.length * 100) : 0));
     const startedDomains = domains.filter((domain) => domain.skills.some((item) => state[item.id] === true)).length;
     return { progress, startedDomains, startedSkills, totalSkills: allSkills.length };
   };
-  window.softSkillsProgress = Object.freeze({ loadAuthoritativeState, calculateProgress, totalSkills: allSkills.length });
+  window.softSkillsProgress = Object.freeze({ loadAuthoritativeState, loadAuthoritativePracticeState, calculateProgress, totalSkills: allSkills.length });
   resolveSoftSkillsProgress(window.softSkillsProgress);
 
   const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
@@ -145,31 +179,65 @@
   if (!list) return;
 
   let stored = {};
+  let practiceRows = {};
   try {
-    stored = await loadAuthoritativeState(localStorage);
+    [stored, practiceRows] = await Promise.all([loadAuthoritativeState(localStorage), loadAuthoritativePracticeState(localStorage)]);
   } catch (error) {
-    console.error("Authoritative Soft Skills progress could not be loaded.", error);
+    console.error("Authoritative Soft Skills progress or practice could not be loaded.", error);
     const note = document.querySelector("#soft-progress-note");
-    if (note) note.textContent = "Soft Skills progress could not be loaded from your account. Your local data is unchanged. Please refresh and try again.";
+    if (note) note.textContent = "Soft Skills progress and practice could not be loaded from your account. Your local data is unchanged. Please refresh and try again.";
     return;
   }
 
   const isStarted = (id) => stored[id] === true;
   let practiceData = { reflections: {}, simulations: {}, activities: {} };
-  try {
-    const savedPractice = JSON.parse(localStorage.getItem(PRACTICE_STORAGE_KEY) || "{}");
-    const isRecord = (value) => value && typeof value === "object" && !Array.isArray(value);
-    if (isRecord(savedPractice)) practiceData = {
-      reflections: isRecord(savedPractice.reflections) ? savedPractice.reflections : {},
-      simulations: isRecord(savedPractice.simulations) ? savedPractice.simulations : {},
-      activities: isRecord(savedPractice.activities) ? savedPractice.activities : {}
-    };
-  } catch (error) {
-    console.warn("Soft skills practice notes could not be read from local storage.", error);
+  for (const [id, row] of Object.entries(practiceRows)) {
+    practiceData.reflections[id] = row.reflections;
+    practiceData.simulations[id] = row.simulation;
+    practiceData.activities[id] = row.activity_completed;
   }
-  const savePractice = () => {
-    try { localStorage.setItem(PRACTICE_STORAGE_KEY, JSON.stringify(practiceData)); return true; }
+  const savePractice = (id) => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(PRACTICE_STORAGE_KEY) || "{}");
+      const cached = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      for (const [key, value] of [["reflections", practiceRows[id].reflections], ["simulations", practiceRows[id].simulation], ["activities", practiceRows[id].activity_completed]]) {
+        if (!cached[key] || typeof cached[key] !== "object" || Array.isArray(cached[key])) cached[key] = {};
+        cached[key][id] = value;
+      }
+      localStorage.setItem(PRACTICE_STORAGE_KEY, JSON.stringify(cached));
+      return true;
+    }
     catch (error) { console.warn("Soft skills practice could not be saved to local storage.", error); return false; }
+  };
+  const savePracticeChange = async (id, changes, sourceControl) => {
+    const card = sourceControl.closest("[data-skill-card]");
+    const controls = [...(card?.querySelectorAll("input, textarea, button") || [])];
+    const previousDisabled = new Map(controls.map((control) => [control, control.disabled]));
+    controls.forEach((control) => { control.disabled = true; });
+    try {
+      const current = practiceRows[id] || { reflections: {}, simulation: {}, activity_completed: false };
+      const row = await window.progressStore.upsertSoftSkillPractice({
+        skill_id: id,
+        reflections: changes.reflections ?? current.reflections,
+        simulation: changes.simulation ?? current.simulation,
+        activity_completed: changes.activity_completed ?? current.activity_completed
+      });
+      practiceRows[id] = { reflections: row.reflections, simulation: row.simulation, activity_completed: row.activity_completed };
+      practiceData.reflections[id] = row.reflections;
+      practiceData.simulations[id] = row.simulation;
+      practiceData.activities[id] = row.activity_completed;
+      const cacheSaved = savePractice(id);
+      const note = document.querySelector("#soft-progress-note");
+      if (note) note.textContent = cacheSaved ? "Practice saved to your account." : "Practice saved to your account. The local compatibility cache could not be updated.";
+      return true;
+    } catch (error) {
+      console.error("Soft Skills practice write failed:", error);
+      const note = document.querySelector("#soft-progress-note");
+      if (note) note.textContent = `Could not save this practice to your account (${error.code || "write error"}). Your saved practice was not changed. Please try again.`;
+      return false;
+    } finally {
+      controls.forEach((control) => { control.disabled = previousDisabled.get(control); });
+    }
   };
   const aiPracticeDomains = new Set(["communication", "teamwork", "problem-solving", "leadership", "presentation", "emotional-intelligence", "career-readiness"]);
   const practiceTools = {
@@ -197,7 +265,7 @@
           <details class="soft-simulation"><summary>${typeBadge("simulation")}${typeBadge("interactive")} Practice the scenario</summary><div class="soft-simulation-body"><p><strong>Scenario:</strong> ${escapeHTML(item.scenario)}</p><label for="simulation-${escapeHTML(item.id)}">How would you respond?</label><textarea id="simulation-${escapeHTML(item.id)}" data-simulation-id="${escapeHTML(item.id)}" rows="3" placeholder="Write or outline your response…">${escapeHTML((practiceData.simulations[item.id] || {}).response || "")}</textarea><button class="soft-feedback-button" type="button" data-feedback-id="${escapeHTML(item.id)}">Compare with guidance</button><div class="soft-feedback-guidance" data-guidance-id="${escapeHTML(item.id)}" ${((practiceData.simulations[item.id] || {}).guidanceViewed) ? "" : "hidden"}><strong>Guidance to compare:</strong><p>${escapeHTML(item.improve)}</p><small>This is a reflection aid, not an automated score. Revise your response and compare again.</small></div><button class="soft-retry-button" type="button" data-retry-id="${escapeHTML(item.id)}">Try again</button></div></details>
           ${aiPracticeDomains.has(domain.id) ? `<details class="soft-ai-practice"><summary>${typeBadge("ai-practice")} Copy a role-play prompt</summary><div class="soft-ai-body"><p>This page has no AI connection. Copy this prompt into an AI assistant you choose; do not include private or sensitive information.</p><textarea readonly rows="5" data-prompt-id="${escapeHTML(item.id)}">${escapeHTML(aiPromptFor(item))}</textarea><button class="soft-copy-prompt" type="button" data-copy-prompt="${escapeHTML(item.id)}">Copy practice prompt</button><span class="soft-copy-status" data-copy-status="${escapeHTML(item.id)}" role="status"></span></div></details>` : ""}
           ${practiceTools[domain.id] ? `<p class="soft-tool-resource">${typeBadge("tool")} <a href="${escapeHTML(practiceTools[domain.id].url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(practiceTools[domain.id].title)}</a><small>${escapeHTML(practiceTools[domain.id].description)}</small></p>` : ""}
-          <details class="soft-reflection"><summary>${typeBadge("reflection")} My reflection</summary><div class="soft-reflection-fields">${[["did", "What I did"], ["wentWell", "What went well"], ["difficult", "What was difficult"], ["improve", "What I should improve"], ["next", "What I will try next"]].map(([key, label]) => `<label>${label}<textarea rows="2" data-reflection-id="${escapeHTML(item.id)}" data-reflection-field="${key}" placeholder="Add a short note…">${escapeHTML(((practiceData.reflections[item.id] || {})[key]) || "")}</textarea></label>`).join("")}<span class="soft-reflection-status" data-reflection-status="${escapeHTML(item.id)}" role="status">Saved on this device</span></div></details>
+          <details class="soft-reflection"><summary>${typeBadge("reflection")} My reflection</summary><div class="soft-reflection-fields">${[["did", "What I did"], ["wentWell", "What went well"], ["difficult", "What was difficult"], ["improve", "What I should improve"], ["next", "What I will try next"]].map(([key, label]) => `<label>${label}<textarea rows="2" data-reflection-id="${escapeHTML(item.id)}" data-reflection-field="${key}" placeholder="Add a short note…">${escapeHTML(((practiceData.reflections[item.id] || {})[key]) || "")}</textarea></label>`).join("")}<span class="soft-reflection-status" data-reflection-status="${escapeHTML(item.id)}" role="status">Changes save to your account.</span></div></details>
         </div></details>
       </article>`).join("")}</div>
     </details>`;
@@ -219,31 +287,34 @@
     window.dispatchEvent(new CustomEvent("softSkillsProgressUpdated", { detail: { progress, startedDomains, startedSkills, totalSkills: allSkills.length } }));
   };
 
-  list.addEventListener("change", (event) => {
+  list.addEventListener("change", async (event) => {
     const activity = event.target.closest("[data-activity-id]");
     if (activity) {
-      practiceData.activities[activity.dataset.activityId] = activity.checked;
-      savePractice();
+      const id = activity.dataset.activityId;
+      const previous = practiceRows[id]?.activity_completed === true;
+      const next = activity.checked;
+      activity.checked = previous;
+      const saved = await savePracticeChange(id, { activity_completed: next }, activity);
+      activity.checked = saved ? next : previous;
       return;
     }
-  });
-  list.addEventListener("input", (event) => {
     const simulation = event.target.closest("[data-simulation-id]");
     if (simulation) {
-      practiceData.simulations[simulation.dataset.simulationId] = {
-        ...(practiceData.simulations[simulation.dataset.simulationId] || {}), response: simulation.value
-      };
-      savePractice();
+      const id = simulation.dataset.simulationId;
+      const previous = practiceRows[id]?.simulation || {};
+      const saved = await savePracticeChange(id, { simulation: { ...previous, response: simulation.value } }, simulation);
+      if (!saved) simulation.value = previous.response || "";
+      return;
     }
     const reflection = event.target.closest("[data-reflection-id]");
     if (reflection) {
-      const currentReflection = practiceData.reflections[reflection.dataset.reflectionId];
-      const skillReflection = currentReflection && typeof currentReflection === "object" && !Array.isArray(currentReflection) ? currentReflection : {};
-      skillReflection[reflection.dataset.reflectionField] = reflection.value;
-      practiceData.reflections[reflection.dataset.reflectionId] = skillReflection;
-      const saved = savePractice();
-      const status = list.querySelector(`[data-reflection-status="${reflection.dataset.reflectionId}"]`);
-      if (status) status.textContent = saved ? "Saved on this device" : "Could not save; check browser storage settings";
+      const id = reflection.dataset.reflectionId;
+      const field = reflection.dataset.reflectionField;
+      const previous = practiceRows[id]?.reflections || {};
+      const saved = await savePracticeChange(id, { reflections: { ...previous, [field]: reflection.value } }, reflection);
+      if (!saved) reflection.value = previous[field] || "";
+      const status = list.querySelector(`[data-reflection-status="${id}"]`);
+      if (status) status.textContent = saved ? "Saved to your account." : "Could not save. Your previous response was restored.";
     }
   });
   list.addEventListener("click", (event) => {
@@ -284,21 +355,28 @@
     const feedbackButton = event.target.closest("[data-feedback-id]");
     if (feedbackButton) {
       const id = feedbackButton.dataset.feedbackId;
-      practiceData.simulations[id] = { ...(practiceData.simulations[id] || {}), guidanceViewed: true };
-      savePractice();
-      const guidance = list.querySelector(`[data-guidance-id="${id}"]`);
-      if (guidance) guidance.hidden = false;
+      const previous = practiceRows[id]?.simulation || {};
+      feedbackButton.disabled = true;
+      savePracticeChange(id, { simulation: { ...previous, guidanceViewed: true } }, feedbackButton).then((saved) => {
+        const guidance = list.querySelector(`[data-guidance-id="${id}"]`);
+        if (guidance && saved) guidance.hidden = false;
+        feedbackButton.disabled = false;
+      });
       return;
     }
     const retryButton = event.target.closest("[data-retry-id]");
     if (retryButton) {
       const id = retryButton.dataset.retryId;
-      practiceData.simulations[id] = { response: "", guidanceViewed: false };
-      savePractice();
-      const response = list.querySelector(`[data-simulation-id="${id}"]`);
-      const guidance = list.querySelector(`[data-guidance-id="${id}"]`);
-      if (response) response.value = "";
-      if (guidance) guidance.hidden = true;
+      retryButton.disabled = true;
+      savePracticeChange(id, { simulation: { response: "", guidanceViewed: false } }, retryButton).then((saved) => {
+        if (saved) {
+          const response = list.querySelector(`[data-simulation-id="${id}"]`);
+          const guidance = list.querySelector(`[data-guidance-id="${id}"]`);
+          if (response) response.value = "";
+          if (guidance) guidance.hidden = true;
+        }
+        retryButton.disabled = false;
+      });
       return;
     }
     const copyButton = event.target.closest("[data-copy-prompt]");

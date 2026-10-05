@@ -154,6 +154,7 @@
     insertSoftSkillProgressIfMissing(record) { return insertIfMissing(tables.softSkills, "insertSoftSkillProgressIfMissing", record, normalize.softSkill, "user_id,skill_id"); },
     loadSoftSkillPractice() { return read(tables.softSkillPractice, "loadSoftSkillPractice", normalize.softSkillPractice); },
     upsertSoftSkillPractice(record) { return upsert(tables.softSkillPractice, "upsertSoftSkillPractice", record, normalize.softSkillPractice, "user_id,skill_id"); },
+    insertSoftSkillPracticeIfMissing(record) { return insertIfMissing(tables.softSkillPractice, "insertSoftSkillPracticeIfMissing", record, normalize.softSkillPractice, "user_id,skill_id"); },
     loadNetworkingJourneyProgress() { return read(tables.networkingJourney, "loadNetworkingJourneyProgress", normalize.networkingJourney); },
     upsertNetworkingJourneyProgress(record) { return upsert(tables.networkingJourney, "upsertNetworkingJourneyProgress", record, normalize.networkingJourney, "user_id,step_id"); },
     insertNetworkingJourneyProgressIfMissing(record) { return insertIfMissing(tables.networkingJourney, "insertNetworkingJourneyProgressIfMissing", record, normalize.networkingJourney, "user_id,step_id"); },
