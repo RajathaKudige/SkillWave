@@ -2664,5 +2664,1065 @@ Object.assign(roadmaps, {
     });
     item.resources = item.resources.map((existing) => contextualResourceCorrections.get(`${role}|${item.title}|${existing.url}`) || existing);
   })));
+
+  // Canonical mission IDs are explicit catalogue data. Keep assigned values unchanged
+  // when mission copy changes; update only the lookup key when a title is renamed.
+  const canonicalMissionIds = {
+  "Full-Stack Developer": {
+    "Build a Responsive Personal Portfolio Page": "full-stack-developer-build-a-responsive-personal-portfolio-page",
+    "Build an Interactive To-Do Application": "full-stack-developer-build-an-interactive-to-do-application",
+    "Publish a Project on GitHub Using a Proper Git Workflow": "full-stack-developer-publish-a-project-on-github-using-a-proper-git-workflow",
+    "Build a Frontend Application Using a Public API": "full-stack-developer-build-a-frontend-application-using-a-public-api",
+    "Build a Complete REST API": "full-stack-developer-build-a-complete-rest-api",
+    "Build a Database-Backed Application": "full-stack-developer-build-a-database-backed-application",
+    "Deploy a Production-Style Application": "full-stack-developer-deploy-a-production-style-application",
+    "Build a Complete Full-Stack Application": "full-stack-developer-build-a-complete-full-stack-application"
+  },
+  "Cloud Architect": {
+    "Write a cloud architecture brief": "cloud-architect-write-a-cloud-architecture-brief",
+    "Design a segmented cloud network": "cloud-architect-design-a-segmented-cloud-network",
+    "Create an identity trust design": "cloud-architect-create-an-identity-trust-design",
+    "Select a compute pattern": "cloud-architect-select-a-compute-pattern",
+    "Choose data services for a workload": "cloud-architect-choose-data-services-for-a-workload",
+    "Set recovery and scaling targets": "cloud-architect-set-recovery-and-scaling-targets",
+    "Present an architecture decision record": "cloud-architect-present-an-architecture-decision-record",
+    "Publish a production-style cloud architecture": "cloud-architect-publish-a-production-style-cloud-architecture"
+  },
+  "Cloud Developer": {
+    "Create a configurable cloud app": "cloud-developer-create-a-configurable-cloud-app",
+    "Build an API-backed feature": "cloud-developer-build-an-api-backed-feature",
+    "Persist application data": "cloud-developer-persist-application-data",
+    "Package a portable application": "cloud-developer-package-a-portable-application",
+    "Implement an event-triggered function": "cloud-developer-implement-an-event-triggered-function",
+    "Connect services with asynchronous events": "cloud-developer-connect-services-with-asynchronous-events",
+    "Release an observable cloud feature": "cloud-developer-release-an-observable-cloud-feature",
+    "Deliver a cloud-native application": "cloud-developer-deliver-a-cloud-native-application"
+  },
+  "DevSecOps Engineer": {
+    "Map security into a delivery lifecycle": "devsecops-engineer-map-security-into-a-delivery-lifecycle",
+    "Harden source collaboration": "devsecops-engineer-harden-source-collaboration",
+    "Constrain pipeline execution": "devsecops-engineer-constrain-pipeline-execution",
+    "Find and remediate code risks": "devsecops-engineer-find-and-remediate-code-risks",
+    "Harden build artifacts": "devsecops-engineer-harden-build-artifacts",
+    "Validate infrastructure before apply": "devsecops-engineer-validate-infrastructure-before-apply",
+    "Govern and measure secure releases": "devsecops-engineer-govern-and-measure-secure-releases",
+    "Deliver a secured CI/CD pipeline": "devsecops-engineer-deliver-a-secured-ci-cd-pipeline"
+  },
+  "Platform Engineer": {
+    "Define an internal platform product": "platform-engineer-define-an-internal-platform-product",
+    "Improve developer workflows": "platform-engineer-improve-developer-workflows",
+    "Create safe self-service infrastructure": "platform-engineer-create-safe-self-service-infrastructure",
+    "Build a shared workload platform": "platform-engineer-build-a-shared-workload-platform",
+    "Compose a developer platform": "platform-engineer-compose-a-developer-platform",
+    "Automate platform lifecycle": "platform-engineer-automate-platform-lifecycle",
+    "Operate the platform as a dependable service": "platform-engineer-operate-the-platform-as-a-dependable-service",
+    "Publish a self-service developer platform": "platform-engineer-publish-a-self-service-developer-platform"
+  },
+  "Infrastructure Engineer": {
+    "Inventory a small infrastructure estate": "infrastructure-engineer-inventory-a-small-infrastructure-estate",
+    "Prepare a standard server build": "infrastructure-engineer-prepare-a-standard-server-build",
+    "Map host connectivity dependencies": "infrastructure-engineer-map-host-connectivity-dependencies",
+    "Design recoverable storage": "infrastructure-engineer-design-recoverable-storage",
+    "Provision repeatable infrastructure": "infrastructure-engineer-provision-repeatable-infrastructure",
+    "Maintain consistent system state": "infrastructure-engineer-maintain-consistent-system-state",
+    "Operate infrastructure through its lifecycle": "infrastructure-engineer-operate-infrastructure-through-its-lifecycle",
+    "Deliver a repeatable infrastructure blueprint": "infrastructure-engineer-deliver-a-repeatable-infrastructure-blueprint"
+  },
+  "Network Administrator": {
+    "Build an addressing and connectivity map": "network-administrator-build-an-addressing-and-connectivity-map",
+    "Configure a segmented lab LAN": "network-administrator-configure-a-segmented-lab-lan",
+    "Verify routed paths": "network-administrator-verify-routed-paths",
+    "Troubleshoot client network services": "network-administrator-troubleshoot-client-network-services",
+    "Support wireless and VPN users": "network-administrator-support-wireless-and-vpn-users",
+    "Resolve a simulated network incident": "network-administrator-resolve-a-simulated-network-incident",
+    "Create a supportable network handoff": "network-administrator-create-a-supportable-network-handoff",
+    "Operate and troubleshoot a branch network lab": "network-administrator-operate-and-troubleshoot-a-branch-network-lab"
+  },
+  "Network Architect": {
+    "Create an architecture requirements brief": "network-architect-create-an-architecture-requirements-brief",
+    "Design segmented enterprise zones": "network-architect-design-segmented-enterprise-zones",
+    "Choose scalable routing patterns": "network-architect-choose-scalable-routing-patterns",
+    "Connect data center and cloud domains": "network-architect-connect-data-center-and-cloud-domains",
+    "Design a resilient distributed WAN": "network-architect-design-a-resilient-distributed-wan",
+    "Model network failure and recovery": "network-architect-model-network-failure-and-recovery",
+    "Create network architecture guardrails": "network-architect-create-network-architecture-guardrails",
+    "Publish a resilient enterprise network design": "network-architect-publish-a-resilient-enterprise-network-design"
+  },
+  "Systems Administrator": {
+    "Prepare a system administration runbook": "systems-administrator-prepare-a-system-administration-runbook",
+    "Administer a Linux host": "systems-administrator-administer-a-linux-host",
+    "Maintain a Windows Server host": "systems-administrator-maintain-a-windows-server-host",
+    "Manage access for a team": "systems-administrator-manage-access-for-a-team",
+    "Configure reliable system services": "systems-administrator-configure-reliable-system-services",
+    "Restore a system from a practice backup": "systems-administrator-restore-a-system-from-a-practice-backup",
+    "Resolve a host service issue": "systems-administrator-resolve-a-host-service-issue",
+    "Operate a documented Linux and Windows service": "systems-administrator-operate-a-documented-linux-and-windows-service"
+  },
+  "Systems Engineer": {
+    "Define a system problem and constraints": "systems-engineer-define-a-system-problem-and-constraints",
+    "Create a system design package": "systems-engineer-create-a-system-design-package",
+    "Integrate infrastructure components": "systems-engineer-integrate-infrastructure-components",
+    "Automate a system integration task": "systems-engineer-automate-a-system-integration-task",
+    "Assess system capacity and bottlenecks": "systems-engineer-assess-system-capacity-and-bottlenecks",
+    "Plan reliable system operation": "systems-engineer-plan-reliable-system-operation",
+    "Manage design changes and technical records": "systems-engineer-manage-design-changes-and-technical-records",
+    "Deliver an integrated system engineering portfolio": "systems-engineer-deliver-an-integrated-system-engineering-portfolio"
+  },
+  "IT Support Engineer": {
+    "Resolve and document a support request": "it-support-engineer-resolve-and-document-a-support-request",
+    "Diagnose an endpoint setup issue": "it-support-engineer-diagnose-an-endpoint-setup-issue",
+    "Restore a simulated endpoint connection": "it-support-engineer-restore-a-simulated-endpoint-connection",
+    "Restore a user's approved access": "it-support-engineer-restore-a-user-s-approved-access",
+    "Prepare a managed endpoint": "it-support-engineer-prepare-a-managed-endpoint",
+    "Solve a multi-symptom support case": "it-support-engineer-solve-a-multi-symptom-support-case",
+    "Improve a support knowledge article": "it-support-engineer-improve-a-support-knowledge-article",
+    "Deliver an end-to-end support case portfolio": "it-support-engineer-deliver-an-end-to-end-support-case-portfolio"
+  },
+  "Blockchain Developer": {
+    "Map an application-to-chain request": "blockchain-developer-map-an-application-to-chain-request",
+    "Trace account and transaction lifecycle": "blockchain-developer-trace-account-and-transaction-lifecycle",
+    "Build an ABI-backed contract client": "blockchain-developer-build-an-abi-backed-contract-client",
+    "Implement a backend chain-data endpoint": "blockchain-developer-implement-a-backend-chain-data-endpoint",
+    "Build an event-backed activity view": "blockchain-developer-build-an-event-backed-activity-view",
+    "Verify a resilient transaction journey": "blockchain-developer-verify-a-resilient-transaction-journey",
+    "Publish a test-network release package": "blockchain-developer-publish-a-test-network-release-package",
+    "Ship a blockchain application engineering system": "blockchain-developer-ship-a-blockchain-application-engineering-system"
+  },
+  "Blockchain Engineer": {
+    "Model a replicated ledger": "blockchain-engineer-model-a-replicated-ledger",
+    "Compare consensus and peer discovery": "blockchain-engineer-compare-consensus-and-peer-discovery",
+    "Implement a minimal block and state model": "blockchain-engineer-implement-a-minimal-block-and-state-model",
+    "Trace a node request path": "blockchain-engineer-trace-a-node-request-path",
+    "Measure propagation and sync behavior": "blockchain-engineer-measure-propagation-and-sync-behavior",
+    "Benchmark a node workload": "blockchain-engineer-benchmark-a-node-workload",
+    "Write a node operations and threat plan": "blockchain-engineer-write-a-node-operations-and-threat-plan",
+    "Extend and evaluate a node component": "blockchain-engineer-extend-and-evaluate-a-node-component"
+  },
+  "Smart Contract Developer": {
+    "Document an EVM contract execution trace": "smart-contract-developer-document-an-evm-contract-execution-trace",
+    "Implement a stateful contract component": "smart-contract-developer-implement-a-stateful-contract-component",
+    "Design a composable contract system": "smart-contract-developer-design-a-composable-contract-system",
+    "Implement a standards-based token component": "smart-contract-developer-implement-a-standards-based-token-component",
+    "Fuzz a contract invariant": "smart-contract-developer-fuzz-a-contract-invariant",
+    "Review and harden an adversarial contract": "smart-contract-developer-review-and-harden-an-adversarial-contract",
+    "Prepare a verified test-network release": "smart-contract-developer-prepare-a-verified-test-network-release",
+    "Build and secure a multi-contract protocol": "smart-contract-developer-build-and-secure-a-multi-contract-protocol"
+  },
+  "Web3 Developer": {
+    "Map a decentralized product architecture": "web3-developer-map-a-decentralized-product-architecture",
+    "Build wallet sign-in with clear consent": "web3-developer-build-wallet-sign-in-with-clear-consent",
+    "Deliver a multi-state dApp interface": "web3-developer-deliver-a-multi-state-dapp-interface",
+    "Integrate a protocol behind a typed client": "web3-developer-integrate-a-protocol-behind-a-typed-client",
+    "Deliver a content and activity view": "web3-developer-deliver-a-content-and-activity-view",
+    "Test a safe transaction journey": "web3-developer-test-a-safe-transaction-journey",
+    "Release a tested dApp to a public test network": "web3-developer-release-a-tested-dapp-to-a-public-test-network",
+    "Ship a user-facing decentralized product": "web3-developer-ship-a-user-facing-decentralized-product"
+  },
+  "Solidity Developer": {
+    "Compile and explain a minimal contract": "solidity-developer-compile-and-explain-a-minimal-contract",
+    "Demonstrate data-location and storage behavior": "solidity-developer-demonstrate-data-location-and-storage-behavior",
+    "Build an interface-based component set": "solidity-developer-build-an-interface-based-component-set",
+    "Refactor a contract into maintainable modules": "solidity-developer-refactor-a-contract-into-maintainable-modules",
+    "Debug and fuzz a Solidity component": "solidity-developer-debug-and-fuzz-a-solidity-component",
+    "Reduce gas without weakening invariants": "solidity-developer-reduce-gas-without-weakening-invariants",
+    "Publish a reproducible verified build": "solidity-developer-publish-a-reproducible-verified-build",
+    "Deliver a verified Solidity contract system": "solidity-developer-deliver-a-verified-solidity-contract-system"
+  },
+  "Quantum Computing Researcher": {
+    "Write a quantum notation and probability notebook": "quantum-computing-researcher-write-a-quantum-notation-and-probability-notebook",
+    "Construct and analyze a small circuit": "quantum-computing-researcher-construct-and-analyze-a-small-circuit",
+    "Implement a circuit in a simulator": "quantum-computing-researcher-implement-a-circuit-in-a-simulator",
+    "Reproduce a small algorithm experiment": "quantum-computing-researcher-reproduce-a-small-algorithm-experiment",
+    "Measure noise effects on a circuit": "quantum-computing-researcher-measure-noise-effects-on-a-circuit",
+    "Compare a quantum method with a baseline": "quantum-computing-researcher-compare-a-quantum-method-with-a-baseline",
+    "Reproduce a published quantum result": "quantum-computing-researcher-reproduce-a-published-quantum-result",
+    "Conduct a reproducible quantum research project": "quantum-computing-researcher-conduct-a-reproducible-quantum-research-project"
+  },
+  "Game Developer": {
+    "Create a small game concept and production brief": "game-developer-create-a-small-game-concept-and-production-brief",
+    "Build a playable engine-based vertical slice": "game-developer-build-a-playable-engine-based-vertical-slice",
+    "Implement a complete core gameplay loop": "game-developer-implement-a-complete-core-gameplay-loop",
+    "Create a data-driven game feature": "game-developer-create-a-data-driven-game-feature",
+    "Polish a player-facing game flow": "game-developer-polish-a-player-facing-game-flow",
+    "Profile and improve a representative game scene": "game-developer-profile-and-improve-a-representative-game-scene",
+    "Prepare a release candidate": "game-developer-prepare-a-release-candidate",
+    "Ship a portfolio-ready game vertical slice": "game-developer-ship-a-portfolio-ready-game-vertical-slice"
+  },
+  "Unity Developer": {
+    "Create a structured Unity project": "unity-developer-create-a-structured-unity-project",
+    "Build reusable MonoBehaviour components": "unity-developer-build-reusable-monobehaviour-components",
+    "Assemble a reusable physics-driven scene": "unity-developer-assemble-a-reusable-physics-driven-scene",
+    "Build an animated input-driven interaction": "unity-developer-build-an-animated-input-driven-interaction",
+    "Build a complete Unity UI flow": "unity-developer-build-a-complete-unity-ui-flow",
+    "Diagnose a Unity performance bottleneck": "unity-developer-diagnose-a-unity-performance-bottleneck",
+    "Deliver an Addressables-backed Unity build": "unity-developer-deliver-an-addressables-backed-unity-build",
+    "Ship a complete Unity game feature": "unity-developer-ship-a-complete-unity-game-feature"
+  },
+  "Unreal Engine Developer": {
+    "Create an Unreal project structure": "unreal-engine-developer-create-an-unreal-project-structure",
+    "Implement a C++ and Blueprint feature": "unreal-engine-developer-implement-a-c-and-blueprint-feature",
+    "Build a gameplay framework feature": "unreal-engine-developer-build-a-gameplay-framework-feature",
+    "Create a performant Unreal material set": "unreal-engine-developer-create-a-performant-unreal-material-set",
+    "Connect Unreal input, animation, and UI": "unreal-engine-developer-connect-unreal-input-animation-and-ui",
+    "Profile and optimize an Unreal level": "unreal-engine-developer-profile-and-optimize-an-unreal-level",
+    "Package a release candidate for a target platform": "unreal-engine-developer-package-a-release-candidate-for-a-target-platform",
+    "Ship an Unreal Engine vertical slice": "unreal-engine-developer-ship-an-unreal-engine-vertical-slice"
+  },
+  "Gameplay Programmer": {
+    "Implement responsive player input": "gameplay-programmer-implement-responsive-player-input",
+    "Build a precise character controller": "gameplay-programmer-build-a-precise-character-controller",
+    "Implement a testable combat or interaction system": "gameplay-programmer-implement-a-testable-combat-or-interaction-system",
+    "Coordinate a multi-system gameplay feature": "gameplay-programmer-coordinate-a-multi-system-gameplay-feature",
+    "Build an adaptive gameplay encounter": "gameplay-programmer-build-an-adaptive-gameplay-encounter",
+    "Tune a camera and feedback response": "gameplay-programmer-tune-a-camera-and-feedback-response",
+    "Implement persistent player progression": "gameplay-programmer-implement-persistent-player-progression",
+    "Deliver an interconnected gameplay systems prototype": "gameplay-programmer-deliver-an-interconnected-gameplay-systems-prototype"
+  },
+  "Game Designer": {
+    "Map a player experience and core loop": "game-designer-map-a-player-experience-and-core-loop",
+    "Specify and prototype a game mechanic": "game-designer-specify-and-prototype-a-game-mechanic",
+    "Design a balanced progression path": "game-designer-design-a-balanced-progression-path",
+    "Block out and evaluate a level": "game-designer-block-out-and-evaluate-a-level",
+    "Design a readable player feedback system": "game-designer-design-a-readable-player-feedback-system",
+    "Run a balance iteration": "game-designer-run-a-balance-iteration",
+    "Conduct a structured playtest": "game-designer-conduct-a-structured-playtest",
+    "Design and validate a complete game experience": "game-designer-design-and-validate-a-complete-game-experience"
+  },
+  "AR/VR Developer": {
+    "Define an XR experience and device setup": "ar-vr-developer-define-an-xr-experience-and-device-setup",
+    "Build an OpenXR application shell": "ar-vr-developer-build-an-openxr-application-shell",
+    "Implement controller and direct interaction": "ar-vr-developer-implement-controller-and-direct-interaction",
+    "Create a tracked spatial experience": "ar-vr-developer-create-a-tracked-spatial-experience",
+    "Design and evaluate comfortable locomotion": "ar-vr-developer-design-and-evaluate-comfortable-locomotion",
+    "Deliver a usable spatial interface": "ar-vr-developer-deliver-a-usable-spatial-interface",
+    "Profile and deploy an XR build": "ar-vr-developer-profile-and-deploy-an-xr-build",
+    "Ship a comfortable immersive application": "ar-vr-developer-ship-a-comfortable-immersive-application"
+  },
+  "Technical Artist": {
+    "Set up a reproducible real-time art pipeline": "technical-artist-set-up-a-reproducible-real-time-art-pipeline",
+    "Build a reusable material system": "technical-artist-build-a-reusable-material-system",
+    "Adapt a scene to a rendering pipeline": "technical-artist-adapt-a-scene-to-a-rendering-pipeline",
+    "Create a procedural content tool": "technical-artist-create-a-procedural-content-tool",
+    "Integrate a polished real-time effect": "technical-artist-integrate-a-polished-real-time-effect",
+    "Optimize a representative art asset set": "technical-artist-optimize-a-representative-art-asset-set",
+    "Build an art validation and handoff workflow": "technical-artist-build-an-art-validation-and-handoff-workflow",
+    "Deliver a production-ready art technology package": "technical-artist-deliver-a-production-ready-art-technology-package"
+  },
+  "Test Automation Engineer": {
+    "Build a maintainable automated test starter": "test-automation-engineer-build-a-maintainable-automated-test-starter",
+    "Design a layered automation framework": "test-automation-engineer-design-a-layered-automation-framework",
+    "Automate a critical browser workflow": "test-automation-engineer-automate-a-critical-browser-workflow",
+    "Automate service-level contract checks": "test-automation-engineer-automate-service-level-contract-checks",
+    "Create isolated test data and service doubles": "test-automation-engineer-create-isolated-test-data-and-service-doubles",
+    "Run a parallel test suite in CI": "test-automation-engineer-run-a-parallel-test-suite-in-ci",
+    "Reduce flakiness in a critical test suite": "test-automation-engineer-reduce-flakiness-in-a-critical-test-suite",
+    "Deliver a production-ready automation system": "test-automation-engineer-deliver-a-production-ready-automation-system"
+  },
+  "Performance Test Engineer": {
+    "Define a measurable performance objective": "performance-test-engineer-define-a-measurable-performance-objective",
+    "Model a representative production workload": "performance-test-engineer-model-a-representative-production-workload",
+    "Characterize behavior under changing load": "performance-test-engineer-characterize-behavior-under-changing-load",
+    "Measure endurance and capacity limits": "performance-test-engineer-measure-endurance-and-capacity-limits",
+    "Correlate workload results with telemetry": "performance-test-engineer-correlate-workload-results-with-telemetry",
+    "Identify a measured performance bottleneck": "performance-test-engineer-identify-a-measured-performance-bottleneck",
+    "Establish a performance regression gate": "performance-test-engineer-establish-a-performance-regression-gate",
+    "Deliver a capacity and performance engineering report": "performance-test-engineer-deliver-a-capacity-and-performance-engineering-report"
+  },
+  "QA Lead": {
+    "Publish a product quality strategy": "qa-lead-publish-a-product-quality-strategy",
+    "Coordinate a cross-team test plan": "qa-lead-coordinate-a-cross-team-test-plan",
+    "Create an actionable quality reporting system": "qa-lead-create-an-actionable-quality-reporting-system",
+    "Improve defect triage and risk ownership": "qa-lead-improve-defect-triage-and-risk-ownership",
+    "Lead a release readiness review": "qa-lead-lead-a-release-readiness-review",
+    "Facilitate a quality planning and learning session": "qa-lead-facilitate-a-quality-planning-and-learning-session",
+    "Run a measurable quality improvement cycle": "qa-lead-run-a-measurable-quality-improvement-cycle",
+    "Deliver a cross-team quality governance portfolio": "qa-lead-deliver-a-cross-team-quality-governance-portfolio"
+  },
+  "Embedded Systems Engineer": {
+    "Define an embedded product architecture": "embedded-systems-engineer-define-an-embedded-product-architecture",
+    "Select a compute and memory platform": "embedded-systems-engineer-select-a-compute-and-memory-platform",
+    "Integrate a sensor and actuator interface": "embedded-systems-engineer-integrate-a-sensor-and-actuator-interface",
+    "Choose an operating system strategy": "embedded-systems-engineer-choose-an-operating-system-strategy",
+    "Analyze system timing and concurrency": "embedded-systems-engineer-analyze-system-timing-and-concurrency",
+    "Diagnose a system-level integration fault": "embedded-systems-engineer-diagnose-a-system-level-integration-fault",
+    "Assess power and reliability risks": "embedded-systems-engineer-assess-power-and-reliability-risks",
+    "Deliver an integrated embedded system design": "embedded-systems-engineer-deliver-an-integrated-embedded-system-design"
+  },
+  "Embedded Software Engineer": {
+    "Build a portable embedded software module": "embedded-software-engineer-build-a-portable-embedded-software-module",
+    "Structure an embedded application into modules": "embedded-software-engineer-structure-an-embedded-application-into-modules",
+    "Implement a hardware abstraction boundary": "embedded-software-engineer-implement-a-hardware-abstraction-boundary",
+    "Implement coordinated RTOS application tasks": "embedded-software-engineer-implement-coordinated-rtos-application-tasks",
+    "Build a layered embedded test suite": "embedded-software-engineer-build-a-layered-embedded-test-suite",
+    "Find and prevent a target software defect": "embedded-software-engineer-find-and-prevent-a-target-software-defect",
+    "Create a reproducible target build pipeline": "embedded-software-engineer-create-a-reproducible-target-build-pipeline",
+    "Deliver production-ready embedded software": "embedded-software-engineer-deliver-production-ready-embedded-software"
+  },
+  "Firmware Engineer": {
+    "Bring up a new microcontroller board": "firmware-engineer-bring-up-a-new-microcontroller-board",
+    "Map the boot path and memory image": "firmware-engineer-map-the-boot-path-and-memory-image",
+    "Implement a register-level peripheral driver": "firmware-engineer-implement-a-register-level-peripheral-driver",
+    "Handle an interrupt-driven device event": "firmware-engineer-handle-an-interrupt-driven-device-event",
+    "Integrate a verified firmware bootloader": "firmware-engineer-integrate-a-verified-firmware-bootloader",
+    "Design a recoverable firmware update": "firmware-engineer-design-a-recoverable-firmware-update",
+    "Build actionable firmware diagnostics": "firmware-engineer-build-actionable-firmware-diagnostics",
+    "Deliver a field-updatable firmware product": "firmware-engineer-deliver-a-field-updatable-firmware-product"
+  },
+  "IoT Engineer": {
+    "Design a connected product architecture": "iot-engineer-design-a-connected-product-architecture",
+    "Publish reliable device telemetry": "iot-engineer-publish-reliable-device-telemetry",
+    "Provision devices with unique identities": "iot-engineer-provision-devices-with-unique-identities",
+    "Route device data into cloud services": "iot-engineer-route-device-data-into-cloud-services",
+    "Operate a versioned device fleet": "iot-engineer-operate-a-versioned-device-fleet",
+    "Deliver a secure staged device update": "iot-engineer-deliver-a-secure-staged-device-update",
+    "Monitor fleet health and message quality": "iot-engineer-monitor-fleet-health-and-message-quality",
+    "Deliver a secure connected-device fleet": "iot-engineer-deliver-a-secure-connected-device-fleet"
+  },
+  "Robotics Engineer": {
+    "Define an integrated robot system": "robotics-engineer-define-an-integrated-robot-system",
+    "Integrate a sensor and actuator subsystem": "robotics-engineer-integrate-a-sensor-and-actuator-subsystem",
+    "Model robot geometry and motion": "robotics-engineer-model-robot-geometry-and-motion",
+    "Tune a robot motion control loop": "robotics-engineer-tune-a-robot-motion-control-loop",
+    "Validate a robot concept in simulation": "robotics-engineer-validate-a-robot-concept-in-simulation",
+    "Calibrate and integrate robot subsystems": "robotics-engineer-calibrate-and-integrate-robot-subsystems",
+    "Validate robot behavior and safe operation": "robotics-engineer-validate-robot-behavior-and-safe-operation",
+    "Deliver an integrated robotic system": "robotics-engineer-deliver-an-integrated-robotic-system"
+  },
+  "Robotics Software Engineer": {
+    "Build a modular ROS 2 application": "robotics-software-engineer-build-a-modular-ros-2-application",
+    "Choose and implement ROS interfaces": "robotics-software-engineer-choose-and-implement-ros-interfaces",
+    "Configure reliable robot communication": "robotics-software-engineer-configure-reliable-robot-communication",
+    "Build a sensor processing pipeline": "robotics-software-engineer-build-a-sensor-processing-pipeline",
+    "Connect robot software to navigation": "robotics-software-engineer-connect-robot-software-to-navigation",
+    "Test robot software in simulation and CI": "robotics-software-engineer-test-robot-software-in-simulation-and-ci",
+    "Deploy and observe a robot software stack": "robotics-software-engineer-deploy-and-observe-a-robot-software-stack",
+    "Deliver an observable robot software platform": "robotics-software-engineer-deliver-an-observable-robot-software-platform"
+  },
+  "Autonomous Systems Engineer": {
+    "Define an autonomy system and safety envelope": "autonomous-systems-engineer-define-an-autonomy-system-and-safety-envelope",
+    "Build a perception pipeline": "autonomous-systems-engineer-build-a-perception-pipeline",
+    "Estimate robot state from noisy sensors": "autonomous-systems-engineer-estimate-robot-state-from-noisy-sensors",
+    "Create and validate a map representation": "autonomous-systems-engineer-create-and-validate-a-map-representation",
+    "Fuse complementary sensor evidence": "autonomous-systems-engineer-fuse-complementary-sensor-evidence",
+    "Plan safe behavior toward a goal": "autonomous-systems-engineer-plan-safe-behavior-toward-a-goal",
+    "Verify autonomy across scenarios and faults": "autonomous-systems-engineer-verify-autonomy-across-scenarios-and-faults",
+    "Deliver an autonomy stack validated under uncertainty": "autonomous-systems-engineer-deliver-an-autonomy-stack-validated-under-uncertainty"
+  },
+  "UX Designer": {
+    "Frame a user-centered experience problem": "ux-designer-frame-a-user-centered-experience-problem",
+    "Map an end-to-end user journey": "ux-designer-map-an-end-to-end-user-journey",
+    "Design a findable information structure": "ux-designer-design-a-findable-information-structure",
+    "Create task flows and wireframes": "ux-designer-create-task-flows-and-wireframes",
+    "Prototype a critical experience flow": "ux-designer-prototype-a-critical-experience-flow",
+    "Evaluate a design with representative users": "ux-designer-evaluate-a-design-with-representative-users",
+    "Refine an experience for inclusive use": "ux-designer-refine-an-experience-for-inclusive-use",
+    "Deliver a validated end-to-end experience": "ux-designer-deliver-a-validated-end-to-end-experience"
+  },
+  "UI Designer": {
+    "Establish a visual interface direction": "ui-designer-establish-a-visual-interface-direction",
+    "Build a readable type and color system": "ui-designer-build-a-readable-type-and-color-system",
+    "Create a consistent responsive layout": "ui-designer-create-a-consistent-responsive-layout",
+    "Design a complete high-fidelity screen set": "ui-designer-design-a-complete-high-fidelity-screen-set",
+    "Create a consistent visual asset language": "ui-designer-create-a-consistent-visual-asset-language",
+    "Audit a responsive interface visually": "ui-designer-audit-a-responsive-interface-visually",
+    "Prepare a developer-ready visual handoff": "ui-designer-prepare-a-developer-ready-visual-handoff",
+    "Deliver a polished responsive interface": "ui-designer-deliver-a-polished-responsive-interface"
+  },
+  "Product Designer": {
+    "Frame an outcome-oriented design opportunity": "product-designer-frame-an-outcome-oriented-design-opportunity",
+    "Connect user evidence to product opportunity": "product-designer-connect-user-evidence-to-product-opportunity",
+    "Shape a coherent product flow": "product-designer-shape-a-coherent-product-flow",
+    "Design a coherent product interface": "product-designer-design-a-coherent-product-interface",
+    "Test a product solution before delivery": "product-designer-test-a-product-solution-before-delivery",
+    "Align a design with delivery partners": "product-designer-align-a-design-with-delivery-partners",
+    "Measure and improve a shipped experience": "product-designer-measure-and-improve-a-shipped-experience",
+    "Deliver a validated outcome-focused product solution": "product-designer-deliver-a-validated-outcome-focused-product-solution"
+  },
+  "UX Researcher": {
+    "Create an ethical research plan": "ux-researcher-create-an-ethical-research-plan",
+    "Conduct a qualitative user study": "ux-researcher-conduct-a-qualitative-user-study",
+    "Design a useful quantitative study": "ux-researcher-design-a-useful-quantitative-study",
+    "Run a moderated usability study": "ux-researcher-run-a-moderated-usability-study",
+    "Synthesize evidence into actionable insights": "ux-researcher-synthesize-evidence-into-actionable-insights",
+    "Present evidence for a product decision": "ux-researcher-present-evidence-for-a-product-decision",
+    "Improve a research program’s quality": "ux-researcher-improve-a-research-program-s-quality",
+    "Deliver a decision-ready research portfolio": "ux-researcher-deliver-a-decision-ready-research-portfolio"
+  },
+  "Interaction Designer": {
+    "Specify an interaction model": "interaction-designer-specify-an-interaction-model",
+    "Map a complex interaction flow": "interaction-designer-map-a-complex-interaction-flow",
+    "Design understandable interaction controls": "interaction-designer-design-understandable-interaction-controls",
+    "Design timely system feedback": "interaction-designer-design-timely-system-feedback",
+    "Prototype stateful interactions": "interaction-designer-prototype-stateful-interactions",
+    "Design recoverable error behavior": "interaction-designer-design-recoverable-error-behavior",
+    "Validate an accessible interaction flow": "interaction-designer-validate-an-accessible-interaction-flow",
+    "Deliver a complete resilient interaction model": "interaction-designer-deliver-a-complete-resilient-interaction-model"
+  },
+  "Visual Designer": {
+    "Define a product visual language": "visual-designer-define-a-product-visual-language",
+    "Compose a balanced digital interface": "visual-designer-compose-a-balanced-digital-interface",
+    "Create expressive yet legible type and color": "visual-designer-create-expressive-yet-legible-type-and-color",
+    "Build a consistent image and icon treatment": "visual-designer-build-a-consistent-image-and-icon-treatment",
+    "Apply product identity across key screens": "visual-designer-apply-product-identity-across-key-screens",
+    "Maintain visual consistency across viewports": "visual-designer-maintain-visual-consistency-across-viewports",
+    "Review a product’s visual communication": "visual-designer-review-a-product-s-visual-communication",
+    "Deliver a cohesive visual identity for a product": "visual-designer-deliver-a-cohesive-visual-identity-for-a-product"
+  },
+  "Product Manager": {
+    "Define a product vision and strategy": "product-manager-define-a-product-vision-and-strategy",
+    "Validate a product opportunity": "product-manager-validate-a-product-opportunity",
+    "Set measurable product goals": "product-manager-set-measurable-product-goals",
+    "Prioritize product opportunities transparently": "product-manager-prioritize-product-opportunities-transparently",
+    "Publish an outcome-oriented roadmap": "product-manager-publish-an-outcome-oriented-roadmap",
+    "Align a team around product delivery": "product-manager-align-a-team-around-product-delivery",
+    "Review product outcomes and adapt direction": "product-manager-review-product-outcomes-and-adapt-direction",
+    "Deliver a product strategy and outcome roadmap": "product-manager-deliver-a-product-strategy-and-outcome-roadmap"
+  },
+  "Product Owner": {
+    "Establish product ownership responsibilities": "product-owner-establish-product-ownership-responsibilities",
+    "Order a usable product backlog": "product-owner-order-a-usable-product-backlog",
+    "Write testable backlog items": "product-owner-write-testable-backlog-items",
+    "Facilitate effective backlog refinement": "product-owner-facilitate-effective-backlog-refinement",
+    "Support a sprint toward usable value": "product-owner-support-a-sprint-toward-usable-value",
+    "Resolve stakeholder needs into backlog decisions": "product-owner-resolve-stakeholder-needs-into-backlog-decisions",
+    "Prepare an evidence-based release": "product-owner-prepare-an-evidence-based-release",
+    "Deliver a release-ready prioritized product backlog": "product-owner-deliver-a-release-ready-prioritized-product-backlog"
+  },
+  "Design Systems Designer": {
+    "Define a design system architecture": "design-systems-designer-define-a-design-system-architecture",
+    "Design a semantic token architecture": "design-systems-designer-design-a-semantic-token-architecture",
+    "Specify reusable component patterns": "design-systems-designer-specify-reusable-component-patterns",
+    "Define component state contracts": "design-systems-designer-define-component-state-contracts",
+    "Set accessibility standards for the system": "design-systems-designer-set-accessibility-standards-for-the-system",
+    "Create a sustainable contribution workflow": "design-systems-designer-create-a-sustainable-contribution-workflow",
+    "Improve system adoption across teams": "design-systems-designer-improve-system-adoption-across-teams",
+    "Deliver a governed production-ready design system": "design-systems-designer-deliver-a-governed-production-ready-design-system"
+  },
+  "Frontend Developer": {
+    "Build a semantic profile page": "frontend-developer-build-a-semantic-profile-page",
+    "Make the page work for more people and devices": "frontend-developer-make-the-page-work-for-more-people-and-devices",
+    "Turn a static page into an interactive interface": "frontend-developer-turn-a-static-page-into-an-interactive-interface",
+    "Load remote data and track your changes": "frontend-developer-load-remote-data-and-track-your-changes",
+    "Rebuild the interface with reusable components": "frontend-developer-rebuild-the-interface-with-reusable-components",
+    "Build a small multi-view product": "frontend-developer-build-a-small-multi-view-product",
+    "Make the interface reliable and safe": "frontend-developer-make-the-interface-reliable-and-safe",
+    "Ship a portfolio-quality frontend application": "frontend-developer-ship-a-portfolio-quality-frontend-application"
+  },
+  "AI Engineer": {
+    "Build a reliable Python data tool": "ai-engineer-build-a-reliable-python-data-tool",
+    "Make an experiment another person can repeat": "ai-engineer-make-an-experiment-another-person-can-repeat",
+    "Explain a model result in plain language": "ai-engineer-explain-a-model-result-in-plain-language",
+    "Prepare a trustworthy training table": "ai-engineer-prepare-a-trustworthy-training-table",
+    "Compare a model with a simple baseline": "ai-engineer-compare-a-model-with-a-simple-baseline",
+    "Decide whether a model is useful": "ai-engineer-decide-whether-a-model-is-useful",
+    "Train and inspect a small neural network": "ai-engineer-train-and-inspect-a-small-neural-network",
+    "Deliver an evaluated AI-powered application": "ai-engineer-deliver-an-evaluated-ai-powered-application"
+  },
+  "Data Scientist": {
+    "Explore a dataset with Python": "data-scientist-explore-a-dataset-with-python",
+    "Plan a measurable investigation": "data-scientist-plan-a-measurable-investigation",
+    "Create an analysis-ready dataset": "data-scientist-create-an-analysis-ready-dataset",
+    "Explain a data pattern visually": "data-scientist-explain-a-data-pattern-visually",
+    "Build a baseline predictive model": "data-scientist-build-a-baseline-predictive-model",
+    "Test whether a result generalizes": "data-scientist-test-whether-a-result-generalizes",
+    "Present an evidence-based recommendation": "data-scientist-present-an-evidence-based-recommendation",
+    "Deliver a usable data science solution": "data-scientist-deliver-a-usable-data-science-solution"
+  },
+  "Backend Developer": {
+    "Build a dependable command-line service": "backend-developer-build-a-dependable-command-line-service",
+    "Write an API contract before implementing routes": "backend-developer-write-an-api-contract-before-implementing-routes",
+    "Implement a readable API": "backend-developer-implement-a-readable-api",
+    "Design a database for a real feature": "backend-developer-design-a-database-for-a-real-feature",
+    "Connect routes to reliable data": "backend-developer-connect-routes-to-reliable-data",
+    "Protect a user-owned resource": "backend-developer-protect-a-user-owned-resource",
+    "Make failures observable and repeatable": "backend-developer-make-failures-observable-and-repeatable",
+    "Deliver a production-minded API capstone": "backend-developer-deliver-a-production-minded-api-capstone"
+  },
+  "Mobile App Developer": {
+    "Create a Kotlin utility app": "mobile-app-developer-create-a-kotlin-utility-app",
+    "Build a multi-screen visual shell": "mobile-app-developer-build-a-multi-screen-visual-shell",
+    "Build an interactive mobile flow": "mobile-app-developer-build-an-interactive-mobile-flow",
+    "Save app data reliably": "mobile-app-developer-save-app-data-reliably",
+    "Add a remote data source": "mobile-app-developer-add-a-remote-data-source",
+    "Prepare the app for real devices": "mobile-app-developer-prepare-the-app-for-real-devices",
+    "Deliver a complete personal finance app": "mobile-app-developer-deliver-a-complete-personal-finance-app",
+    "Publish a tested mobile application portfolio": "mobile-app-developer-publish-a-tested-mobile-application-portfolio"
+  },
+  "Data Analyst": {
+    "Build a trustworthy spreadsheet summary": "data-analyst-build-a-trustworthy-spreadsheet-summary",
+    "Answer business questions with SQL": "data-analyst-answer-business-questions-with-sql",
+    "Prepare a clean reporting dataset": "data-analyst-prepare-a-clean-reporting-dataset",
+    "Define a useful business measure": "data-analyst-define-a-useful-business-measure",
+    "Communicate a trend with a chart": "data-analyst-communicate-a-trend-with-a-chart",
+    "Build an interactive BI dashboard": "data-analyst-build-an-interactive-bi-dashboard",
+    "Present a recommendation": "data-analyst-present-a-recommendation",
+    "Deliver a decision-ready analytics portfolio": "data-analyst-deliver-a-decision-ready-analytics-portfolio"
+  },
+  "Cloud / DevOps Engineer": {
+    "Automate a repeatable server task": "cloud-devops-engineer-automate-a-repeatable-server-task",
+    "Map a service request path": "cloud-devops-engineer-map-a-service-request-path",
+    "Version an operations change": "cloud-devops-engineer-version-an-operations-change",
+    "Package a local service": "cloud-devops-engineer-package-a-local-service",
+    "Automate a build and release check": "cloud-devops-engineer-automate-a-build-and-release-check",
+    "Design a small cloud environment": "cloud-devops-engineer-design-a-small-cloud-environment",
+    "Recreate infrastructure from configuration": "cloud-devops-engineer-recreate-infrastructure-from-configuration",
+    "Deploy and operate a monitored service": "cloud-devops-engineer-deploy-and-operate-a-monitored-service"
+  },
+  "Cybersecurity Engineer": {
+    "Map a network attack surface": "cybersecurity-engineer-map-a-network-attack-surface",
+    "Secure a practice Linux account": "cybersecurity-engineer-secure-a-practice-linux-account",
+    "Write a basic threat model": "cybersecurity-engineer-write-a-basic-threat-model",
+    "Review an authentication design": "cybersecurity-engineer-review-an-authentication-design",
+    "Review a vulnerable practice application": "cybersecurity-engineer-review-a-vulnerable-practice-application",
+    "Assess an owned lab environment": "cybersecurity-engineer-assess-an-owned-lab-environment",
+    "Investigate a simulated security event": "cybersecurity-engineer-investigate-a-simulated-security-event",
+    "Assess and harden a local web service": "cybersecurity-engineer-assess-and-harden-a-local-web-service"
+  },
+  "Data Engineer": {
+    "Create a reproducible data utility": "data-engineer-create-a-reproducible-data-utility",
+    "Model and query an operational dataset": "data-engineer-model-and-query-an-operational-dataset",
+    "Publish a trusted analytical table": "data-engineer-publish-a-trusted-analytical-table",
+    "Ingest a public data source": "data-engineer-ingest-a-public-data-source",
+    "Schedule a multi-step batch workflow": "data-engineer-schedule-a-multi-step-batch-workflow",
+    "Ship a containerized data job": "data-engineer-ship-a-containerized-data-job",
+    "Compare local and cloud pipeline design": "data-engineer-compare-local-and-cloud-pipeline-design",
+    "Deliver a reliable analytics data platform": "data-engineer-deliver-a-reliable-analytics-data-platform"
+  },
+  "Cybersecurity Analyst": {
+    "Map a small practice network": "cybersecurity-analyst-map-a-small-practice-network",
+    "Build a defensive log review utility": "cybersecurity-analyst-build-a-defensive-log-review-utility",
+    "Review an access-control design": "cybersecurity-analyst-review-an-access-control-design",
+    "Prioritize a safe vulnerability backlog": "cybersecurity-analyst-prioritize-a-safe-vulnerability-backlog",
+    "Create a basic detection story": "cybersecurity-analyst-create-a-basic-detection-story",
+    "Investigate a simulated alert": "cybersecurity-analyst-investigate-a-simulated-alert",
+    "Complete a scoped blue-team lab": "cybersecurity-analyst-complete-a-scoped-blue-team-lab",
+    "Deliver a defensive incident analysis": "cybersecurity-analyst-deliver-a-defensive-incident-analysis"
+  },
+  "Cloud Engineer": {
+    "Document a reproducible service environment": "cloud-engineer-document-a-reproducible-service-environment",
+    "Design a private service network": "cloud-engineer-design-a-private-service-network",
+    "Deploy a small cloud service": "cloud-engineer-deploy-a-small-cloud-service",
+    "Create a least-privilege cloud plan": "cloud-engineer-create-a-least-privilege-cloud-plan",
+    "Recreate infrastructure from code": "cloud-engineer-recreate-infrastructure-from-code",
+    "Operate a resilient service design": "cloud-engineer-operate-a-resilient-service-design",
+    "Review a production architecture": "cloud-engineer-review-a-production-architecture",
+    "Deliver a secure cloud service blueprint": "cloud-engineer-deliver-a-secure-cloud-service-blueprint"
+  },
+  "DevOps Engineer": {
+    "Automate a repeatable local build": "devops-engineer-automate-a-repeatable-local-build",
+    "Trace an application request": "devops-engineer-trace-an-application-request",
+    "Build a trusted CI pipeline": "devops-engineer-build-a-trusted-ci-pipeline",
+    "Package and publish a container": "devops-engineer-package-and-publish-a-container",
+    "Provision a reviewable environment": "devops-engineer-provision-a-reviewable-environment",
+    "Deploy a service with a safe rollout": "devops-engineer-deploy-a-service-with-a-safe-rollout",
+    "Create an operations-ready service": "devops-engineer-create-an-operations-ready-service",
+    "Deliver a complete automated release path": "devops-engineer-deliver-a-complete-automated-release-path"
+  },
+  "Android Developer": {
+    "Create a first Android utility": "android-developer-create-a-first-android-utility",
+    "Build an interactive Compose interface": "android-developer-build-an-interactive-compose-interface",
+    "Structure a multi-screen application": "android-developer-structure-a-multi-screen-application",
+    "Make an app work with real data": "android-developer-make-an-app-work-with-real-data",
+    "Build robust user journeys": "android-developer-build-robust-user-journeys",
+    "Prepare a reviewable app release": "android-developer-prepare-a-reviewable-app-release",
+    "Polish an integrated Android feature": "android-developer-polish-an-integrated-android-feature",
+    "Deliver a production-style Android application": "android-developer-deliver-a-production-style-android-application"
+  },
+  "iOS Developer": {
+    "Create a first Swift app": "ios-developer-create-a-first-swift-app",
+    "Build an interactive SwiftUI experience": "ios-developer-build-an-interactive-swiftui-experience",
+    "Organize a multi-screen app": "ios-developer-organize-a-multi-screen-app",
+    "Load and persist useful data": "ios-developer-load-and-persist-useful-data",
+    "Make user journeys inclusive and reliable": "ios-developer-make-user-journeys-inclusive-and-reliable",
+    "Prepare a reviewable iOS release": "ios-developer-prepare-a-reviewable-ios-release",
+    "Polish a complete iOS feature": "ios-developer-polish-a-complete-ios-feature",
+    "Deliver a portfolio-ready native app": "ios-developer-deliver-a-portfolio-ready-native-app"
+  },
+  "Flutter Developer": {
+    "Build a Dart command-line utility": "flutter-developer-build-a-dart-command-line-utility",
+    "Create a responsive Flutter interface": "flutter-developer-create-a-responsive-flutter-interface",
+    "Build a multi-screen Flutter feature": "flutter-developer-build-a-multi-screen-flutter-feature",
+    "Build a data-backed Flutter feature": "flutter-developer-build-a-data-backed-flutter-feature",
+    "Structure an authenticated app flow": "flutter-developer-structure-an-authenticated-app-flow",
+    "Verify a Flutter feature": "flutter-developer-verify-a-flutter-feature",
+    "Prepare a cross-platform release candidate": "flutter-developer-prepare-a-cross-platform-release-candidate",
+    "Deliver a polished cross-platform application": "flutter-developer-deliver-a-polished-cross-platform-application"
+  },
+  "Ethical Hacker": {
+    "Map a sample web request": "ethical-hacker-map-a-sample-web-request",
+    "Create a safe lab notebook": "ethical-hacker-create-a-safe-lab-notebook",
+    "Write an assessment authorization plan": "ethical-hacker-write-an-assessment-authorization-plan",
+    "Document an intentionally vulnerable lab": "ethical-hacker-document-an-intentionally-vulnerable-lab",
+    "Analyze a training-lab finding": "ethical-hacker-analyze-a-training-lab-finding",
+    "Review a lab application's security controls": "ethical-hacker-review-a-lab-application-s-security-controls",
+    "Deliver a useful security report": "ethical-hacker-deliver-a-useful-security-report",
+    "Complete an authorized lab assessment": "ethical-hacker-complete-an-authorized-lab-assessment"
+  },
+  "SOC Analyst": {
+    "Map a fictional organization's basic risks": "soc-analyst-map-a-fictional-organization-s-basic-risks",
+    "Build a sample event timeline": "soc-analyst-build-a-sample-event-timeline",
+    "Create a basic monitoring dashboard": "soc-analyst-create-a-basic-monitoring-dashboard",
+    "Triage a simulated security alert": "soc-analyst-triage-a-simulated-security-alert",
+    "Investigate a contained scenario": "soc-analyst-investigate-a-contained-scenario",
+    "Write and validate a detection rule": "soc-analyst-write-and-validate-a-detection-rule",
+    "Produce a shift handoff": "soc-analyst-produce-a-shift-handoff",
+    "Investigate and report a simulated incident": "soc-analyst-investigate-and-report-a-simulated-incident"
+  },
+  "QA Engineer": {
+    "Test a small user-facing feature": "qa-engineer-test-a-small-user-facing-feature",
+    "Create a practical test plan": "qa-engineer-create-a-practical-test-plan",
+    "Run a structured exploratory session": "qa-engineer-run-a-structured-exploratory-session",
+    "Verify an API-backed workflow": "qa-engineer-verify-an-api-backed-workflow",
+    "Check a key browser user journey": "qa-engineer-check-a-key-browser-user-journey",
+    "Automate a repeatable regression check": "qa-engineer-automate-a-repeatable-regression-check",
+    "Integrate quality checks into a change workflow": "qa-engineer-integrate-quality-checks-into-a-change-workflow",
+    "Deliver a complete quality portfolio": "qa-engineer-deliver-a-complete-quality-portfolio"
+  },
+  "SDET": {
+    "Write a reliable test utility": "sdet-write-a-reliable-test-utility",
+    "Design a maintainable test suite": "sdet-design-a-maintainable-test-suite",
+    "Automate a stable browser workflow": "sdet-automate-a-stable-browser-workflow",
+    "Build an API regression suite": "sdet-build-an-api-regression-suite",
+    "Test components with controlled dependencies": "sdet-test-components-with-controlled-dependencies",
+    "Publish useful test results in CI": "sdet-publish-useful-test-results-in-ci",
+    "Improve framework reliability": "sdet-improve-framework-reliability",
+    "Deliver a maintainable automation framework": "sdet-deliver-a-maintainable-automation-framework"
+  },
+  "Network Engineer": {
+    "Draw a small network topology": "network-engineer-draw-a-small-network-topology",
+    "Design a segmented office LAN": "network-engineer-design-a-segmented-office-lan",
+    "Plan routed connectivity": "network-engineer-plan-routed-connectivity",
+    "Troubleshoot a simulated service outage": "network-engineer-troubleshoot-a-simulated-service-outage",
+    "Capture and explain lab traffic": "network-engineer-capture-and-explain-lab-traffic",
+    "Review a network security design": "network-engineer-review-a-network-security-design",
+    "Automate a repeatable lab check": "network-engineer-automate-a-repeatable-lab-check",
+    "Design and troubleshoot a lab network": "network-engineer-design-and-troubleshoot-a-lab-network"
+  },
+  "Site Reliability Engineer": {
+    "Create a service health-check utility": "site-reliability-engineer-create-a-service-health-check-utility",
+    "Trace a request through a service": "site-reliability-engineer-trace-a-request-through-a-service",
+    "Provision a small test environment": "site-reliability-engineer-provision-a-small-test-environment",
+    "Create a tested release pipeline": "site-reliability-engineer-create-a-tested-release-pipeline",
+    "Instrument a service dashboard": "site-reliability-engineer-instrument-a-service-dashboard",
+    "Define service objectives": "site-reliability-engineer-define-service-objectives",
+    "Run a simulated incident review": "site-reliability-engineer-run-a-simulated-incident-review",
+    "Deploy and operate a reliable service": "site-reliability-engineer-deploy-and-operate-a-reliable-service"
+  },
+  "Machine Learning Engineer": {
+    "Create a versioned data exploration project": "machine-learning-engineer-create-a-versioned-data-exploration-project",
+    "Prepare a trustworthy tabular dataset": "machine-learning-engineer-prepare-a-trustworthy-tabular-dataset",
+    "Compare a baseline with two classical models": "machine-learning-engineer-compare-a-baseline-with-two-classical-models",
+    "Create a leakage-safe feature experiment": "machine-learning-engineer-create-a-leakage-safe-feature-experiment",
+    "Build a reproducible training pipeline": "machine-learning-engineer-build-a-reproducible-training-pipeline",
+    "Serve predictions through a small API": "machine-learning-engineer-serve-predictions-through-a-small-api",
+    "Design a model monitoring and release plan": "machine-learning-engineer-design-a-model-monitoring-and-release-plan",
+    "Build and deploy a complete ML prediction service": "machine-learning-engineer-build-and-deploy-a-complete-ml-prediction-service"
+  },
+  "AI/ML Engineer": {
+    "Create a reusable data analysis package": "ai-ml-engineer-create-a-reusable-data-analysis-package",
+    "Build and assess a baseline ML model": "ai-ml-engineer-build-and-assess-a-baseline-ml-model",
+    "Train a small neural network": "ai-ml-engineer-train-a-small-neural-network",
+    "Run a model comparison study": "ai-ml-engineer-run-a-model-comparison-study",
+    "Create a model-backed API prototype": "ai-ml-engineer-create-a-model-backed-api-prototype",
+    "Review an AI feature before release": "ai-ml-engineer-review-an-ai-feature-before-release",
+    "Prepare an operational plan for a model service": "ai-ml-engineer-prepare-an-operational-plan-for-a-model-service",
+    "Deliver a responsible AI application": "ai-ml-engineer-deliver-a-responsible-ai-application"
+  },
+  "Deep Learning Engineer": {
+    "Build a small numerical learning notebook": "deep-learning-engineer-build-a-small-numerical-learning-notebook",
+    "Implement a framework training loop": "deep-learning-engineer-implement-a-framework-training-loop",
+    "Compare optimization choices": "deep-learning-engineer-compare-optimization-choices",
+    "Train and inspect a CNN": "deep-learning-engineer-train-and-inspect-a-cnn",
+    "Build a sequence model comparison": "deep-learning-engineer-build-a-sequence-model-comparison",
+    "Create a reproducible training report": "deep-learning-engineer-create-a-reproducible-training-report",
+    "Package a small neural model for inference": "deep-learning-engineer-package-a-small-neural-model-for-inference",
+    "Build and serve a neural network application": "deep-learning-engineer-build-and-serve-a-neural-network-application"
+  },
+  "Generative AI Engineer": {
+    "Build a small text processing utility": "generative-ai-engineer-build-a-small-text-processing-utility",
+    "Train a small model and explain its limits": "generative-ai-engineer-train-a-small-model-and-explain-its-limits",
+    "Inspect a pretrained language model": "generative-ai-engineer-inspect-a-pretrained-language-model",
+    "Build a small semantic search index": "generative-ai-engineer-build-a-small-semantic-search-index",
+    "Create a structured extraction workflow": "generative-ai-engineer-create-a-structured-extraction-workflow",
+    "Build a constrained tool-using assistant": "generative-ai-engineer-build-a-constrained-tool-using-assistant",
+    "Evaluate and harden a generative feature": "generative-ai-engineer-evaluate-and-harden-a-generative-feature",
+    "Build a responsible retrieval-augmented application": "generative-ai-engineer-build-a-responsible-retrieval-augmented-application"
+  },
+  "NLP Engineer": {
+    "Prepare a small text corpus": "nlp-engineer-prepare-a-small-text-corpus",
+    "Build a classical NLP baseline": "nlp-engineer-build-a-classical-nlp-baseline",
+    "Build semantic search over short documents": "nlp-engineer-build-semantic-search-over-short-documents",
+    "Fine-tune a small transformer classifier": "nlp-engineer-fine-tune-a-small-transformer-classifier",
+    "Create an extraction pipeline": "nlp-engineer-create-an-extraction-pipeline",
+    "Implement an evidence-linked retrieval prototype": "nlp-engineer-implement-an-evidence-linked-retrieval-prototype",
+    "Deploy a tested NLP service": "nlp-engineer-deploy-a-tested-nlp-service",
+    "Build and publish a practical NLP application": "nlp-engineer-build-and-publish-a-practical-nlp-application"
+  },
+  "Computer Vision Engineer": {
+    "Prepare an image dataset audit": "computer-vision-engineer-prepare-an-image-dataset-audit",
+    "Create a classical vision baseline": "computer-vision-engineer-create-a-classical-vision-baseline",
+    "Train an image classifier": "computer-vision-engineer-train-an-image-classifier",
+    "Build an object localization prototype": "computer-vision-engineer-build-an-object-localization-prototype",
+    "Compare visual representations": "computer-vision-engineer-compare-visual-representations",
+    "Create a document OCR review workflow": "computer-vision-engineer-create-a-document-ocr-review-workflow",
+    "Package a vision model and quality report": "computer-vision-engineer-package-a-vision-model-and-quality-report",
+    "Build a practical computer vision application": "computer-vision-engineer-build-a-practical-computer-vision-application"
+  },
+  "AI Research Engineer": {
+    "Create a reproducible numerical notebook": "ai-research-engineer-create-a-reproducible-numerical-notebook",
+    "Reproduce a simple learning algorithm": "ai-research-engineer-reproduce-a-simple-learning-algorithm",
+    "Reproduce a small neural model": "ai-research-engineer-reproduce-a-small-neural-model",
+    "Prepare a structured paper review": "ai-research-engineer-prepare-a-structured-paper-review",
+    "Publish a reproducible experiment": "ai-research-engineer-publish-a-reproducible-experiment",
+    "Run a small ablation and benchmark study": "ai-research-engineer-run-a-small-ablation-and-benchmark-study",
+    "Prepare a responsible research communication package": "ai-research-engineer-prepare-a-responsible-research-communication-package",
+    "Reproduce and extend a small AI research result": "ai-research-engineer-reproduce-and-extend-a-small-ai-research-result"
+  },
+  "Digital Marketing Specialist": {
+    "Create a digital campaign brief": "digital-marketing-specialist-create-a-digital-campaign-brief",
+    "Plan a paid media test": "digital-marketing-specialist-plan-a-paid-media-test",
+    "Map audience intent to an organic discovery plan": "digital-marketing-specialist-map-audience-intent-to-an-organic-discovery-plan",
+    "Build a consent-aware email journey": "digital-marketing-specialist-build-a-consent-aware-email-journey",
+    "Improve a campaign landing page": "digital-marketing-specialist-improve-a-campaign-landing-page",
+    "Create a campaign measurement plan": "digital-marketing-specialist-create-a-campaign-measurement-plan",
+    "Optimize a live campaign using evidence": "digital-marketing-specialist-optimize-a-live-campaign-using-evidence",
+    "Deliver an integrated digital campaign portfolio": "digital-marketing-specialist-deliver-an-integrated-digital-campaign-portfolio"
+  },
+  "SEO Specialist": {
+    "Audit crawl and indexation health": "seo-specialist-audit-crawl-and-indexation-health",
+    "Diagnose a technical SEO issue": "seo-specialist-diagnose-a-technical-seo-issue",
+    "Design a crawlable site architecture": "seo-specialist-design-a-crawlable-site-architecture",
+    "Build an intent-led keyword map": "seo-specialist-build-an-intent-led-keyword-map",
+    "Optimize a priority page": "seo-specialist-optimize-a-priority-page",
+    "Assess a site's link authority": "seo-specialist-assess-a-site-s-link-authority",
+    "Deliver a prioritized SEO audit": "seo-specialist-deliver-a-prioritized-seo-audit",
+    "Deliver an SEO audit and recovery plan": "seo-specialist-deliver-an-seo-audit-and-recovery-plan"
+  },
+  "Content Strategist": {
+    "Create an audience content needs assessment": "content-strategist-create-an-audience-content-needs-assessment",
+    "Write a content strategy brief": "content-strategist-write-a-content-strategy-brief",
+    "Build a content pillar model": "content-strategist-build-a-content-pillar-model",
+    "Create an editorial operating plan": "content-strategist-create-an-editorial-operating-plan",
+    "Design a content information architecture": "content-strategist-design-a-content-information-architecture",
+    "Plan a content distribution system": "content-strategist-plan-a-content-distribution-system",
+    "Build a content performance framework": "content-strategist-build-a-content-performance-framework",
+    "Deliver an editorial strategy portfolio": "content-strategist-deliver-an-editorial-strategy-portfolio"
+  },
+  "Growth Marketer": {
+    "Define a growth model and baseline": "growth-marketer-define-a-growth-model-and-baseline",
+    "Diagnose acquisition funnel quality": "growth-marketer-diagnose-acquisition-funnel-quality",
+    "Design an activation improvement experiment": "growth-marketer-design-an-activation-improvement-experiment",
+    "Design a valid conversion experiment": "growth-marketer-design-a-valid-conversion-experiment",
+    "Create a retention experiment plan": "growth-marketer-create-a-retention-experiment-plan",
+    "Analyze and communicate an experiment": "growth-marketer-analyze-and-communicate-an-experiment",
+    "Prioritize a growth experiment portfolio": "growth-marketer-prioritize-a-growth-experiment-portfolio",
+    "Deliver a growth experiment portfolio": "growth-marketer-deliver-a-growth-experiment-portfolio"
+  },
+  "Social Media Manager": {
+    "Create a platform strategy": "social-media-manager-create-a-platform-strategy",
+    "Build a social publishing calendar": "social-media-manager-build-a-social-publishing-calendar",
+    "Develop an engagement-led content series": "social-media-manager-develop-an-engagement-led-content-series",
+    "Create a community response and moderation guide": "social-media-manager-create-a-community-response-and-moderation-guide",
+    "Coordinate a cross-functional social campaign": "social-media-manager-coordinate-a-cross-functional-social-campaign",
+    "Report social channel performance": "social-media-manager-report-social-channel-performance",
+    "Improve a social channel operating plan": "social-media-manager-improve-a-social-channel-operating-plan",
+    "Deliver a multi-platform social strategy": "social-media-manager-deliver-a-multi-platform-social-strategy"
+  },
+  "Brand Manager": {
+    "Assess brand perception in the market": "brand-manager-assess-brand-perception-in-the-market",
+    "Write a differentiated brand positioning": "brand-manager-write-a-differentiated-brand-positioning",
+    "Create a brand identity direction": "brand-manager-create-a-brand-identity-direction",
+    "Build a brand messaging framework": "brand-manager-build-a-brand-messaging-framework",
+    "Create a brand governance guide": "brand-manager-create-a-brand-governance-guide",
+    "Review a campaign for brand consistency": "brand-manager-review-a-campaign-for-brand-consistency",
+    "Build a brand health scorecard": "brand-manager-build-a-brand-health-scorecard",
+    "Deliver a brand strategy portfolio": "brand-manager-deliver-a-brand-strategy-portfolio"
+  },
+  "Business Analyst": {
+    "Frame a business need and analysis approach": "business-analyst-frame-a-business-need-and-analysis-approach",
+    "Elicit and confirm stakeholder needs": "business-analyst-elicit-and-confirm-stakeholder-needs",
+    "Create a testable requirements baseline": "business-analyst-create-a-testable-requirements-baseline",
+    "Model a business process and its information": "business-analyst-model-a-business-process-and-its-information",
+    "Prioritize and control a changing backlog": "business-analyst-prioritize-and-control-a-changing-backlog",
+    "Analyze evidence for a business decision": "business-analyst-analyze-evidence-for-a-business-decision",
+    "Evaluate a solution against intended outcomes": "business-analyst-evaluate-a-solution-against-intended-outcomes",
+    "Deliver a traceable business analysis package": "business-analyst-deliver-a-traceable-business-analysis-package"
+  },
+  "Business Consultant": {
+    "Scope a client advisory engagement": "business-consultant-scope-a-client-advisory-engagement",
+    "Assess a client market and competitive position": "business-consultant-assess-a-client-market-and-competitive-position",
+    "Diagnose the drivers of a client performance issue": "business-consultant-diagnose-the-drivers-of-a-client-performance-issue",
+    "Compare strategic options for the client": "business-consultant-compare-strategic-options-for-the-client",
+    "Build a decision-ready business case": "business-consultant-build-a-decision-ready-business-case",
+    "Present a concise client recommendation": "business-consultant-present-a-concise-client-recommendation",
+    "Translate a recommendation into an executable plan": "business-consultant-translate-a-recommendation-into-an-executable-plan",
+    "Deliver an evidence-backed client strategy": "business-consultant-deliver-an-evidence-backed-client-strategy"
+  },
+  "Operations Analyst": {
+    "Define an operational performance baseline": "operations-analyst-define-an-operational-performance-baseline",
+    "Map a process and locate avoidable delay": "operations-analyst-map-a-process-and-locate-avoidable-delay",
+    "Build a decision-useful operations dashboard": "operations-analyst-build-a-decision-useful-operations-dashboard",
+    "Create and evaluate an operational demand forecast": "operations-analyst-create-and-evaluate-an-operational-demand-forecast",
+    "Recommend a capacity plan for a changing workload": "operations-analyst-recommend-a-capacity-plan-for-a-changing-workload",
+    "Analyze inventory and service-quality exceptions": "operations-analyst-analyze-inventory-and-service-quality-exceptions",
+    "Design and review a controlled process improvement": "operations-analyst-design-and-review-a-controlled-process-improvement",
+    "Deliver a measured operations improvement": "operations-analyst-deliver-a-measured-operations-improvement"
+  },
+  "Sales Executive": {
+    "Prepare a buyer-focused value brief": "sales-executive-prepare-a-buyer-focused-value-brief",
+    "Build a focused prospecting plan": "sales-executive-build-a-focused-prospecting-plan",
+    "Conduct a structured discovery conversation": "sales-executive-conduct-a-structured-discovery-conversation",
+    "Present a tailored solution and value case": "sales-executive-present-a-tailored-solution-and-value-case",
+    "Resolve objections and prepare a fair negotiation": "sales-executive-resolve-objections-and-prepare-a-fair-negotiation",
+    "Maintain a trustworthy sales pipeline": "sales-executive-maintain-a-trustworthy-sales-pipeline",
+    "Close and hand off a qualified customer commitment": "sales-executive-close-and-hand-off-a-qualified-customer-commitment",
+    "Deliver an end-to-end sales opportunity portfolio": "sales-executive-deliver-an-end-to-end-sales-opportunity-portfolio"
+  },
+  "Business Development Executive": {
+    "Select and justify an expansion opportunity": "business-development-executive-select-and-justify-an-expansion-opportunity",
+    "Map the ecosystem around a target opportunity": "business-development-executive-map-the-ecosystem-around-a-target-opportunity",
+    "Develop a qualified partner or market opportunity": "business-development-executive-develop-a-qualified-partner-or-market-opportunity",
+    "Shape a viable partnership proposition": "business-development-executive-shape-a-viable-partnership-proposition",
+    "Evaluate the economics and risks of a proposed deal": "business-development-executive-evaluate-the-economics-and-risks-of-a-proposed-deal",
+    "Agree a partnership framework and decision rights": "business-development-executive-agree-a-partnership-framework-and-decision-rights",
+    "Plan a measurable partner-led market entry": "business-development-executive-plan-a-measurable-partner-led-market-entry",
+    "Deliver a market-entry and strategic partnership portfolio": "business-development-executive-deliver-a-market-entry-and-strategic-partnership-portfolio"
+  },
+  "Accountant": {
+    "Build an auditable transaction register": "accountant-build-an-auditable-transaction-register",
+    "Post a balanced general ledger": "accountant-post-a-balanced-general-ledger",
+    "Complete a month-end reconciliation pack": "accountant-complete-a-month-end-reconciliation-pack",
+    "Close the operating subledgers": "accountant-close-the-operating-subledgers",
+    "Prepare a close and reporting package": "accountant-prepare-a-close-and-reporting-package",
+    "Document a transaction control walkthrough": "accountant-document-a-transaction-control-walkthrough",
+    "Prepare a jurisdiction-aware compliance calendar": "accountant-prepare-a-jurisdiction-aware-compliance-calendar",
+    "Deliver a complete month-end close portfolio": "accountant-deliver-a-complete-month-end-close-portfolio"
+  },
+  "Management Accountant": {
+    "Translate an operating question into a cost view": "management-accountant-translate-an-operating-question-into-a-cost-view",
+    "Model an operating break-even question": "management-accountant-model-an-operating-break-even-question",
+    "Build a traceable product cost model": "management-accountant-build-a-traceable-product-cost-model",
+    "Explain a shared-service cost allocation": "management-accountant-explain-a-shared-service-cost-allocation",
+    "Prepare an operating budget by function": "management-accountant-prepare-an-operating-budget-by-function",
+    "Investigate a material operating variance": "management-accountant-investigate-a-material-operating-variance",
+    "Deliver a decision-focused management pack": "management-accountant-deliver-a-decision-focused-management-pack",
+    "Deliver a cost and performance management portfolio": "management-accountant-deliver-a-cost-and-performance-management-portfolio"
+  },
+  "Financial Analyst": {
+    "Create a company financial profile": "financial-analyst-create-a-company-financial-profile",
+    "Explain a company's historical performance": "financial-analyst-explain-a-company-s-historical-performance",
+    "Build a driver-based company forecast": "financial-analyst-build-a-driver-based-company-forecast",
+    "Build a decision-ready forecast model": "financial-analyst-build-a-decision-ready-forecast-model",
+    "Compare company valuation scenarios": "financial-analyst-compare-company-valuation-scenarios",
+    "Write a company performance brief": "financial-analyst-write-a-company-performance-brief",
+    "Review and challenge a financial model": "financial-analyst-review-and-challenge-a-financial-model",
+    "Deliver a company analysis and decision portfolio": "financial-analyst-deliver-a-company-analysis-and-decision-portfolio"
+  },
+  "FP&A Analyst": {
+    "Map an annual planning cycle": "fp-and-a-analyst-map-an-annual-planning-cycle",
+    "Build a cross-functional operating budget": "fp-and-a-analyst-build-a-cross-functional-operating-budget",
+    "Produce a rolling forecast update": "fp-and-a-analyst-produce-a-rolling-forecast-update",
+    "Model a strategic operating scenario": "fp-and-a-analyst-model-a-strategic-operating-scenario",
+    "Explain monthly performance to plan": "fp-and-a-analyst-explain-monthly-performance-to-plan",
+    "Facilitate a decision review with business owners": "fp-and-a-analyst-facilitate-a-decision-review-with-business-owners",
+    "Document a governed planning model": "fp-and-a-analyst-document-a-governed-planning-model",
+    "Deliver an integrated planning-cycle portfolio": "fp-and-a-analyst-deliver-an-integrated-planning-cycle-portfolio"
+  },
+  "Risk Analyst": {
+    "Build an exposure inventory": "risk-analyst-build-an-exposure-inventory",
+    "Assess borrower repayment capacity": "risk-analyst-assess-borrower-repayment-capacity",
+    "Prepare a documented credit assessment": "risk-analyst-prepare-a-documented-credit-assessment",
+    "Explain a credit loss estimate": "risk-analyst-explain-a-credit-loss-estimate",
+    "Identify a material portfolio concentration": "risk-analyst-identify-a-material-portfolio-concentration",
+    "Run a portfolio credit stress scenario": "risk-analyst-run-a-portfolio-credit-stress-scenario",
+    "Present a credit risk review": "risk-analyst-present-a-credit-risk-review",
+    "Deliver a credit risk assessment and monitoring portfolio": "risk-analyst-deliver-a-credit-risk-assessment-and-monitoring-portfolio"
+  },
+  "Investment Analyst": {
+    "Map a security research question": "investment-analyst-map-a-security-research-question",
+    "Build an issuer and sector profile": "investment-analyst-build-an-issuer-and-sector-profile",
+    "Analyze an issuer's financial condition": "investment-analyst-analyze-an-issuer-s-financial-condition",
+    "Estimate a security's valuation range": "investment-analyst-estimate-a-security-s-valuation-range",
+    "Compare security risk profiles": "investment-analyst-compare-security-risk-profiles",
+    "Write a security investment thesis": "investment-analyst-write-a-security-investment-thesis",
+    "Assess portfolio implications of a security view": "investment-analyst-assess-portfolio-implications-of-a-security-view",
+    "Deliver an issuer research and security analysis portfolio": "investment-analyst-deliver-an-issuer-research-and-security-analysis-portfolio"
+  },
+  "Product Marketing Manager": {
+    "Create a product marketing charter and collaboration map": "product-marketing-manager-create-a-product-marketing-charter-and-collaboration-map",
+    "Build an evidence-based product audience and market brief": "product-marketing-manager-build-an-evidence-based-product-audience-and-market-brief",
+    "Publish a tested product positioning and messaging framework": "product-marketing-manager-publish-a-tested-product-positioning-and-messaging-framework",
+    "Deliver a coordinated product go-to-market launch plan": "product-marketing-manager-deliver-a-coordinated-product-go-to-market-launch-plan",
+    "Equip customer-facing teams to explain and sell the product": "product-marketing-manager-equip-customer-facing-teams-to-explain-and-sell-the-product",
+    "Create a product adoption and customer education plan": "product-marketing-manager-create-a-product-adoption-and-customer-education-plan",
+    "Present a measured launch review and improvement plan": "product-marketing-manager-present-a-measured-launch-review-and-improvement-plan",
+    "Deliver an end-to-end product go-to-market portfolio": "product-marketing-manager-deliver-an-end-to-end-product-go-to-market-portfolio"
+  },
+  "Software Engineer": {
+    "Build a command-line study planner": "software-engineer-build-a-command-line-study-planner",
+    "Build and compare a search utility": "software-engineer-build-and-compare-a-search-utility",
+    "Contribute a reviewed feature branch": "software-engineer-contribute-a-reviewed-feature-branch",
+    "Refactor a single-file app into cohesive modules": "software-engineer-refactor-a-single-file-app-into-cohesive-modules",
+    "Add persistent storage to a project": "software-engineer-add-persistent-storage-to-a-project",
+    "Design a small service boundary": "software-engineer-design-a-small-service-boundary",
+    "Automate checks and package a release": "software-engineer-automate-checks-and-package-a-release",
+    "Build and publish a production-style project workspace": "software-engineer-build-and-publish-a-production-style-project-workspace"
+  },
+  "Web Developer": {
+    "Publish a simple personal web page": "web-developer-publish-a-simple-personal-web-page",
+    "Build a responsive multi-section landing page": "web-developer-build-a-responsive-multi-section-landing-page",
+    "Build an interactive browser tool": "web-developer-build-an-interactive-browser-tool",
+    "Audit and improve an existing interface": "web-developer-audit-and-improve-an-existing-interface",
+    "Build a small data-driven web experience": "web-developer-build-a-small-data-driven-web-experience",
+    "Create a small React product experience": "web-developer-create-a-small-react-product-experience",
+    "Improve a site’s delivery and loading experience": "web-developer-improve-a-site-s-delivery-and-loading-experience",
+    "Build and publish a community information portal": "web-developer-build-and-publish-a-community-information-portal"
+  },
+  "Application Developer": {
+    "Build a small personal organizer": "application-developer-build-a-small-personal-organizer",
+    "Create a usable multi-screen prototype": "application-developer-create-a-usable-multi-screen-prototype",
+    "Add reliable local persistence": "application-developer-add-reliable-local-persistence",
+    "Refactor a feature for clearer responsibilities": "application-developer-refactor-a-feature-for-clearer-responsibilities",
+    "Integrate a remote data feature": "application-developer-integrate-a-remote-data-feature",
+    "Create a tested feature and debug a platform issue": "application-developer-create-a-tested-feature-and-debug-a-platform-issue",
+    "Package a release candidate": "application-developer-package-a-release-candidate",
+    "Build a cross-platform student life organizer": "application-developer-build-a-cross-platform-student-life-organizer"
+  },
+  "API Developer": {
+    "Trace and document a simple request flow": "api-developer-trace-and-document-a-simple-request-flow",
+    "Build a first documented API": "api-developer-build-a-first-documented-api",
+    "Publish a stable API contract": "api-developer-publish-a-stable-api-contract",
+    "Connect API resources to a relational database": "api-developer-connect-api-resources-to-a-relational-database",
+    "Secure user-owned endpoints": "api-developer-secure-user-owned-endpoints",
+    "Test the API as a client would": "api-developer-test-the-api-as-a-client-would",
+    "Measure and improve a service": "api-developer-measure-and-improve-a-service",
+    "Build a production-style campus resource API": "api-developer-build-a-production-style-campus-resource-api"
+  },
+  "React Native Developer": {
+    "Create a typed mobile starter project": "react-native-developer-create-a-typed-mobile-starter-project",
+    "Create a multi-screen mobile interface": "react-native-developer-create-a-multi-screen-mobile-interface",
+    "Build a navigable app flow": "react-native-developer-build-a-navigable-app-flow",
+    "Add a validated saved-items workflow": "react-native-developer-add-a-validated-saved-items-workflow",
+    "Create a context-aware mobile feature": "react-native-developer-create-a-context-aware-mobile-feature",
+    "Harden the app’s core user journeys": "react-native-developer-harden-the-app-s-core-user-journeys",
+    "Prepare a tested release candidate": "react-native-developer-prepare-a-tested-release-candidate",
+    "Build a campus events and activities app": "react-native-developer-build-a-campus-events-and-activities-app"
+  },
+  "Analytics Engineer": {
+    "Create a reviewed SQL analysis": "analytics-engineer-create-a-reviewed-sql-analysis",
+    "Model an operational dataset for analysis": "analytics-engineer-model-an-operational-dataset-for-analysis",
+    "Build a staged analytics transformation": "analytics-engineer-build-a-staged-analytics-transformation",
+    "Create a dbt project with documented models": "analytics-engineer-create-a-dbt-project-with-documented-models",
+    "Add quality gates to an analytics project": "analytics-engineer-add-quality-gates-to-an-analytics-project",
+    "Deliver a reusable stakeholder-facing data product": "analytics-engineer-deliver-a-reusable-stakeholder-facing-data-product",
+    "Automate an analytics release workflow": "analytics-engineer-automate-an-analytics-release-workflow",
+    "Build an analytics product for a campus service": "analytics-engineer-build-an-analytics-product-for-a-campus-service"
+  },
+  "Data Architect": {
+    "Map a small organization’s data landscape": "data-architect-map-a-small-organization-s-data-landscape",
+    "Choose a fit-for-purpose storage design": "data-architect-choose-a-fit-for-purpose-storage-design",
+    "Design an analytical storage layout": "data-architect-design-an-analytical-storage-layout",
+    "Compare batch and event-driven integration": "data-architect-compare-batch-and-event-driven-integration",
+    "Plan a resilient data-processing design": "data-architect-plan-a-resilient-data-processing-design",
+    "Create a governed data-access design": "data-architect-create-a-governed-data-access-design",
+    "Review and defend a platform architecture": "data-architect-review-and-defend-a-platform-architecture",
+    "Design a data platform for a college services ecosystem": "data-architect-design-a-data-platform-for-a-college-services-ecosystem"
+  },
+  "BI Analyst": {
+    "Convert a vague request into an analysis brief": "bi-analyst-convert-a-vague-request-into-an-analysis-brief",
+    "Prepare a clean analysis dataset": "bi-analyst-prepare-a-clean-analysis-dataset",
+    "Create a KPI dictionary": "bi-analyst-create-a-kpi-dictionary",
+    "Prototype a decision-focused dashboard": "bi-analyst-prototype-a-decision-focused-dashboard",
+    "Create a first interactive Power BI report": "bi-analyst-create-a-first-interactive-power-bi-report",
+    "Add metrics and guided drilldowns": "bi-analyst-add-metrics-and-guided-drilldowns",
+    "Present a recommendation to a mock stakeholder": "bi-analyst-present-a-recommendation-to-a-mock-stakeholder",
+    "Build an executive decision dashboard for a campus program": "bi-analyst-build-an-executive-decision-dashboard-for-a-campus-program"
+  },
+  "BI Developer": {
+    "Create a versioned BI dataset": "bi-developer-create-a-versioned-bi-dataset",
+    "Build a star schema for a reporting workload": "bi-developer-build-a-star-schema-for-a-reporting-workload",
+    "Build a reusable semantic model": "bi-developer-build-a-reusable-semantic-model",
+    "Deliver a reusable multi-page report": "bi-developer-deliver-a-reusable-multi-page-report",
+    "Harden a shared BI model": "bi-developer-harden-a-shared-bi-model",
+    "Prepare a measured BI release": "bi-developer-prepare-a-measured-bi-release",
+    "Review and improve a BI solution architecture": "bi-developer-review-and-improve-a-bi-solution-architecture",
+    "Build a production-style service operations BI solution": "bi-developer-build-a-production-style-service-operations-bi-solution"
+  },
+  "Security Analyst": {
+    "Create a threat and risk profile for a fictional organization": "security-analyst-create-a-threat-and-risk-profile-for-a-fictional-organization",
+    "Analyze a small synthetic security dataset": "security-analyst-analyze-a-small-synthetic-security-dataset",
+    "Produce a threat-intelligence assessment for a fictional organization": "security-analyst-produce-a-threat-intelligence-assessment-for-a-fictional-organization",
+    "Prioritize a fictional vulnerability backlog": "security-analyst-prioritize-a-fictional-vulnerability-backlog",
+    "Determine the likely root cause of a simulated security finding": "security-analyst-determine-the-likely-root-cause-of-a-simulated-security-finding",
+    "Assess control effectiveness for a fictional service": "security-analyst-assess-control-effectiveness-for-a-fictional-service",
+    "Write a professional security findings report": "security-analyst-write-a-professional-security-findings-report",
+    "Complete a security posture analysis for a simulated organization": "security-analyst-complete-a-security-posture-analysis-for-a-simulated-organization"
+  },
+  "Security Engineer": {
+    "Create a baseline for a lab environment": "security-engineer-create-a-baseline-for-a-lab-environment",
+    "Implement and verify a least-privilege baseline": "security-engineer-implement-and-verify-a-least-privilege-baseline",
+    "Design secure connectivity for a small service": "security-engineer-design-secure-connectivity-for-a-small-service",
+    "Build a secure configuration and remediation plan": "security-engineer-build-a-secure-configuration-and-remediation-plan",
+    "Build a checked infrastructure baseline": "security-engineer-build-a-checked-infrastructure-baseline",
+    "Instrument a service with security-relevant signals": "security-engineer-instrument-a-service-with-security-relevant-signals",
+    "Validate an engineering control set": "security-engineer-validate-an-engineering-control-set",
+    "Engineer a secure deployment baseline for a student service": "security-engineer-engineer-a-secure-deployment-baseline-for-a-student-service"
+  },
+  "Penetration Tester": {
+    "Write rules of engagement for a local lab": "penetration-tester-write-rules-of-engagement-for-a-local-lab",
+    "Inventory a deliberately vulnerable local target": "penetration-tester-inventory-a-deliberately-vulnerable-local-target",
+    "Complete guided identity security labs": "penetration-tester-complete-guided-identity-security-labs",
+    "Complete safe injection exercises": "penetration-tester-complete-safe-injection-exercises",
+    "Test a training API and client-side flow": "penetration-tester-test-a-training-api-and-client-side-flow",
+    "Write and peer-review a lab finding": "penetration-tester-write-and-peer-review-a-lab-finding",
+    "Complete a scoped lab engagement": "penetration-tester-complete-a-scoped-lab-engagement",
+    "Assess a deliberately vulnerable local web application": "penetration-tester-assess-a-deliberately-vulnerable-local-web-application"
+  },
+  "Application Security Engineer": {
+    "Threat-model a small application feature": "application-security-engineer-threat-model-a-small-application-feature",
+    "Review and improve a sample application flow": "application-security-engineer-review-and-improve-a-sample-application-flow",
+    "Add supply-chain checks to a sample repository": "application-security-engineer-add-supply-chain-checks-to-a-sample-repository",
+    "Build a useful application security test loop": "application-security-engineer-build-a-useful-application-security-test-loop",
+    "Review a service architecture for security boundaries": "application-security-engineer-review-a-service-architecture-for-security-boundaries",
+    "Add security gates to a delivery pipeline": "application-security-engineer-add-security-gates-to-a-delivery-pipeline",
+    "Partner with developers to resolve a security defect": "application-security-engineer-partner-with-developers-to-resolve-a-security-defect",
+    "Secure a student services application through its SDLC": "application-security-engineer-secure-a-student-services-application-through-its-sdlc"
+  },
+  "Cloud Security Engineer": {
+    "Map a cloud workloadâ€™s shared responsibilities": "cloud-security-engineer-map-a-cloud-workloada-tms-shared-responsibilities",
+    "Design least-privilege cloud access": "cloud-security-engineer-design-least-privilege-cloud-access",
+    "Harden a cloud workload design": "cloud-security-engineer-harden-a-cloud-workload-design",
+    "Review a simulated cloud posture report": "cloud-security-engineer-review-a-simulated-cloud-posture-report",
+    "Add security checks to an infrastructure workflow": "cloud-security-engineer-add-security-checks-to-an-infrastructure-workflow",
+    "Review workload deployment patterns": "cloud-security-engineer-review-workload-deployment-patterns",
+    "Run a cloud incident tabletop": "cloud-security-engineer-run-a-cloud-incident-tabletop",
+    "Design a secure cloud architecture for a student service": "cloud-security-engineer-design-a-secure-cloud-architecture-for-a-student-service"
+  },
+  "Security Architect": {
+    "Write an architecture context and risk brief": "security-architect-write-an-architecture-context-and-risk-brief",
+    "Model trust boundaries and zero-trust decisions": "security-architect-model-trust-boundaries-and-zero-trust-decisions",
+    "Create an enterprise access and connectivity model": "security-architect-create-an-enterprise-access-and-connectivity-model",
+    "Review a multi-service application design": "security-architect-review-a-multi-service-application-design",
+    "Design secure data handling across a cloud service": "security-architect-design-secure-data-handling-across-a-cloud-service",
+    "Create an assurance and recovery architecture": "security-architect-create-an-assurance-and-recovery-architecture",
+    "Present an architecture review package": "security-architect-present-an-architecture-review-package",
+    "Design security architecture for a multi-service college platform": "security-architect-design-security-architecture-for-a-multi-service-college-platform"
+  },
+  "Digital Forensics Analyst": {
+    "Write an evidence-handling plan for a supplied image": "digital-forensics-analyst-write-an-evidence-handling-plan-for-a-supplied-image",
+    "Examine a small provided disk image": "digital-forensics-analyst-examine-a-small-provided-disk-image",
+    "Build an operating-system activity timeline": "digital-forensics-analyst-build-an-operating-system-activity-timeline",
+    "Analyze a provided memory image": "digital-forensics-analyst-analyze-a-provided-memory-image",
+    "Analyze a supplied browser and network artifact set": "digital-forensics-analyst-analyze-a-supplied-browser-and-network-artifact-set",
+    "Create a timeline from a multi-source lab case": "digital-forensics-analyst-create-a-timeline-from-a-multi-source-lab-case",
+    "Prepare a defensible investigation report": "digital-forensics-analyst-prepare-a-defensible-investigation-report",
+    "Investigate a synthetic workstation incident": "digital-forensics-analyst-investigate-a-synthetic-workstation-incident"
+  }
+};
+  Object.entries(roadmaps).forEach(([role, roadmap]) => roadmap.stages.forEach((stage) => {
+    const id = canonicalMissionIds[role]?.[stage.mission.title];
+    if (!id) throw new Error(`Missing canonical mission ID for ${role} / ${stage.mission.title}`);
+    stage.mission.id = id;
+  }));
   return roadmaps;
 })();

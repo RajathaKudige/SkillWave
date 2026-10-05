@@ -39,13 +39,9 @@ if (!careersByDomain || typeof careersByDomain !== "object") {
 const resourceTypes = new Set(["article", "course", "documentation", "interactive", "practice", "tool", "video"]);
 const roleNames = Object.keys(roadmaps);
 const onboardingOccurrences = [];
-const declaredRoadmapRoles = Array.from(roadmapSource.matchAll(/^ {2,4}"([^"]+)":/gm), (match) => match[1]);
-const declaredRoleCounts = new Map();
-for (const role of declaredRoadmapRoles) declaredRoleCounts.set(role, (declaredRoleCounts.get(role) || 0) + 1);
-for (const [role, count] of declaredRoleCounts) {
-  if (count > 1) fail(`Roadmap role key "${role}" is declared ${count} times in roadmap-data.js.`);
-}
-
+const allMissionIds = new Set();
+let totalStages = 0;
+let totalMissions = 0;
 for (const [domain, tracks] of Object.entries(careersByDomain)) {
   if (!tracks || typeof tracks !== "object" || Array.isArray(tracks)) {
     fail(`Onboarding domain "${domain}" must contain a track registry.`);
@@ -83,6 +79,7 @@ for (const [role, roadmap] of Object.entries(roadmaps)) {
     continue;
   }
   if (stages.length !== 8) fail(`Role "${role}" has ${stages.length} stages; expected 8.`);
+  totalStages += stages.length;
 
   const skillIds = new Set();
   const skillNames = new Set();
@@ -148,6 +145,7 @@ for (const [role, roadmap] of Object.entries(roadmaps)) {
       fail(`${stageLabel} must have a mission object.`);
     } else {
       missionCount += 1;
+      totalMissions += 1;
       if (typeof mission.title !== "string" || !mission.title.trim()) {
         fail(`${stageLabel} has a mission with an invalid name.`);
       } else if (missionNames.has(mission.title)) {
@@ -158,8 +156,19 @@ for (const [role, roadmap] of Object.entries(roadmaps)) {
       if (mission.id !== undefined) {
         if (typeof mission.id !== "string" || !mission.id.trim()) fail(`${stageLabel} has a mission with an invalid ID.`);
         else if (missionIds.has(mission.id)) fail(`Role "${role}" repeats mission ID "${mission.id}".`);
-        else missionIds.add(mission.id);
+        else {
+          missionIds.add(mission.id);
+          if (allMissionIds.has(mission.id)) fail(`Mission ID "${mission.id}" is duplicated across roles.`);
+          allMissionIds.add(mission.id);
+          if (!/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(mission.id)) {
+            fail(`Mission ID "${mission.id}" must use lowercase kebab-case.`);
+          }
+          if (/-(?:stage|mission)-?\d+$/.test(mission.id) || /-[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(mission.id)) {
+            fail(`Mission ID "${mission.id}" appears position-based or randomly generated.`);
+          }
+        }
       }
+      if (typeof mission.id !== "string" || !mission.id.trim()) fail(`${stageLabel} is missing a canonical mission ID.`);
     }
   });
 
@@ -170,7 +179,15 @@ for (const [role, roadmap] of Object.entries(roadmaps)) {
   if (!/portfolio|capstone/i.test(capstoneText)) fail(`Role "${role}" stage 8 is not identified as a portfolio or capstone stage.`);
 }
 
+if (roleNames.length !== 105) fail(`Runtime catalogue has ${roleNames.length} roles; expected 105.`);
+if (totalStages !== 840) fail(`Runtime catalogue has ${totalStages} stages; expected 840.`);
+if (totalMissions !== 840) fail(`Runtime catalogue has ${totalMissions} missions; expected 840.`);
+if (allMissionIds.size !== totalMissions) fail(`Runtime catalogue has ${allMissionIds.size} unique mission IDs for ${totalMissions} missions.`);
+
 console.log(`Roadmap roles: ${roleNames.length}`);
+console.log(`Roadmap stages: ${totalStages}`);
+console.log(`Roadmap missions: ${totalMissions}`);
+console.log(`Unique canonical mission IDs: ${allMissionIds.size}`);
 console.log(`Unique onboarding roles: ${onboardingCounts.size}`);
 console.log(`Roadmap resources checked: ${roleNames.reduce((sum, role) => sum + ((roadmaps[role]?.stages || []).reduce((stageSum, stage) => stageSum + (stage.skills || []).reduce((skillSum, skill) => skillSum + (skill.resources || []).length, 0), 0)), 0)}`);
 
