@@ -124,11 +124,13 @@
       window.location.replace("dashboard.html");
       return { user, profile: null, redirected: true };
     }
+    if (["forgot-password", "reset-password"].includes(page)) return { user, profile: null };
     if (page === "navigation") return { user, profile: null };
     return routeAuthenticatedUser(user, page);
   })();
 
   const protectedPages = ["dashboard", "roadmap", "softskills", "networking"];
+  let recoveryEventReceived = false;
   let initialIdentityReady = false;
   let activeUserId = null;
   let pendingUserId;
@@ -146,7 +148,8 @@
     window.location.reload();
   };
 
-  client.auth.onAuthStateChange((_event, session) => {
+  client.auth.onAuthStateChange((event, session) => {
+    if (event === "PASSWORD_RECOVERY") recoveryEventReceived = true;
     handleIdentityChange(session?.user?.id || null);
   });
 
@@ -192,6 +195,7 @@
   window.accountAuth = {
     client,
     ready,
+    get recoveryEventReceived() { return recoveryEventReceived; },
     showError,
     studentProfile,
     userStorage,

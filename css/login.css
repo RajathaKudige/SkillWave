@@ -40,6 +40,9 @@
 .login-page .account-switch { margin: 18px 0 0; color: #708298; font-size: .79rem; text-align: center; }
 .login-page .account-switch a { color: #355e89; font-weight: 700; text-decoration: underline; text-decoration-color: #b6c5d2; text-underline-offset: 3px; }
 .login-page .account-switch a:hover { color: #234a76; text-decoration-color: currentColor; }
+.login-page .password-recovery-link { margin: -3px 0 12px; text-align: right; }
+.login-page .signup-field-note { display: block; margin-top: 6px; color: #7b8b9b; font-size: .68rem; line-height: 1.4; }
+.login-page [hidden] { display: none !important; }
 .login-footer { flex: 0 0 auto; padding: 0 24px 22px; color: #788a9b; font-size: .66rem; text-align: center; }
 @media (max-width: 820px) {
   .login-main { align-items: flex-start; padding-top: 36px; }
