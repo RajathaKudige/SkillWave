@@ -7,8 +7,15 @@
   const submitButton = form.querySelector("button[type='submit']");
   const mode = form.dataset.mode;
 
-  function showMessage(text, success = false) {
-    message.textContent = text;
+  function showMessage(text, success = false, actions = []) {
+    message.replaceChildren(document.createTextNode(text));
+    actions.forEach(({ label, href }) => {
+      message.append(document.createTextNode(" "));
+      const link = document.createElement("a");
+      link.href = href;
+      link.textContent = label;
+      message.append(link);
+    });
     message.classList.add("show");
     message.classList.toggle("success", success);
   }
@@ -71,8 +78,15 @@
         showMessage("The email or password is incorrect.");
       } else if (normalized.includes("email not confirmed")) {
         showMessage("Verify your email address before logging in.");
-      } else if (normalized.includes("already registered") || normalized.includes("already been registered")) {
-        showMessage("An account already exists for this email. Try logging in instead.");
+      } else if (mode === "signup" && (
+        error?.code === "user_already_exists" ||
+        normalized.includes("user already registered") ||
+        normalized.includes("user already exists")
+      )) {
+        showMessage("Email already exists. Please log in or reset your password.", false, [
+          { label: "Log in", href: "login.html" },
+          { label: "Reset password", href: "forgot-password.html" }
+        ]);
       } else if (normalized.includes("password should be at least") || normalized.includes("password is too weak")) {
         showMessage("Choose a stronger password that meets the project's password requirements.");
       } else if (normalized.includes("profiles") || normalized.includes("row-level security") || normalized.includes("permission denied")) {
