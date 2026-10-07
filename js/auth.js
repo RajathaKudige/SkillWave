@@ -7,15 +7,8 @@
   const submitButton = form.querySelector("button[type='submit']");
   const mode = form.dataset.mode;
 
-  function showMessage(text, success = false, actions = []) {
-    message.replaceChildren(document.createTextNode(text));
-    actions.forEach(({ label, href }) => {
-      message.append(document.createTextNode(" "));
-      const link = document.createElement("a");
-      link.href = href;
-      link.textContent = label;
-      message.append(link);
-    });
+  function showMessage(text, success = false) {
+    message.textContent = text;
     message.classList.add("show");
     message.classList.toggle("success", success);
   }
@@ -64,8 +57,19 @@
 
       if (result.error) throw result.error;
       if (mode === "signup" && !result.data.session) {
-        showMessage("Account created. Check your email to verify your address, then log in to continue.", true);
-        form.reset();
+        const signupUser = result.data.user;
+        if (signupUser && Array.isArray(signupUser.identities) && signupUser.identities.length === 0) {
+          showMessage("Email already exists. Please log in or reset your password.");
+        } else if (
+          signupUser &&
+          Array.isArray(signupUser.identities) &&
+          signupUser.identities.some((identity) => identity?.provider === "email")
+        ) {
+          showMessage("Account created. Check your email to verify your address, then log in to continue.", true);
+          form.reset();
+        } else {
+          showMessage("We couldn't confirm account creation. Please try again.");
+        }
         return;
       }
 
@@ -83,10 +87,7 @@
         normalized.includes("user already registered") ||
         normalized.includes("user already exists")
       )) {
-        showMessage("Email already exists. Please log in or reset your password.", false, [
-          { label: "Log in", href: "login.html" },
-          { label: "Reset password", href: "forgot-password.html" }
-        ]);
+        showMessage("Email already exists. Please log in or reset your password.");
       } else if (normalized.includes("password should be at least") || normalized.includes("password is too weak")) {
         showMessage("Choose a stronger password that meets the project's password requirements.");
       } else if (normalized.includes("profiles") || normalized.includes("row-level security") || normalized.includes("permission denied")) {

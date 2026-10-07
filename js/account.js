@@ -70,7 +70,13 @@
     return {
       getItem(key) { return localStorage.getItem(prefix + key); },
       setItem(key, value) { localStorage.setItem(prefix + key, value); },
-      removeItem(key) { localStorage.removeItem(prefix + key); }
+      removeItem(key) { localStorage.removeItem(prefix + key); },
+      clear() {
+        for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+          const key = localStorage.key(index);
+          if (key?.startsWith(prefix)) localStorage.removeItem(key);
+        }
+      }
     };
   }
 
