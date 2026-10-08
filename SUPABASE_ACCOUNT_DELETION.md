@@ -20,11 +20,6 @@ If deploying to a nonstandard runtime where neither is present, configure the
 secret only in the Supabase Edge Function secrets settings. Never add it to
 frontend files, this repository, or client-side build configuration.
 
-The Career Paths database migration adds `career_paths`, referencing
-`auth.users(id) ON DELETE CASCADE`. The roadmap progress tables keep their
-existing user ownership and role-based keys during the compatibility rollout;
-their nullable `path_id` columns reference `(career_paths.id, user_id)` with
-`ON DELETE CASCADE`. Deleting an Auth user therefore removes their profile,
-career paths, and user-owned progress/contact rows. Deleting a career path
-directly is not granted to authenticated clients, so routine path management
-cannot cascade away roadmap progress.
+No schema or RLS changes are required. Existing `ON DELETE CASCADE` foreign
+keys remove the profile and user-owned progress/contact rows when the Auth user
+is permanently deleted.
