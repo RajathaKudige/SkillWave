@@ -135,6 +135,7 @@ if (roadmapPage) {
       const render = () => {
         const currentIndex = roadmap.stages.findIndex((stage) => statusClass(stage) !== "completed");
         const openSkillIds = new Set([...stagesElement.querySelectorAll(".skill-detail.open")].map((detail) => detail.id));
+        const openStageIndexes = new Set([...stagesElement.querySelectorAll(".stage-disclosure[open]")].map((disclosure) => disclosure.dataset.stageIndex));
         stagesElement.innerHTML = `<div class="journey-start"><span class="journey-start-icon" aria-hidden="true">◎</span><div><span class="eyebrow">YOUR TARGET</span><strong>${studentProfile.targetRole || roadmap.title}</strong><small>Every milestone moves you closer to your goal.</small></div></div>${roadmap.stages.map((stage, index) => {
           const state = stageState(stage, index, currentIndex);
           const stageNumber = String(index + 1).padStart(2, "0");
@@ -142,7 +143,9 @@ if (roadmapPage) {
           return `<article class="roadmap-stage journey-${state} ${isCapstone ? "capstone-stage" : ""}">
             <div class="stage-node" aria-label="Stage ${stageNumber}, ${state}">${state === "completed" ? "✓" : stageNumber}</div>
             <div class="stage-card">
-              <div class="stage-heading"><div><p class="eyebrow">${isCapstone ? "FINAL DESTINATION" : `MILESTONE ${stageNumber}`}</p><h2>${stage.title}</h2></div><span class="stage-state-label">${state === "current" ? "CURRENT STAGE" : state === "completed" ? "COMPLETED" : "UPCOMING"}</span></div>
+              <details class="stage-disclosure" data-stage-index="${index}" ${openStageIndexes.has(String(index)) ? "open" : ""}>
+              <summary class="stage-heading"><span class="stage-heading-copy"><span class="eyebrow">${isCapstone ? "FINAL DESTINATION" : `MILESTONE ${stageNumber}`}</span><span class="stage-title">${stage.title}</span></span><span class="stage-heading-meta"><span class="stage-state-label">${state === "current" ? "CURRENT STAGE" : state === "completed" ? "COMPLETED" : "UPCOMING"}</span><span class="stage-chevron" aria-hidden="true">⌄</span></span></summary>
+              <div class="stage-content">
               <div class="stage-flow" aria-label="Learn, practice, build, complete, move forward"><span>LEARN</span><i>↓</i><span>PRACTICE</span><i>↓</i><span>BUILD</span><i>↓</i><span>COMPLETE</span><i>↓</i><span>NEXT</span></div>
               <div class="skill-list">${stage.skills.length ? stage.skills.map((item) => {
                 const isCompleted = statuses[item.id] === "Completed";
@@ -171,6 +174,8 @@ if (roadmapPage) {
                 <div class="mission-content"><p class="eyebrow">${isCapstone ? "🏆 FINAL CAPSTONE" : `🧪 PRACTICAL MISSION ${stageNumber}`}</p><h3>${stage.mission.title}</h3><p class="mission-description">${stage.mission.description}</p><p class="mission-why"><strong>Why this matters:</strong> ${stage.mission.why}</p><ul>${stage.mission.tasks.map((task) => `<li>${task}</li>`).join("")}</ul>${stage.mission.finalMilestone ? `<p class="milestone">${stage.mission.finalMilestone}</p>` : ""}</div>
                 <label class="mission-complete"><input type="checkbox" data-mission="${stage.mission.id}" ${missionStatus[stage.mission.id] ? "checked" : ""}><span class="mission-checkmark" aria-hidden="true">✓</span><span>${missionStatus[stage.mission.id] ? "Mission completed" : "Mark mission complete"}</span></label>
               </section>
+              </div>
+              </details>
             </div>
           </article>`;
         }).join("")}<div class="journey-finish"><span aria-hidden="true">✦</span><strong>Keep moving forward</strong><small>Your next professional challenge starts with the skills you build here.</small></div>`;

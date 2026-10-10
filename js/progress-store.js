@@ -73,7 +73,7 @@
       const last_interaction = nullableDate(row?.last_interaction, "last_interaction", op);
       const follow_up_completed = rowBoolean(row, "follow_up_completed", op);
       const result = { id, person, follow_up_completed };
-      for (const key of ["role", "organization", "met", "topic", "next_action", "notes"]) result[key] = nullableString(row?.[key], key, op);
+      for (const key of ["role", "organization", "contact_information", "met", "topic", "next_action", "notes"]) result[key] = nullableString(row?.[key], key, op);
       result.last_interaction = last_interaction;
       return result;
     }
@@ -303,7 +303,7 @@
   function normalizeContactInput(record, operation, requirePerson) {
     const result = {};
     if (requirePerson || Object.prototype.hasOwnProperty.call(record, "person")) result.person = requiredString(record.person, "person", operation);
-    for (const [key, alias] of [["role", "role"], ["organization", "organization"], ["met", "met"], ["topic", "topic"], ["next_action", "nextAction"], ["notes", "notes"]]) {
+    for (const [key, alias] of [["role", "role"], ["organization", "organization"], ["contact_information", "contactInformation"], ["met", "met"], ["topic", "topic"], ["next_action", "nextAction"], ["notes", "notes"]]) {
       const inputKey = Object.prototype.hasOwnProperty.call(record, key) ? key : alias;
       if (Object.prototype.hasOwnProperty.call(record, inputKey)) result[key] = nullableString(record[inputKey], key, operation);
     }

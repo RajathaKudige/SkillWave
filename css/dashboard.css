@@ -52,6 +52,7 @@
 .progress-item:not(:last-child) { padding-bottom: 15px; }
 .progress-item>div:first-child,.roadmap-progress>div:first-child { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 7px; color: #29476b; font-size: .8rem; }
 .progress-item>div:first-child span,.roadmap-progress span { min-width: 0; color: #526c87; }
+.progress-item>div:first-child span { font-weight: 700; }
 .progress-item b { flex: 0 0 auto; color: #345c88; font-size: .75rem; font-weight: 700; text-align: right; }
 .progress-item small { display: block; margin: -2px 0 8px; color: #71849a; font-size: .68rem; line-height: 1.45; }
 .progress-bar { height: 8px; overflow: hidden; border: 1px solid rgba(119,148,176,.14); border-radius: 99px; background: linear-gradient(180deg,#e3ebf1,#edf2f6); box-shadow: inset 0 1px 2px rgba(36,66,96,.08); }

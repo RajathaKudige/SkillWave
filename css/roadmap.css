@@ -14,7 +14,8 @@
   font-family: "DM Sans",Arial,sans-serif;
 }
 .roadmap-page:before { position: fixed; z-index: -1; inset: 0; background-color: #c7d5e1; background-image: radial-gradient(ellipse at 18% 12%,rgba(255,255,255,.62),transparent 46%),radial-gradient(ellipse at 84% 84%,rgba(173,196,216,.42),transparent 46%),linear-gradient(135deg,rgba(207,222,235,.38),transparent 35%,rgba(255,255,255,.2) 62%,transparent),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='chrome' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23fff' stop-opacity='.1'/%3E%3Cstop offset='.28' stop-color='%23aebdca' stop-opacity='.48'/%3E%3Cstop offset='.48' stop-color='%23fff' stop-opacity='.78'/%3E%3Cstop offset='.68' stop-color='%23b5c3d0' stop-opacity='.36'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='.08'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M-120 730C220 575 375 835 710 655S1160 305 1730 470' fill='none' stroke='url(%23chrome)' stroke-width='190' opacity='.34'/%3E%3Cpath d='M-120 645C250 500 415 730 730 570S1190 260 1730 380' fill='none' stroke='%23fff' stroke-opacity='.44' stroke-width='2'/%3E%3Cpath d='M-120 815C220 665 420 910 760 725S1220 385 1730 550' fill='none' stroke='%239db0c2' stroke-opacity='.24' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat,no-repeat,no-repeat,no-repeat; background-size: auto,auto,auto,cover; background-position: center,center,center,center; content: ""; pointer-events: none; }
-.roadmap-page > header,.roadmap-page > main,.roadmap-page > footer { position: relative; z-index: 1; }
+.roadmap-page > header { position: relative; z-index: 10; }
+.roadmap-page > main,.roadmap-page > footer { position: relative; z-index: 1; }
 .roadmap-page h1,.roadmap-page h2,.roadmap-page h3 { font-family: "Fraunces",Georgia,serif; font-weight: 500; letter-spacing: -.035em; }
 .roadmap-page a:focus-visible,.roadmap-page button:focus-visible,.roadmap-page input:focus-visible { outline: 2px solid #6488ad; outline-offset: 3px; }
 
@@ -89,10 +90,17 @@
 .journey-current .stage-card { border-color: #9fb7ca; background: linear-gradient(145deg,#edf3f7,#e2ecf2); box-shadow: 0 13px 32px rgba(48,83,120,.11),inset 0 1px rgba(255,255,255,.86); }
 .journey-upcoming .stage-card { background: linear-gradient(145deg,#edf2f5,#e5ecf1); }
 .journey-completed .stage-card { border-color: #bad3c4; background: linear-gradient(125deg,#e9f2ec,#e2ede7); }
-.stage-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; margin-bottom: 15px; }
-.stage-heading>div { min-width: 0; }
+.stage-disclosure { min-width: 0; }
+.stage-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; margin: 0 0 15px; cursor: pointer; list-style: none; }
+.stage-heading::-webkit-details-marker { display: none; }
+.stage-heading-copy { display: block; min-width: 0; }
 .stage-heading .eyebrow { margin-bottom: 6px; font-size: .58rem; }
-.stage-heading h2 { margin: 0; color: #18365f; font-size: clamp(1.2rem,2.1vw,1.6rem); line-height: 1.2; overflow-wrap: anywhere; }
+.stage-title { display: block; color: #18365f; font-family: "Fraunces",Georgia,serif; font-size: clamp(1.2rem,2.1vw,1.6rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.2; overflow-wrap: anywhere; }
+.stage-heading-meta { display: flex; flex: 0 0 auto; align-items: center; gap: 11px; }
+.stage-chevron { color: #71869b; font-size: 1.05rem; transition: transform .2s ease; }
+.stage-disclosure[open] .stage-chevron { transform: rotate(180deg); }
+.stage-content { animation: stage-reveal .2s ease both; }
+@keyframes stage-reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 .stage-state-label { flex: 0 0 auto; padding: 6px 9px; border: 1px solid #e2e9ef; border-radius: 99px; background: #f6f8fa; color: #73869a; font-size: .54rem; font-weight: 700; letter-spacing: .08em; text-align: center; }
 .journey-current .stage-state-label { border-color: #d4e0e9; background: #edf3f8; color: #456b9b; }
 .journey-completed .stage-state-label { border-color: #d7e9de; background: #eff7f2; color: #4d8068; }
@@ -226,7 +234,8 @@
   .roadmap-stage.journey-completed:after { top: 56px; left: 16px; width: 2px; }
   .stage-card { padding: 17px 13px; border-radius: 16px; }
   .stage-heading { align-items: flex-start; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-  .stage-heading h2 { font-size: 1.12rem; }
+  .stage-title { font-size: 1.12rem; }
+  .stage-heading-meta { gap: 6px; }
   .stage-flow { gap: 4px; margin-bottom: 13px; font-size: .45rem; letter-spacing: .035em; }
   .stage-flow span { padding: 4px 5px; }
   .stage-flow i { font-size: .56rem; }

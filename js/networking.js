@@ -177,7 +177,7 @@
   const legacyContactRows = [];
   for (const item of contacts) {
     if (!item || typeof item !== "object" || Array.isArray(item) || typeof item.person !== "string" || !item.person.trim() || typeof item.id !== "string" || !item.id.trim()) continue;
-    const textFields = ["role", "organization", "met", "topic", "nextAction", "notes"];
+    const textFields = ["role", "organization", "contactInformation", "met", "topic", "nextAction", "notes"];
     if (textFields.some((key) => item[key] !== undefined && item[key] !== null && typeof item[key] !== "string")) continue;
     const lastInteraction = item.lastInteraction || null;
     if (lastInteraction !== null && !isValidDate(lastInteraction)) continue;
@@ -187,6 +187,7 @@
       person: item.person.trim(),
       role: item.role || null,
       organization: item.organization || null,
+      contact_information: item.contactInformation || null,
       met: item.met || null,
       topic: item.topic || null,
       last_interaction: lastInteraction,
@@ -208,7 +209,7 @@
     return [row.scenario_id, { choice: Number.isInteger(choice) && choice >= 0 && choice < scenario.choices.length ? choice : null, completed: row.completed }];
   }));
   contacts = contactRows.map((row) => ({
-    id: row.id, person: row.person, role: row.role || "", organization: row.organization || "", met: row.met || "", topic: row.topic || "",
+    id: row.id, person: row.person, role: row.role || "", organization: row.organization || "", contactInformation: row.contact_information || "", met: row.met || "", topic: row.topic || "",
     lastInteraction: row.last_interaction || "", nextAction: row.next_action || "", notes: row.notes || "", followUpCompleted: row.follow_up_completed
   }));
   scenarioGrid.innerHTML = scenarios.map((item, index) => {
@@ -244,10 +245,10 @@
   const contactEmpty = document.querySelector("#contacts-empty");
   const drawContacts = () => {
     contactEmpty.hidden = contacts.length > 0;
-    contactList.innerHTML = contacts.map((item) => `<article class="networking-contact-card"><div class="networking-contact-card-heading"><div><h4>${escapeHTML(item.person)}</h4><p>${escapeHTML([item.role, item.organization].filter(Boolean).join(" · ") || "Professional connection")}</p></div><span class="networking-contact-met">${escapeHTML(item.met || "Connection")}</span></div><dl>${item.topic ? `<div><dt>Topic</dt><dd>${escapeHTML(item.topic)}</dd></div>` : ""}${item.lastInteraction ? `<div><dt>Last interaction</dt><dd>${escapeHTML(item.lastInteraction)}</dd></div>` : ""}${item.nextAction ? `<div><dt>Next action</dt><dd>${escapeHTML(item.nextAction)}</dd></div>` : ""}${item.notes ? `<div><dt>Notes</dt><dd>${escapeHTML(item.notes)}</dd></div>` : ""}</dl><div class="networking-actions"><button type="button" class="networking-secondary-button" data-edit-contact="${escapeHTML(item.id)}">Edit</button><button type="button" class="networking-delete-button" data-delete-contact="${escapeHTML(item.id)}">Delete</button></div></article>`).join("");
+    contactList.innerHTML = contacts.map((item) => `<article class="networking-contact-card"><div class="networking-contact-card-heading"><div><h4>${escapeHTML(item.person)}</h4><p>${escapeHTML([item.role, item.organization].filter(Boolean).join(" · ") || "Professional connection")}</p></div><span class="networking-contact-met">${escapeHTML(item.met || "Connection")}</span></div><dl>${item.contactInformation ? `<div><dt>Contact Information</dt><dd>${escapeHTML(item.contactInformation)}</dd></div>` : ""}${item.topic ? `<div><dt>Topic</dt><dd>${escapeHTML(item.topic)}</dd></div>` : ""}${item.lastInteraction ? `<div><dt>Last interaction</dt><dd>${escapeHTML(item.lastInteraction)}</dd></div>` : ""}${item.nextAction ? `<div><dt>Next action</dt><dd>${escapeHTML(item.nextAction)}</dd></div>` : ""}${item.notes ? `<div><dt>Notes</dt><dd>${escapeHTML(item.notes)}</dd></div>` : ""}</dl><div class="networking-actions"><button type="button" class="networking-secondary-button" data-edit-contact="${escapeHTML(item.id)}">Edit</button><button type="button" class="networking-delete-button" data-delete-contact="${escapeHTML(item.id)}">Delete</button></div></article>`).join("");
   };
   const clearContactForm = () => {
-    ["id", "person", "role", "organization", "met", "topic", "lastInteraction", "nextAction", "notes"].forEach((name) => { contactForm.elements[name].value = ""; });
+    ["id", "person", "role", "organization", "contactInformation", "met", "topic", "lastInteraction", "nextAction", "notes"].forEach((name) => { contactForm.elements[name].value = ""; });
     document.querySelector("#contact-form-title").textContent = "Add a professional connection";
     document.querySelector("#contact-submit").textContent = "Save connection";
     document.querySelector("#contact-cancel").hidden = true;
@@ -407,7 +408,7 @@
     const existingId = form.get("id");
     const entry = {
       id: existingId || null,
-      person: form.get("person").trim(), role: form.get("role").trim(), organization: form.get("organization").trim(),
+      person: form.get("person").trim(), role: form.get("role").trim(), organization: form.get("organization").trim(), contactInformation: form.get("contactInformation").trim(),
       met: form.get("met").trim(), topic: form.get("topic").trim(), lastInteraction: form.get("lastInteraction"),
       nextAction: form.get("nextAction").trim(), notes: form.get("notes").trim(),
       followUpCompleted: contacts.find((item) => item.id === existingId)?.followUpCompleted || false
@@ -417,15 +418,15 @@
     submitButton.disabled = true;
     try {
       const payload = {
-        id: entry.id || createContactUuid(), person: entry.person, role: entry.role || null, organization: entry.organization || null,
+        id: entry.id || createContactUuid(), person: entry.person, role: entry.role || null, organization: entry.organization || null, contact_information: entry.contactInformation || null,
         met: entry.met || null, topic: entry.topic || null, last_interaction: entry.lastInteraction || null,
         next_action: entry.nextAction || null, notes: entry.notes || null, follow_up_completed: entry.followUpCompleted
       };
       const savedRow = existingId
-        ? await progressStore.updateNetworkingContact(existingId, { person: payload.person, role: payload.role, organization: payload.organization, met: payload.met, topic: payload.topic, last_interaction: payload.last_interaction, next_action: payload.next_action, notes: payload.notes, follow_up_completed: payload.follow_up_completed })
+        ? await progressStore.updateNetworkingContact(existingId, { person: payload.person, role: payload.role, organization: payload.organization, contact_information: payload.contact_information, met: payload.met, topic: payload.topic, last_interaction: payload.last_interaction, next_action: payload.next_action, notes: payload.notes, follow_up_completed: payload.follow_up_completed })
         : await progressStore.createNetworkingContact(payload);
       const savedContact = {
-        id: savedRow.id, person: savedRow.person, role: savedRow.role || "", organization: savedRow.organization || "",
+        id: savedRow.id, person: savedRow.person, role: savedRow.role || "", organization: savedRow.organization || "", contactInformation: savedRow.contact_information || "",
         met: savedRow.met || "", topic: savedRow.topic || "", lastInteraction: savedRow.last_interaction || "",
         nextAction: savedRow.next_action || "", notes: savedRow.notes || "", followUpCompleted: savedRow.follow_up_completed
       };
