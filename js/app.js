@@ -133,78 +133,12 @@ if (dashboardPage) {
     const storedCareerProgress = JSON.parse(localStorage.getItem("careerProgress"));
     const isOldPlaceholderData = storedCareerProgress && storedCareerProgress.technical === 35 && storedCareerProgress.softSkills === 25 && storedCareerProgress.networking === 20;
     const careerProgress = isOldPlaceholderData ? defaultCareerProgress : { ...defaultCareerProgress, ...storedCareerProgress };
-    let authoritativeRoadmap;
-    let roadmapUnavailable = false;
-    try {
-      authoritativeRoadmap = await window.roadmapProgress.loadAuthoritativeState(localStorage);
-    } catch (error) {
-      console.error("Dashboard roadmap progress could not be loaded:", error);
-      roadmapUnavailable = true;
-      authoritativeRoadmap = { skillStatusesByRole: {}, missionStatusesByRole: {} };
-    }
-    let roadmapProgressByRole = {};
-    try {
-      const stored = JSON.parse(localStorage.getItem("roadmapProgress") || "{}");
-      if (stored && typeof stored === "object" && !Array.isArray(stored)) {
-        roadmapProgressByRole = Object.prototype.hasOwnProperty.call(stored, "completed") || Object.prototype.hasOwnProperty.call(stored, "total")
-          ? { "Full-Stack Developer": stored }
-          : stored;
-      }
-    } catch { /* A malformed legacy cache does not replace server progress. */ }
-    // Save defaults once, so future pages can update the same progress values.
-    localStorage.setItem("careerProgress", JSON.stringify(careerProgress));
-
-    const skillStatuses = authoritativeRoadmap.skillStatusesByRole[targetRole] || {};
-    const missionStatuses = authoritativeRoadmap.missionStatusesByRole[targetRole] || {};
-    const roadmapProgress = hasSelectedRoadmap
-      ? window.roadmapProgress.calculateProgress(selectedRoadmap, skillStatuses, missionStatuses)
-      : defaultRoadmapProgress;
-    if (hasSelectedRoadmap) roadmapProgressByRole[targetRole] = roadmapProgress;
-    if (!roadmapUnavailable) {
-      try { localStorage.setItem("roadmapProgress", JSON.stringify(roadmapProgressByRole)); } catch (error) { console.warn("Roadmap progress cache could not be updated:", error); }
-    }
-
-    const roadmapTotal = Math.max(1, Number(roadmapProgress.total) || 10);
-    const roadmapCompleted = Math.max(0, Math.min(roadmapTotal, Number(roadmapProgress.completed) || 0));
-    const roadmapPercent = Math.round((roadmapCompleted / roadmapTotal) * 100);
-
-    const getPercentage = (value) => {
-      if (value === null || value === undefined || value === "") return null;
-      return Math.max(0, Math.min(100, Number(value) || 0));
+    const setText = (id, value) => {
+      if (!dashboardPage.isConnected) return;
+      document.querySelector(id).textContent = value || "—";
     };
-    const technical = roadmapUnavailable ? null : hasSelectedRoadmap ? roadmapPercent : getPercentage(careerProgress.technical);
-    let softSkillUnavailable = false;
-    let softSkillMetrics;
-    try {
-      const softSkillsProgress = await window.softSkillsProgressReady;
-      const softSkillState = await softSkillsProgress.loadAuthoritativeState(localStorage);
-      softSkillMetrics = softSkillsProgress.calculateProgress(softSkillState);
-    } catch (error) {
-      console.error("Dashboard Soft Skills progress could not be loaded:", error);
-      softSkillUnavailable = true;
-    }
-    const softSkills = softSkillUnavailable ? null : softSkillMetrics.progress;
-    let networkingUnavailable = false;
-    let networkingMetrics;
-    try {
-      const networkingState = await window.progressStore.loadNetworkingJourneyState();
-      networkingMetrics = window.progressStore.calculateNetworkingJourneyProgress(networkingState);
-    } catch (error) {
-      console.error("Dashboard Networking progress could not be loaded:", error);
-      networkingUnavailable = true;
-    }
-    const networking = networkingUnavailable ? null : networkingMetrics.progress;
-    const assessedAreas = [technical, softSkills, networking].filter((value) => value !== null);
-    const overall = assessedAreas.length ? Math.round(assessedAreas.reduce((total, value) => total + value, 0) / assessedAreas.length) : null;
-    const allRoadmapSkills = hasSelectedRoadmap ? selectedRoadmap.stages.flatMap((stage) => stage.skills) : [];
-    const completedSkills = allRoadmapSkills.filter((skill) => skillStatuses[skill.id] === "Completed").length;
-    const totalMissions = hasSelectedRoadmap ? selectedRoadmap.stages.length : 0;
-    const completedMissions = hasSelectedRoadmap
-      ? selectedRoadmap.stages.filter((stage) => missionStatuses[stage.mission.id]).length
-      : 0;
-
-    const setText = (id, value) => { document.querySelector(id).textContent = value || "—"; };
     const setReadinessArea = (barId, valueId, hintId, value, emptyLabel, emptyHint) => {
+      if (!dashboardPage.isConnected) return;
       document.querySelector(barId).style.width = `${value === null ? 0 : value}%`;
       setText(valueId, value === null ? emptyLabel : `${value}%`);
       setText(hintId, value === null ? emptyHint : "Assessment complete");
@@ -212,7 +146,6 @@ if (dashboardPage) {
     const hour = new Date().getHours();
     const timeOfDay = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
     const firstName = (studentProfile.name || "there").trim().split(" ")[0];
-
     setText("#greeting", `Good ${timeOfDay}, ${firstName}`);
     setText("#profile-name", studentProfile.name);
     setText("#profile-initial", firstName.charAt(0).toUpperCase());
@@ -221,30 +154,144 @@ if (dashboardPage) {
     setText("#profile-domain", studentProfile.domain);
     setText("#profile-track", studentProfile.careerTrack);
     setText("#profile-role", studentProfile.targetRole);
-    setText("#overall-progress", overall === null ? "—" : `${overall}%`);
-    setText("#overall-label", overall === null ? "not assessed" : "overall");
-    document.querySelector("#overall-ring").style.setProperty("--overall-progress", `${Math.max(0, Math.min(100, Number(overall) || 0))}%`);
-    setReadinessArea("#technical-bar", "#technical-value", "#technical-hint", technical, "Not assessed", "Complete your technical assessment");
-    if (hasSelectedRoadmap && !roadmapUnavailable) setText("#technical-hint", "Based on your roadmap progress");
-    setReadinessArea("#soft-skills-bar", "#soft-skills-value", "#soft-skills-hint", softSkills, "Not assessed", "Complete your soft skills assessment");
-    if (softSkills !== null) setText("#soft-skills-hint", "Based on skills you have started");
-    else if (softSkillUnavailable) setText("#soft-skills-hint", "Soft Skills progress is temporarily unavailable");
-    setReadinessArea("#networking-bar", "#networking-value", "#networking-hint", networking, "Getting started", "Begin your networking journey");
-    if (networkingUnavailable) setText("#networking-hint", "Networking progress is temporarily unavailable");
-    else if (networking !== null) setText("#networking-hint", `${networkingMetrics.completedSteps} of ${networkingMetrics.totalSteps} journey steps complete`);
     setText("#roadmap-role", studentProfile.targetRole || "Your");
-    setText("#roadmap-skills-count", hasSelectedRoadmap ? `Skills completed: ${completedSkills} of ${allRoadmapSkills.length}` : "Skills completed: —");
-    setText("#roadmap-missions-count", hasSelectedRoadmap ? `Missions completed: ${completedMissions} of ${totalMissions}` : "Missions completed: —");
-    setText("#roadmap-percent", `Overall progress: ${roadmapPercent}%`);
-    document.querySelector("#roadmap-bar").style.width = `${roadmapPercent}%`;
-    if (roadmapUnavailable) {
-      setText("#technical-hint", "Roadmap progress is temporarily unavailable");
-      setText("#roadmap-description", "Roadmap progress is temporarily unavailable. Please refresh to try again.");
-      setText("#roadmap-skills-count", "Skills completed: unavailable");
-      setText("#roadmap-missions-count", "Missions completed: unavailable");
-      setText("#roadmap-percent", "Overall progress: unavailable");
-      document.querySelector("#roadmap-bar").style.width = "0%";
-    }
+
+    const getPercentage = (value) => {
+      if (value === null || value === undefined || value === "") return null;
+      return Math.max(0, Math.min(100, Number(value) || 0));
+    };
+    let technical = hasSelectedRoadmap ? null : getPercentage(careerProgress.technical);
+    let softSkills = null;
+    let networking = null;
+    let roadmapLoaded = false;
+    let softSkillsLoaded = false;
+    let networkingLoaded = false;
+    let softSkillUnavailable = false;
+    let networkingUnavailable = false;
+    let networkingMetrics;
+
+    const renderOverall = () => {
+      if (!dashboardPage.isConnected || !roadmapLoaded || !softSkillsLoaded || !networkingLoaded) return;
+      const assessedAreas = [technical, softSkills, networking].filter((value) => value !== null);
+      const overall = assessedAreas.length ? Math.round(assessedAreas.reduce((total, value) => total + value, 0) / assessedAreas.length) : null;
+      setText("#overall-progress", overall === null ? "—" : `${overall}%`);
+      setText("#overall-label", overall === null ? "not assessed" : "overall");
+      document.querySelector("#overall-ring").style.setProperty("--overall-progress", `${Math.max(0, Math.min(100, Number(overall) || 0))}%`);
+    };
+
+    const renderTechnical = (unavailable = false) => {
+      setReadinessArea("#technical-bar", "#technical-value", "#technical-hint", technical, "Not assessed", "Complete your technical assessment");
+      if (hasSelectedRoadmap && !unavailable) setText("#technical-hint", "Based on your roadmap progress");
+      if (unavailable) setText("#technical-hint", "Roadmap progress is temporarily unavailable");
+      renderOverall();
+    };
+
+    const renderSoftSkills = () => {
+      setReadinessArea("#soft-skills-bar", "#soft-skills-value", "#soft-skills-hint", softSkills, "Not assessed", "Complete your soft skills assessment");
+      if (softSkills !== null) setText("#soft-skills-hint", "Based on skills you have started");
+      else if (softSkillUnavailable) setText("#soft-skills-hint", "Soft Skills progress is temporarily unavailable");
+      renderOverall();
+    };
+
+    const renderNetworking = () => {
+      setReadinessArea("#networking-bar", "#networking-value", "#networking-hint", networking, "Getting started", "Begin your networking journey");
+      if (networkingUnavailable) setText("#networking-hint", "Networking progress is temporarily unavailable");
+      else if (networking !== null) setText("#networking-hint", `${networkingMetrics.completedSteps} of ${networkingMetrics.totalSteps} journey steps complete`);
+      renderOverall();
+    };
+
+    const softSkillLoad = (async () => {
+      try {
+        const softSkillsProgress = await window.softSkillsProgressReady;
+        const softSkillState = await softSkillsProgress.loadAuthoritativeState(localStorage);
+        softSkills = softSkillsProgress.calculateProgress(softSkillState).progress;
+      } catch (error) {
+        console.error("Dashboard Soft Skills progress could not be loaded:", error);
+        softSkillUnavailable = true;
+      }
+      softSkillsLoaded = true;
+      renderSoftSkills();
+    })();
+
+    const networkingLoad = (async () => {
+      try {
+        const networkingState = await window.progressStore.loadNetworkingJourneyState();
+        networkingMetrics = window.progressStore.calculateNetworkingJourneyProgress(networkingState);
+        networking = networkingMetrics.progress;
+      } catch (error) {
+        console.error("Dashboard Networking progress could not be loaded:", error);
+        networkingUnavailable = true;
+      }
+      networkingLoaded = true;
+      renderNetworking();
+    })();
+
+    const roadmapLoad = (async () => {
+      let authoritativeRoadmap;
+      let roadmapUnavailable = false;
+      try {
+        authoritativeRoadmap = await window.roadmapProgress.loadAuthoritativeState(localStorage);
+      } catch (error) {
+        console.error("Dashboard roadmap progress could not be loaded:", error);
+        roadmapUnavailable = true;
+        authoritativeRoadmap = { skillStatusesByRole: {}, missionStatusesByRole: {} };
+      }
+      let roadmapProgressByRole = {};
+      try {
+        const stored = JSON.parse(localStorage.getItem("roadmapProgress") || "{}");
+        if (stored && typeof stored === "object" && !Array.isArray(stored)) {
+          roadmapProgressByRole = Object.prototype.hasOwnProperty.call(stored, "completed") || Object.prototype.hasOwnProperty.call(stored, "total")
+            ? { "Full-Stack Developer": stored }
+            : stored;
+        }
+      } catch { /* A malformed legacy cache does not replace server progress. */ }
+
+      const skillStatuses = authoritativeRoadmap.skillStatusesByRole[targetRole] || {};
+      const missionStatuses = authoritativeRoadmap.missionStatusesByRole[targetRole] || {};
+      const roadmapProgress = hasSelectedRoadmap
+        ? window.roadmapProgress.calculateProgress(selectedRoadmap, skillStatuses, missionStatuses)
+        : defaultRoadmapProgress;
+      if (hasSelectedRoadmap) roadmapProgressByRole[targetRole] = roadmapProgress;
+      if (!roadmapUnavailable) {
+        try { localStorage.setItem("roadmapProgress", JSON.stringify(roadmapProgressByRole)); } catch (error) { console.warn("Roadmap progress cache could not be updated:", error); }
+      }
+
+      const roadmapTotal = Math.max(1, Number(roadmapProgress.total) || 10);
+      const roadmapCompleted = Math.max(0, Math.min(roadmapTotal, Number(roadmapProgress.completed) || 0));
+      const roadmapPercent = Math.round((roadmapCompleted / roadmapTotal) * 100);
+      technical = roadmapUnavailable ? null : hasSelectedRoadmap ? roadmapPercent : getPercentage(careerProgress.technical);
+      renderTechnical(roadmapUnavailable);
+
+      const allRoadmapSkills = hasSelectedRoadmap ? selectedRoadmap.stages.flatMap((stage) => stage.skills) : [];
+      const completedSkills = allRoadmapSkills.filter((skill) => skillStatuses[skill.id] === "Completed").length;
+      const totalMissions = hasSelectedRoadmap ? selectedRoadmap.stages.length : 0;
+      const completedMissions = hasSelectedRoadmap
+        ? selectedRoadmap.stages.filter((stage) => missionStatuses[stage.mission.id]).length
+        : 0;
+      if (!dashboardPage.isConnected) return;
+      setText("#roadmap-skills-count", hasSelectedRoadmap ? `Skills completed: ${completedSkills} of ${allRoadmapSkills.length}` : "Skills completed: —");
+      setText("#roadmap-missions-count", hasSelectedRoadmap ? `Missions completed: ${completedMissions} of ${totalMissions}` : "Missions completed: —");
+      setText("#roadmap-percent", `Overall progress: ${roadmapPercent}%`);
+      document.querySelector("#roadmap-bar").style.width = `${roadmapPercent}%`;
+      if (roadmapUnavailable) {
+        setText("#roadmap-description", "Roadmap progress is temporarily unavailable. Please refresh to try again.");
+        setText("#roadmap-skills-count", "Skills completed: unavailable");
+        setText("#roadmap-missions-count", "Missions completed: unavailable");
+        setText("#roadmap-percent", "Overall progress: unavailable");
+        document.querySelector("#roadmap-bar").style.width = "0%";
+      }
+      roadmapLoaded = true;
+      renderOverall();
+    })().catch((error) => {
+      console.error("Dashboard account loading failed:", error);
+      window.accountAuth.showError("We could not load your account profile. Please check your connection and try again.");
+    });
+
+    // Save defaults once, so future pages can update the same progress values.
+    localStorage.setItem("careerProgress", JSON.stringify(careerProgress));
+    void softSkillLoad;
+    void networkingLoad;
+    void roadmapLoad;
   }).catch((error) => {
     console.error("Dashboard account loading failed:", error);
     window.accountAuth.showError("We could not load your account profile. Please check your connection and try again.");

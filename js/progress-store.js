@@ -79,20 +79,57 @@
     }
   };
 
+  let verifiedUserRequest = null;
+  let verifiedUserClient = null;
+  let authRequestGeneration = 0;
+
+  function invalidateVerifiedUserRequest() {
+    authRequestGeneration += 1;
+    verifiedUserRequest = null;
+    verifiedUserClient = null;
+  }
+
   async function context(operation) {
     const auth = window.accountAuth;
     if (!auth?.ready || !auth?.client) throw new ProgressStoreError("AUTH_UNAVAILABLE", operation, "The shared account session is unavailable.");
     try {
       await auth.ready;
-      const { data, error } = await auth.client.auth.getUser();
-      if (error) throw error;
-      if (!data?.user?.id) throw new ProgressStoreError("UNAUTHENTICATED", operation, "An authenticated user is required for progress access.");
-      return { client: auth.client, userId: data.user.id };
+      while (true) {
+        const client = auth.client;
+        const requestGeneration = authRequestGeneration;
+        if (!verifiedUserRequest || verifiedUserClient !== client) {
+          verifiedUserClient = client;
+          const request = client.auth.getUser().then(({ data, error }) => {
+            if (error) throw error;
+            if (!data?.user?.id) throw new ProgressStoreError("UNAUTHENTICATED", operation, "An authenticated user is required for progress access.");
+            return data.user.id;
+          });
+          const sharedRequest = request.catch((error) => {
+            if (verifiedUserRequest === sharedRequest) {
+              verifiedUserRequest = null;
+              verifiedUserClient = null;
+            }
+            throw error;
+          });
+          verifiedUserRequest = sharedRequest;
+        }
+        let userId;
+        try {
+          userId = await verifiedUserRequest;
+        } catch (error) {
+          if (requestGeneration !== authRequestGeneration || auth.client !== client) continue;
+          throw error;
+        }
+        if (requestGeneration !== authRequestGeneration || auth.client !== client) continue;
+        return { client, userId };
+      }
     } catch (error) {
       if (error instanceof ProgressStoreError) throw error;
       throw new ProgressStoreError("AUTHENTICATION_FAILED", operation, "The authenticated user could not be verified.", error);
     }
   }
+
+  window.accountAuth?.client?.auth.onAuthStateChange(invalidateVerifiedUserRequest);
 
   async function read(table, operation, mapper) {
     const { client, userId } = await context(operation);
