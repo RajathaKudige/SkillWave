@@ -75,7 +75,7 @@ flowchart LR
 
 ## Prerequisites and local setup
 
-You need a modern browser, Node.js with npm for the roadmap validator, and a local static HTTP server. Configure a Supabase project as described below for authenticated and database backed features.
+You need a modern browser, Node.js with npm for roadmap validation, Python (or another static HTTP server) to serve the frontend locally, and the Supabase CLI only for managing database migrations or deploying the Edge Function. The frontend itself has no build step. Configure a Supabase project as described below for authenticated and database backed features.
 
 From the repository root, start Python's built in static server:
 
@@ -94,14 +94,27 @@ Then open <code>http://localhost:5500/</code>. The server serves the repository 
 ## Supabase configuration
 
 1. Create or select a Supabase project.
-2. Set the project URL and publishable key in <code>js/supabase-config.js</code> as <code>window.SUPABASE_CONFIG</code>. This is browser configuration; never put a service role or secret key in frontend files or this README.
-3. Apply the committed SQL migrations in <code>supabase/migrations/</code> to create the profiles, progress, practice, networking, and RLS schema. Review each migration and use the Supabase SQL Editor or your established migration workflow.
-4. Add the local password recovery callback URL to the Supabase Auth URL configuration. The project setup documentation gives <code>http://localhost:5500/reset-password.html</code> as a local example. Configure the corresponding URL for your own hosting origin when deploying.
-5. Set up the account deletion Edge Function using the instructions in <code>SUPABASE_ACCOUNT_DELETION.md</code>. Link the Supabase CLI to your own project, then deploy <code>delete-account</code> with JWT verification enabled. Configure the required server side secret in the Edge Function environment; never expose it to the browser.
+2. Set its project URL and publishable browser key in <code>js/supabase-config.js</code> as <code>window.SUPABASE_CONFIG</code>. The publishable key is intended for browser use; never put a secret or service-role key in frontend files or this README.
+3. Configure the Supabase CLI for this repository. Install the CLI using the [official installation instructions](https://supabase.com/docs/guides/cli). This repository currently has no <code>supabase/config.toml</code>; run <code>supabase init</code> from the project root to create local CLI configuration. Sign in with <code>supabase login</code>, then link the intended project with <code>supabase link --project-ref &lt;YOUR_PROJECT_REF&gt;</code>. Keep CLI access tokens and database passwords in the CLI's supported credential storage or environment, never in this repository.
+4. Before applying migrations, verify the selected project with <code>supabase projects list</code> and inspect local versus remote history with <code>supabase migration list</code>. Review every migration reported as remote-pending. <code>supabase db push</code> applies all local migrations not recorded as applied on the linked database; confirm the linked project and pending list before running it.
+5. Add the local password recovery callback URL to Supabase Auth's Redirect URLs. The project setup documentation gives <code>http://localhost:5500/reset-password.html</code> as an example. Configure the corresponding URL for your own hosting origin when deploying.
+6. Set up the account deletion Edge Function using <code>SUPABASE_ACCOUNT_DELETION.md</code>. After linking the intended project, deploy <code>delete-account</code> with JWT verification enabled. Configure the required server-side secret in the Edge Function environment; never expose it to the browser.
 
-### Pending contact information migration
+### Contact information migration status
 
-<code>supabase/migrations/202610100001_networking_contact_information.sql</code> adds the nullable <code>contact_information</code> text column to <code>public.networking_contacts</code>. The migration file is present in the repository but has not been applied to the Supabase database. Apply it to your project before relying on the Relationship Tracker's new contact information field against that database. No live database change is performed by this repository README setup.
+The repository contains <code>supabase/migrations/202610100001_networking_contact_information.sql</code>, which adds a nullable <code>contact_information</code> text column to <code>public.networking_contacts</code>. Its status in the remote migration ledger and the remote schema is currently **unverified**; this README does not claim that it has or has not been applied.
+
+Before using the contact field against a Supabase project, check both its migration history and schema. <code>supabase migration list</code> compares local and remote migration records. To check the column without changing the database, run this query in the Supabase SQL Editor:
+
+~~~sql
+select column_name, data_type, is_nullable
+from information_schema.columns
+where table_schema = 'public'
+  and table_name = 'networking_contacts'
+  and column_name = 'contact_information';
+~~~
+
+If the migration is pending, apply it through the linked CLI migration workflow after confirming the target and reviewing all pending migrations. Do not bypass the migration ledger by running the migration SQL directly in the remote SQL Editor. The migration adds a nullable column and does not alter existing contact rows or RLS policies.
 
 ## Database and security
 
