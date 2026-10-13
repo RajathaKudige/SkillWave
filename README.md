@@ -4,7 +4,8 @@
 
 SkillWave is a browser-based professional development workspace that brings career roadmaps, soft-skills practice, networking activities, and progress tracking into one place. Create a profile, choose a target role, and keep your development activities and milestones organized as you grow.
 
-**Live Demo:** _Not deployed yet — the deployment URL will be added here._
+**Live Demo:** [🚀 Open SkillWave](https://skillwave-app.netlify.app)
+
 
 ## A look inside
 
