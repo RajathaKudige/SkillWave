@@ -1,150 +1,56 @@
-# SkillWave — A Professional Development Ecosystem
+# SkillWave
 
-SkillWave is a web application for people who want a structured way to build professional skills, practice workplace scenarios, track growth, and nurture career relationships.
+### Build your career, one intentional step at a time.
 
-## Project overview
+SkillWave is a browser-based professional development workspace that brings career roadmaps, soft-skills practice, networking activities, and progress tracking into one place. Create a profile, choose a target role, and keep your development activities and milestones organized as you grow.
 
-Professional development can be difficult to organize across separate learning tools and informal goals. SkillWave brings career roadmaps, soft skills practice, networking activities, and progress tracking into one browser based experience. It is intended for learners and professionals who want to plan and monitor their development.
+## A look inside
 
-## Screenshots
-
-The screenshots below are captures of the application included in this repository.
-
-| Dashboard |
-| --- |
-| ![SkillWave home page](screenshots/home-page.png) |
-
-| How it works | Career roadmap |
+| Career roadmap | Growth dashboard |
 | --- | --- |
-| ![How SkillWave works](screenshots/how-it-works.png) | ![Technical roadmap](screenshots/roadmap.png) |
+| ![SkillWave career roadmap](screenshots/roadmap.png) | ![SkillWave growth dashboard](screenshots/growth-snapshot.png) |
 
-| Roadmap flow | Soft Skills |
+| Soft-skills practice | Networking tracker |
 | --- | --- |
-| ![Roadmap flow](screenshots/roadmap-flow.png) | ![Soft Skills practice](screenshots/soft-skills.png) |
+| ![SkillWave soft-skills practice](screenshots/soft-skills.png) | ![SkillWave networking tracker](screenshots/networking.png) |
 
-| Networking |
-| --- |
-| ![Networking and Relationship Tracker](screenshots/networking.png) |
+## What you can do
 
-## Features
+- **Follow career roadmaps** with role-based skills, missions, and completion tracking.
+- **Practice soft skills** through workplace scenarios and reflection activities. Prompts can be copied to an AI assistant; SkillWave does not call an AI service.
+- **Build professional connections** with guided networking activities and a contact tracker.
+- **See your progress** across technical skills, soft skills, and networking on the dashboard.
+- **Manage your account** with sign-up, sign-in, password recovery, and account deletion.
 
-- **Dashboard and Growth Snapshot:** overview of progress across Technical Skills, Soft Skills, and Networking.
-- **Career roadmaps:** role based stages, missions, and skills, with expandable milestones and completion tracking.
-- **Soft Skills practice:** scenario based practice and a prompt users can copy into an AI assistant they choose. The application does not call an AI service.
-- **Networking:** guided networking activities and a Relationship Tracker for saving contacts, including contact information.
-- **Progress tracking:** completion state is stored for the authenticated user in Supabase.
-- **Authentication:** Supabase Auth supports account registration, sign in, password recovery, and password reset.
-- **Account deletion:** account settings can call the <code>delete-account</code> Supabase Edge Function to request account deletion.
+## Built with
 
-## Technology
+- HTML, CSS, and browser JavaScript (ES modules)
+- Supabase Auth and PostgreSQL with Row Level Security (RLS)
+- Supabase Edge Functions with TypeScript and Deno for account deletion
+- Node.js for roadmap data validation
 
-- HTML pages with CSS stylesheets
-- Browser JavaScript using ES modules and the Supabase JavaScript client
-- Supabase Auth and PostgreSQL with Row Level Security
-- Supabase Edge Functions, written in TypeScript and run on Deno
-- Node.js for the repository's roadmap data validation script
+The frontend is static and has no build step.
 
-The frontend is static; the repository does not define a frontend build step.
+## Run locally
 
-## Architecture
+From the repository root, start a static server:
 
-The browser loads the HTML, styles, and JavaScript. The account code creates a Supabase client using the public project URL and publishable key configured in <code>js/supabase-config.js</code>. Auth provides the current user session. Progress and contact data access uses that user identity; database policies are defined in the migrations.
-
-Account deletion is requested from account settings by invoking the <code>delete-account</code> Edge Function. The function validates the caller's bearer token with Supabase Auth before deleting the corresponding user through the Admin API using a server side secret supplied by the Edge Function environment.
-
-~~~mermaid
-flowchart LR
-  Browser[Static HTML CSS JavaScript] -->|public URL and publishable key| Supabase[Supabase]
-  Browser <-->|authentication and session| Auth[Supabase Auth]
-  Browser <-->|user scoped reads and writes| DB[(PostgreSQL with RLS)]
-  Browser -->|authenticated invocation| Edge[delete-account Edge Function]
-  Edge -->|verify token and delete user| Auth
-~~~
-
-## Project structure
-
-- <code>*.html</code> — application pages, including the Dashboard, Roadmap, Soft Skills, and Networking experiences.
-- <code>css/</code> — page and shared stylesheets.
-- <code>js/</code> — page behavior, Supabase configuration, authentication, and progress-store code.
-- <code>data/</code> — roadmap and application data used by the frontend.
-- <code>screenshots/</code> — application screenshots referenced above.
-- <code>scripts/validate-roadmaps.js</code> — roadmap data validator.
-- <code>supabase/migrations/</code> — SQL schema and Row Level Security migrations.
-- <code>supabase/functions/delete-account/</code> — account deletion Edge Function.
-- <code>SUPABASE_ACCOUNT_DELETION.md</code> and <code>SUPABASE_AUTH_SETUP.md</code> — setup and operational guidance.
-
-## Prerequisites and local setup
-
-You need a modern browser, Node.js with npm for roadmap validation, Python (or another static HTTP server) to serve the frontend locally, and the Supabase CLI only for managing database migrations or deploying the Edge Function. The frontend itself has no build step. Configure a Supabase project as described below for authenticated and database backed features.
-
-From the repository root, start Python's built in static server:
-
-~~~powershell
-py -m http.server 5500
-~~~
-
-If the <code>py</code> launcher is unavailable but Python is on PATH, use:
-
-~~~sh
+```sh
 python -m http.server 5500
-~~~
+```
 
-Then open <code>http://localhost:5500/</code>. The server serves the repository files; it does not build or bundle the frontend. Stop it with Ctrl+C.
+On Windows, `py -m http.server 5500` also works. Open [http://localhost:5500](http://localhost:5500). Configure Supabase first to use authentication and saved account data.
 
-## Supabase configuration
+## Supabase setup and security
 
-1. Create or select a Supabase project.
-2. Set its project URL and publishable browser key in <code>js/supabase-config.js</code> as <code>window.SUPABASE_CONFIG</code>. The publishable key is intended for browser use; never put a secret or service-role key in frontend files or this README.
-3. Configure the Supabase CLI for this repository. Install the CLI using the [official installation instructions](https://supabase.com/docs/guides/cli). This repository currently has no <code>supabase/config.toml</code>; run <code>supabase init</code> from the project root to create local CLI configuration. Sign in with <code>supabase login</code>, then link the intended project with <code>supabase link --project-ref &lt;YOUR_PROJECT_REF&gt;</code>. Keep CLI access tokens and database passwords in the CLI's supported credential storage or environment, never in this repository.
-4. Before applying migrations, verify the selected project with <code>supabase projects list</code> and inspect local versus remote history with <code>supabase migration list</code>. Review every migration reported as remote-pending. <code>supabase db push</code> applies all local migrations not recorded as applied on the linked database; confirm the linked project and migration list before running it.
-5. Add the local password recovery callback URL to Supabase Auth's Redirect URLs. The project setup documentation gives <code>http://localhost:5500/reset-password.html</code> as an example. Configure the corresponding URL for your own hosting origin when deploying.
-6. Set up the account deletion Edge Function using <code>SUPABASE_ACCOUNT_DELETION.md</code>. After linking the intended project, deploy <code>delete-account</code> with JWT verification enabled. Configure the required server-side secret in the Edge Function environment; never expose it to the browser.
+Set the project URL and **publishable** browser key in `js/supabase-config.js`. Publishable keys are intended for client-side use; never place a secret or service-role key in frontend code. Supabase migrations define the application tables and RLS policies, so use an appropriately configured project for account-backed features.
 
-### Contact information migration status
+Before applying migrations, confirm the linked Supabase project and compare local and remote migration history. The `contact_information` column exists in the remote database, but whether its migration is recorded as applied is still unverified. See [the setup guide](docs/SETUP.md) before taking migration-related action.
 
-The migration file is <code>supabase/migrations/202610100001_networking_contact_information.sql</code>. It adds a nullable <code>contact_information</code> text column to <code>public.networking_contacts</code>. The column is confirmed present in the remote database, but the migration ledger status is **unverified**. The migration history is not yet reconciled, so inspect the remote migration history before deciding whether reconciliation is needed; the column's presence alone does not establish whether this migration is recorded as applied.
+## Documentation
 
-Before using the contact field against a Supabase project, check both its migration history and schema. <code>supabase migration list</code> compares local and remote migration records. To check the column without changing the database, run this query in the Supabase SQL Editor:
+- [Supabase and migration setup](docs/SETUP.md)
+- [Password recovery URL setup](SUPABASE_AUTH_SETUP.md)
+- [Account deletion deployment](SUPABASE_ACCOUNT_DELETION.md)
 
-~~~sql
-select column_name, data_type, is_nullable
-from information_schema.columns
-where table_schema = 'public'
-  and table_name = 'networking_contacts'
-  and column_name = 'contact_information';
-~~~
-
-After inspecting the migration history, determine whether reconciliation is needed before taking action. Do not run <code>supabase db push</code>, repair migration history, or execute the migration SQL in the remote SQL Editor based only on the column check. The migration adds a nullable column and does not alter existing contact rows or RLS policies.
-
-## Database and security
-
-The migrations define these application tables:
-
-- <code>profiles</code>
-- <code>roadmap_skill_progress</code> and <code>roadmap_mission_progress</code>
-- <code>soft_skill_progress</code> and <code>soft_skill_practice</code>
-- <code>networking_journey_progress</code>, <code>networking_scenario_progress</code>, and <code>networking_contacts</code>
-
-The migrations enable RLS and define user scoped policies for the relevant data tables. Frontend progress-store operations include the authenticated user's ID in data operations. The contact information migration only adds a nullable column; it does not alter RLS policies. Review the SQL migrations and configure keys and project access carefully for your own deployment.
-
-## Validation
-
-Run the repository's defined roadmap data validation command from the project root:
-
-~~~sh
-npm run validate:roadmaps
-~~~
-
-This validates roadmap data. The repository does not define a general automated browser test suite.
-
-## Deployment considerations
-
-The repository has no configured frontend hosting provider or deployment workflow. Host the static project files on a static web server and configure the Supabase URL allowlist, password recovery redirect URLs, and browser configuration for the intended origin. Inspect the target project's migration history before applying migrations; the contact information migration history is not yet reconciled. Deploy the Edge Function separately and configure its server side environment. Do not expose secret keys in static files.
-
-## Limitations and future improvements
-
-Implemented behavior and configuration details can be reviewed in the source and setup documentation. The Soft Skills practice feature prepares a prompt for the user to copy; it does not integrate with an AI provider. The remote contact information column is present, but its migration history is not yet reconciled. The repository currently defines roadmap data validation but no automated browser test suite, frontend build pipeline, or hosting workflow.
-
-## Contributing and license
-
-No contribution guide or license is currently defined in the repository. Review the source and project documentation before proposing changes; contact the repository owner to discuss contributions and licensing.
+Roadmap data can be checked with `npm run validate:roadmaps`. This command validates roadmap data; the repository does not define a general browser test suite.
