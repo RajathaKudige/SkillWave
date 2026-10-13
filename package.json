@@ -2,6 +2,7 @@
   "name": "professional-level-ecosystem",
   "private": true,
   "scripts": {
+    "prepare:deploy": "node scripts/prepare-deploy.js",
     "validate:roadmaps": "node scripts/validate-roadmaps.js"
   }
 }

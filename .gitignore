@@ -1,0 +1,24 @@
+# Generated static deployment output
+/dist/
+
+# Local dependencies and deployment tooling state
+/node_modules/
+/.netlify/
+/supabase/.temp/
+/.vscode/
+
+# Local environment and credential files
+.env
+.env.*
+!.env.example
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*service-role*
+**/*service_role*
+
+# Operating system and local logs
+.DS_Store
+Thumbs.db
+*.log
